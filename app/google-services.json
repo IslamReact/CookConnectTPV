@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280160214787",
+    "project_id": "cookconnect-cfc24",
+    "storage_bucket": "cookconnect-cfc24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280160214787:android:59af4c42ace0bb66e61336",
+        "android_client_info": {
+          "package_name": "com.islamelmrabet.cookconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBStTTaF_I20BiJE2JaS1bOw56JWZkaK_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
