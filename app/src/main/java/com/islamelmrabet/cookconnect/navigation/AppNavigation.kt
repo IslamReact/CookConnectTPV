@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.islamelmrabet.cookconnect.ui.screens.commonScreens.CreateAccountScreen
+import com.islamelmrabet.cookconnect.ui.screens.commonScreens.LogInScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.SplashScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.WelcomeScreen
 
@@ -18,7 +20,13 @@ fun AppNavigation() {
             SplashScreen(navController)
         }
         composable(Routes.WelcomeScreen.route) {
-            WelcomeScreen()
+            WelcomeScreen(navController)
+        }
+        composable(Routes.LogInScreen.route) {
+            LogInScreen(navController)
+        }
+        composable(Routes.CreateAccountScreen.route) {
+            CreateAccountScreen()
         }
     }
 }
