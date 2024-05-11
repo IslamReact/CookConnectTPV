@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
+import com.islamelmrabet.cookconnect.tools.BasicButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +68,7 @@ fun WelcomeScreen(navController : NavController) {
 
 
     Column(
-        modifier = Modifier.padding(start = 25.dp, top = 60.dp, end = 16.dp, bottom = 10.dp),
+        modifier = Modifier.padding(start = 25.dp, top = 60.dp, end = 25.dp, bottom = 10.dp),
         horizontalAlignment = Alignment.Start
     ) {
         // Primera row: Bienvenido a ItemPOS
@@ -134,49 +135,22 @@ fun WelcomeScreen(navController : NavController) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(
-                onClick = { },
-                shape = lessRoundedShape,
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(160.dp),
-                colors = buttonColors,
-                content = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = stringResource(id = R.string.register),
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Forward Arrow",
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
+            BasicButton(
+                navController = navController,
+                buttonText = stringResource(id = R.string.register),
+                route = Routes.CreateAccountScreen.route,
+                lessRoundedShape = lessRoundedShape,
+                buttonColors = buttonColors
             )
-            Spacer(modifier = Modifier.width(15.dp))
-            Button(
-                onClick = { navController.navigate(Routes.LogInScreen.route)},
-                shape = lessRoundedShape,
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(160.dp),
-                colors = buttonColors,
-                content = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = stringResource(id = R.string.login),
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Forward Arrow",
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
+            Spacer(modifier = Modifier.width(35.dp))
+            BasicButton(
+                navController = navController,
+                buttonText = stringResource(id = R.string.login),
+                route = Routes.LogInScreen.route,
+                lessRoundedShape = lessRoundedShape,
+                buttonColors = buttonColors
             )
         }
     }
 }
+

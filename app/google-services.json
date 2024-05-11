@@ -12,7 +12,20 @@
           "package_name": "com.islamelmrabet.cookconnect"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "280160214787-8o1lqej13jp55bn47tuc6pb1hu3a95u1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.islamelmrabet.cookconnect",
+            "certificate_hash": "c2485b64c7122dedf3c8d70d0ea8322921959a2a"
+          }
+        },
+        {
+          "client_id": "280160214787-donsjvdmknkt54jaaodhagh9btjq0tm7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBStTTaF_I20BiJE2JaS1bOw56JWZkaK_s"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280160214787-donsjvdmknkt54jaaodhagh9btjq0tm7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

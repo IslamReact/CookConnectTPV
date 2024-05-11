@@ -1,9 +1,22 @@
 <resources>
     <string name="app_name">CookConnect</string>
-    //Welcome Screen
     <string name="welcome">Bienvenido a ItemPOS!</string>
     <string name="welcome_text">Selecciona en primer lugar el usuario que desea utilizar o inicia sesión en caso de que no aparezca tu usuario.</string>
     <string name="users_text">Usuarios</string>
     <string name="register">Registrarse</string>
     <string name="login">Iniciar Sesion</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="userName">Nombre de usuario</string>
+    <string name="userName_example">Jorge Rodriguez Cutillas</string>
+    <string name="email_example">ejemplo@ejemplo.com</string>
+    <string name="password_label">...</string>
+    <string name="rol_label">Rol</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_web_client_id">Default\n</string>
+    <string name="forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="reset_password">Recuperar la contraseña</string>
+    <string name="forgot_password_label">Olvidó su contraseña</string>
+    <string name="already_got_account">¿Ya tienes cuenta? Inicia sesión</string>
+    ¡
 </resources>
