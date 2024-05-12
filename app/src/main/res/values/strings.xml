@@ -18,5 +18,7 @@
     <string name="reset_password">Recuperar la contraseña</string>
     <string name="forgot_password_label">Olvidó su contraseña</string>
     <string name="already_got_account">¿Ya tienes cuenta? Inicia sesión</string>
-    ¡
+    <string name="important">Importante</string>
+    <string name="important_login_text">Por favor, asegúrate de ingresar tu nombre de usuario y contraseña correctamente para acceder al sistema. </string>
+    <string name="important_create_account_text">Por favor, si no eres el administrador de usuarios no realices ninguna acción en esta pestaña. </string>
 </resources>

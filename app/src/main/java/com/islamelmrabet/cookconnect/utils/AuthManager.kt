@@ -2,6 +2,7 @@ package com.islamelmrabet.cookconnect.utils
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -14,8 +15,11 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.islamelmrabet.cookconnect.R
+import com.islamelmrabet.cookconnect.model.Worker
 import kotlinx.coroutines.tasks.await
 
 sealed class AuthRes<out T> {
@@ -29,9 +33,10 @@ class AuthManager(private val context: Context) {
     private val signInClient = Identity.getSignInClient(context)
 
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String): AuthRes<FirebaseUser?> {
+    suspend fun createUserWithEmailAndPassword(email: String, password: String, worker: Worker): AuthRes<FirebaseUser?> {
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            createWorker(worker)
             AuthRes.Success(authResult.user)
         } catch(e: Exception) {
             AuthRes.Error(e.message ?: "Error al crear el usuario")
@@ -65,6 +70,19 @@ class AuthManager(private val context: Context) {
         return auth.currentUser
     }
 
+    private fun createWorker(worker: Worker) {
+        val userId = auth.currentUser?.uid
+        FirebaseFirestore.getInstance().collection("workers")
+            .add(worker)
+            .addOnSuccessListener {
+                Log.d("Worker", "Worker created succesfully")
+            }.addOnFailureListener {
+                Log.d("Worker", "An error occurred ${it.message}")
+            }
+    }
+
+    // TODO: Funciones para la implementacion de la autentificacion de Google
+    /*
     private val googleSignInClient: GoogleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.getString(R.string.default_web_client_id))
@@ -97,4 +115,6 @@ class AuthManager(private val context: Context) {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
+    */
+
 }

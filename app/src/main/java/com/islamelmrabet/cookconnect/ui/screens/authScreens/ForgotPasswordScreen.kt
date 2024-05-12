@@ -1,4 +1,4 @@
-package com.islamelmrabet.cookconnect.ui.screens.commonScreens.authScreens
+package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext

@@ -6,16 +6,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseUser
-import com.islamelmrabet.cookconnect.ui.screens.commonScreens.authScreens.CreateAccountScreen
-import com.islamelmrabet.cookconnect.ui.screens.commonScreens.authScreens.LogInScreen
+import com.islamelmrabet.cookconnect.ui.screens.authScreens.CreateAccountScreen
+import com.islamelmrabet.cookconnect.ui.screens.authScreens.LogInScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.SplashScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.WelcomeScreen
-import com.islamelmrabet.cookconnect.ui.screens.commonScreens.authScreens.ForgotPasswordScreen
+import com.islamelmrabet.cookconnect.ui.screens.authScreens.ForgotPasswordScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 
 @Composable
-fun AppNavigation(context: Context, navController: NavHostController = rememberNavController()) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
+    val navController = rememberNavController()
     val authManager: AuthManager = AuthManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
@@ -29,8 +32,9 @@ fun AppNavigation(context: Context, navController: NavHostController = rememberN
         composable(Routes.WelcomeScreen.route) {
             WelcomeScreen(navController)
         }
-        composable(Routes.LogInScreen.route) {
-            LogInScreen(auth = authManager,navController)
+        composable(Routes.LogInScreen.route  + "/{email}"){backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
+            LogInScreen(auth = authManager, navController,email, authViewModel)
         }
         composable(Routes.CreateAccountScreen.route) {
             CreateAccountScreen(auth = authManager,navController)

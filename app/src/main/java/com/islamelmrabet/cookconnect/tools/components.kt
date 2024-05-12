@@ -1,5 +1,6 @@
 package com.islamelmrabet.cookconnect.tools
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,8 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -111,18 +114,36 @@ fun TextFieldLogin(
     )
 }
 
+@Composable
+fun ImportantInfoCard(content: @Composable () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+        border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.outline)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            content()
+        }
+    }
+}
 
 // TODO: ALL BUTTONS OF THE APP
 @Composable
 fun BasicButton(
-    navController: NavController,
     buttonText: String,
-    route: String,
     lessRoundedShape: RoundedCornerShape,
-    buttonColors: ButtonColors
+    buttonColors: ButtonColors,
+    onClick: () -> Unit
 ) {
     Button(
-        onClick = { navController.navigate(route) },
+        onClick = onClick ,
         shape = lessRoundedShape,
         modifier = Modifier
             .height(50.dp)
@@ -242,3 +263,4 @@ fun ClickableText(
         modifier = modifier.clickable { onClick() }
     )
 }
+

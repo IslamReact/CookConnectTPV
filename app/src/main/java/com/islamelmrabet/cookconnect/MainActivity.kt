@@ -11,8 +11,10 @@ import com.islamelmrabet.cookconnect.ui.CookConnectContent
 import android.Manifest
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +22,11 @@ class MainActivity : ComponentActivity() {
 
         askNotificationPermission()
         tokenNew()
+        val authViewModel by viewModels<AuthViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this)
+               AppNavigation(this,authViewModel)
             }
         }
     }

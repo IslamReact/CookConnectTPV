@@ -1,24 +1,26 @@
 
-package com.islamelmrabet.cookconnect.ui.screens.commonScreens.authScreens
+package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -30,26 +32,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.firebase.auth.GoogleAuthProvider
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.ButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.ClickableText
+import com.islamelmrabet.cookconnect.tools.ImportantInfoCard
 import com.islamelmrabet.cookconnect.tools.TextFieldLogin
 import com.islamelmrabet.cookconnect.utils.AuthRes
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LogInScreen(auth: AuthManager, navController: NavController) {
+fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: String? = null, authViewModel: AuthViewModel) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -57,7 +60,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController) {
         containerColor = primaryColor
     )
 
-    val (email, setEmail) = remember { mutableStateOf("") }
+    val (email, setEmail) = remember { mutableStateOf(initialEmail ?: "") }
     val (password, setPassword) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -68,6 +71,13 @@ fun LogInScreen(auth: AuthManager, navController: NavController) {
     var isButtonEnabled by remember { mutableStateOf(false) }
     LaunchedEffect(email, password) {
         isButtonEnabled = email.isNotBlank() && password.isNotBlank()
+    }
+
+    LaunchedEffect(Unit) {
+        if (initialEmail != null) {
+            val fetchedPassword = authViewModel.getPasswordByEmail(initialEmail)
+            fetchedPassword?.let { setPassword(it) }
+        }
     }
 
     Scaffold(
@@ -116,6 +126,29 @@ fun LogInScreen(auth: AuthManager, navController: NavController) {
                     icon = Icons.Default.Person,
                     enabled = isButtonEnabled
                 )
+                Spacer(modifier = Modifier.height(50.dp))
+                ImportantInfoCard {
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "info",
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = stringResource(id = R.string.important),
+                            textAlign = TextAlign.Start,
+                            style = TextStyle(fontSize = 16.sp),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = stringResource(id = R.string.important_login_text),
+                        textAlign = TextAlign.Justify,
+                        style = TextStyle(fontSize = 16.sp)
+                    )
+                }
             }
         }
     )

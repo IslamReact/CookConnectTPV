@@ -1,5 +1,7 @@
 package com.islamelmrabet.cookconnect.ui.screens.commonScreens
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +33,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.BasicButton
@@ -63,9 +69,31 @@ fun WelcomeScreen(navController : NavController) {
     )
 
     var expandedState by remember { mutableStateOf(false) }
-    val options = listOf("Opción 1", "Opción 2", "Opción 3")
-    var selectedItem by remember { mutableStateOf(options[0]) }
+    val options = remember { mutableStateListOf<String>() }
+    var selectedItem by remember { mutableStateOf<String?>(null) }
 
+    LaunchedEffect(Unit) {
+        val workersRef = Firebase.firestore.collection("workers")
+        workersRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val namesAndRolesAndEmail = mutableListOf<String>()
+                for (document in task.result) {
+                    val name = document.getString("name")
+                    val userRole = document.getString("userRole")
+                    val email = document.getString("email")
+                    if (name != null && userRole != null && email != null) {
+                        namesAndRolesAndEmail.add("$name - $userRole - $email")
+                    }
+                }
+                options.addAll(namesAndRolesAndEmail)
+                if (options.isNotEmpty()) {
+                    selectedItem = options[0]
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ${task.exception?.message}")
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.padding(start = 25.dp, top = 60.dp, end = 25.dp, bottom = 10.dp),
@@ -101,13 +129,15 @@ fun WelcomeScreen(navController : NavController) {
                 onExpandedChange = { expandedState = !expandedState },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                TextField(
-                    value = selectedItem,
-                    modifier = Modifier.menuAnchor(),
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState)}
-                )
+                selectedItem?.let {
+                    TextField(
+                        value = it,
+                        modifier = Modifier.menuAnchor(),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState)}
+                    )
+                }
 
                 ExposedDropdownMenu(
                     expanded = expandedState,
@@ -136,19 +166,24 @@ fun WelcomeScreen(navController : NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             BasicButton(
-                navController = navController,
                 buttonText = stringResource(id = R.string.register),
-                route = Routes.CreateAccountScreen.route,
                 lessRoundedShape = lessRoundedShape,
-                buttonColors = buttonColors
+                buttonColors = buttonColors,
+                onClick = {
+                    navController.navigate(Routes.CreateAccountScreen.route)
+                }
             )
             Spacer(modifier = Modifier.width(35.dp))
             BasicButton(
-                navController = navController,
                 buttonText = stringResource(id = R.string.login),
-                route = Routes.LogInScreen.route,
                 lessRoundedShape = lessRoundedShape,
-                buttonColors = buttonColors
+                buttonColors = buttonColors,
+                onClick = {
+                    selectedItem?.let { selected ->
+                        val email = selected.split(" - ")[2]
+                        navController.navigate("${Routes.LogInScreen.route}/$email")
+                    }
+                }
             )
         }
     }
