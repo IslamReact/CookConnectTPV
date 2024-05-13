@@ -2,6 +2,7 @@ package com.islamelmrabet.cookconnect.tools
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,17 +21,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,14 +74,14 @@ fun TextFieldLogin(
     emailValue: String,
     passwordValue: String
 ) {
-    var passwordFocusRequester by remember { mutableStateOf(FocusRequester()) }
+    val passwordFocusRequester by remember { mutableStateOf(FocusRequester()) }
 
     Text(
         text = labelEmailText,
         textAlign = TextAlign.Start,
         modifier = Modifier.fillMaxWidth()
     )
-    TextField(
+    OutlinedTextField(
         value = emailValue,
         onValueChange = onEmailChange,
         placeholder = { Text(text = labelEmailTextField) },
@@ -97,7 +103,7 @@ fun TextFieldLogin(
         textAlign = TextAlign.Start,
         modifier = Modifier.fillMaxWidth()
     )
-    TextField(
+    OutlinedTextField(
         value = passwordValue,
         onValueChange = onPasswordChange,
         placeholder = { Text(text = labelPasswordTextField) },
@@ -218,6 +224,9 @@ fun AppBar(navController: NavController, topAppBarText : String, route: String) 
                     modifier = Modifier.fillMaxWidth()
                 )
             },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            ),
             navigationIcon = {
                 Box(
                     modifier = Modifier
@@ -243,6 +252,46 @@ fun AppBar(navController: NavController, topAppBarText : String, route: String) 
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CookerAndWaiterAppBar(topAppBarText : String, onClick: () -> Unit) {
+    Box {
+        TopAppBar(
+            title = {
+                Text(
+                    text = topAppBarText,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            ),
+            navigationIcon = {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(30.dp)
+                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                ) {
+                    IconButton(onClick = onClick ) {
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .shadow(3.dp)
+        )
+    }
+}
+
 //TODO: TEXTOS CLICKABLES
 
 @Composable
@@ -257,7 +306,7 @@ fun ClickableText(
         style = textStyle.merge(
             color = MaterialTheme.colorScheme.primary,
             textDecoration = TextDecoration.Underline,
-            fontSize = 12.sp
+            fontSize = 14.sp
         ),
         textAlign = TextAlign.End,
         modifier = modifier.clickable { onClick() }

@@ -24,6 +24,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -110,7 +111,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
-                TextField(
+                OutlinedTextField(
                     value = name,
                     onValueChange = onNameChange,
                     placeholder = { R.string.userName_example },
@@ -135,7 +136,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                 ClickableText(
                     text = stringResource(id = R.string.already_got_account),
                     onClick = {
-                          navController.navigate(Routes.LogInScreen.route)
+                          navController.navigate("${Routes.LogInScreen.route}/@gmail.com")
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -154,7 +155,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                         onExpandedChange = { expandedState = !expandedState },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        TextField(
+                        OutlinedTextField(
                             value = selectedItem,
                             modifier = Modifier.menuAnchor(),
                             onValueChange = {},

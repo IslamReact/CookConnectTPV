@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -66,6 +68,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val userRole  = remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     val onEmailChange: (String) -> Unit = { setEmail(it) }
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
@@ -126,8 +129,13 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
                 ButtonWithIcon(
                     buttonText = stringResource(id = R.string.login),
                     onClick = {
+                        isLoading = true
                         scope.launch {
-                            emailPassSignIn(email, password, auth, context, navController, userRole.value)
+                            try {
+                                emailPassSignIn(email, password, auth, context, navController, userRole.value)
+                            } finally {
+                                isLoading = false
+                            }
                         }
                     },
                     lessRoundedShape = lessRoundedShape,
@@ -135,6 +143,11 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
                     icon = Icons.Default.Person,
                     enabled = isButtonEnabled
                 )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(50.dp))
                 ImportantInfoCard {
                     Row {
