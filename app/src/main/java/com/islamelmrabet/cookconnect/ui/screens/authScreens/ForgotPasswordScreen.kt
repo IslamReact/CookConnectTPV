@@ -100,7 +100,7 @@ fun ForgotPasswordScreen(auth: AuthManager, navController: NavController) {
                                             "Correo enviado",
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        navController.navigate(Routes.LogInScreen.route)
+                                        navController.navigate(Routes.WelcomeScreen.route)
                                     }
 
                                     is AuthRes.Error -> {

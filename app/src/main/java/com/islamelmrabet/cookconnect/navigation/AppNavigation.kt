@@ -13,13 +13,21 @@ import com.islamelmrabet.cookconnect.ui.screens.authScreens.LogInScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.SplashScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.WelcomeScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.ForgotPasswordScreen
+import com.islamelmrabet.cookconnect.ui.screens.commonScreens.AccountSettingsScreen
+import com.islamelmrabet.cookconnect.ui.screens.commonScreens.InvoiceScreen
+import com.islamelmrabet.cookconnect.ui.screens.cookerScreens.OrderCookerScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.AddProductScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.EditProductScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 
 @Composable
 fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
     val navController = rememberNavController()
-    val authManager: AuthManager = AuthManager(context)
+    val authManager = AuthManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 
@@ -41,6 +49,30 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
         }
         composable(Routes.ForgotPasswordScreen.route) {
             ForgotPasswordScreen(auth = authManager,navController)
+        }
+        composable(Routes.TableScreen.route) {
+            TableScreen(auth = authManager,navController)
+        }
+        composable(Routes.OrderScreen.route) {
+            OrderScreen(auth = authManager,navController)
+        }
+        composable(Routes.InventoryScreen.route) {
+            InventoryScreen(auth = authManager,navController)
+        }
+        composable(Routes.EditProductScreen.route) {
+            EditProductScreen(auth = authManager,navController)
+        }
+        composable(Routes.AddProductScreen.route) {
+            AddProductScreen(auth = authManager,navController)
+        }
+        composable(Routes.OrderCookerScreen.route) {
+            OrderCookerScreen(auth = authManager,navController)
+        }
+        composable(Routes.InventoryScreen.route) {
+            InvoiceScreen(auth = authManager,navController)
+        }
+        composable(Routes.AccountSettingsScreen.route) {
+            AccountSettingsScreen(auth = authManager,navController)
         }
     }
 }

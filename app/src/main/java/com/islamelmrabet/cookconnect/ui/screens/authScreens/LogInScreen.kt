@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Scaffold
@@ -64,6 +65,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     val (password, setPassword) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val userRole  = remember { mutableStateOf("") }
 
     val onEmailChange: (String) -> Unit = { setEmail(it) }
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
@@ -77,6 +79,13 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
         if (initialEmail != null) {
             val fetchedPassword = authViewModel.getPasswordByEmail(initialEmail)
             fetchedPassword?.let { setPassword(it) }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (initialEmail != null) {
+            val fetchedRole = authViewModel.getRoleByEmail(initialEmail)
+            fetchedRole?.let { userRole.value = it }
         }
     }
 
@@ -118,7 +127,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
                     buttonText = stringResource(id = R.string.login),
                     onClick = {
                         scope.launch {
-                            emailPassSignIn(email, password, auth, context, navController)
+                            emailPassSignIn(email, password, auth, context, navController, userRole.value)
                         }
                     },
                     lessRoundedShape = lessRoundedShape,
@@ -154,17 +163,31 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     )
 }
 
-private suspend fun emailPassSignIn(email: String, password: String, auth: AuthManager, context: Context, navigation: NavController) {
+private suspend fun emailPassSignIn(email: String, password: String, auth: AuthManager, context: Context, navigation: NavController, userRole: String) {
     when (val result = auth.signInWithEmailAndPassword(email, password)) {
         is AuthRes.Success -> {
             Toast.makeText(context, "Inicio de sesion correcto", Toast.LENGTH_SHORT).show()
-            navigation.navigate(Routes.WelcomeScreen.route) {
-                popUpTo(Routes.LogInScreen.route) {
-                    inclusive = true
+            when (userRole) {
+                "Cocinero" -> {
+                    navigation.navigate(Routes.OrderCookerScreen.route) {
+                        popUpTo(Routes.WelcomeScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                "Camarero" -> {
+                    navigation.navigate(Routes.TableScreen.route) {
+                        popUpTo(Routes.LogInScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                else -> {
+                    Toast.makeText(context, "Rol desconocido: $userRole", Toast.LENGTH_SHORT).show()
+                    navigation.navigate(Routes.WelcomeScreen.route)
                 }
             }
         }
-
         is AuthRes.Error -> {
             Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT).show()
         }

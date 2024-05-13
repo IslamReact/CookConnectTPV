@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -46,6 +47,7 @@ class AuthManager(private val context: Context) {
     suspend fun signInWithEmailAndPassword(email: String, password: String): AuthRes<FirebaseUser?> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
+            updateLastLoginDate(authResult.user?.uid)
             AuthRes.Success(authResult.user)
         } catch(e: Exception) {
             AuthRes.Error(e.message ?: "Error al iniciar sesión")
@@ -63,7 +65,6 @@ class AuthManager(private val context: Context) {
 
     fun signOut() {
         auth.signOut()
-        signInClient.signOut()
     }
 
     fun getCurrentUser(): FirebaseUser?{
@@ -72,13 +73,36 @@ class AuthManager(private val context: Context) {
 
     private fun createWorker(worker: Worker) {
         val userId = auth.currentUser?.uid
-        FirebaseFirestore.getInstance().collection("workers")
-            .add(worker)
-            .addOnSuccessListener {
-                Log.d("Worker", "Worker created succesfully")
-            }.addOnFailureListener {
-                Log.d("Worker", "An error occurred ${it.message}")
+        if (userId != null) {
+            FirebaseFirestore.getInstance().collection("workers")
+                .document(userId)
+                .set(worker)
+                .addOnSuccessListener {
+                    Log.d("Worker", "Worker created successfully")
+                }.addOnFailureListener { e ->
+                    Log.d("Worker", "Error creating worker: ${e.message}")
+                }
+        } else {
+            Log.d("Worker", "Current user is null, unable to create worker")
+        }
+    }
+
+
+    private suspend fun updateLastLoginDate(userId: String?) {
+        try {
+            userId?.let { uid ->
+                val userRef = FirebaseFirestore.getInstance().collection("workers").document(uid)
+                val userSnapshot = userRef.get().await()
+                if (userSnapshot.exists()) {
+                    userRef.update("lastLogin", FieldValue.serverTimestamp()).await()
+                    Log.d("AuthManager", "Last login date updated successfully")
+                } else {
+                    Log.e("AuthManager", "User document does not exist for UID: $uid")
+                }
             }
+        } catch(e: Exception) {
+            Log.e("AuthManager", "Error updating last login date: ${e.message}")
+        }
     }
 
     // TODO: Funciones para la implementacion de la autentificacion de Google

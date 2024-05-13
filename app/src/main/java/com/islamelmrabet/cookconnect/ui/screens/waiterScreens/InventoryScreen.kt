@@ -1,4 +1,4 @@
-package com.islamelmrabet.cookconnect.ui.screens.commonScreens
+package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.Scaffold
@@ -12,12 +12,12 @@ import com.islamelmrabet.cookconnect.utils.AuthManager
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AccountSettingsScreen(auth: AuthManager, navCotroller: NavHostController){
+fun InventoryScreen(auth: AuthManager, navCotroller: NavHostController){
     Scaffold(
         topBar = {
             AppBar(
                 navCotroller,
-                stringResource(id = R.string.account_screen_header),
+                stringResource(id = R.string.inventary_screen_header),
                 Routes.WelcomeScreen.route
             )
         },

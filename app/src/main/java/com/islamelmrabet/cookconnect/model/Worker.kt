@@ -7,4 +7,5 @@ data class Worker(
     val password: String = "",
     val uid: String = "",
     val userRole: String = "",
+    val lastLogin: String = "",
 )

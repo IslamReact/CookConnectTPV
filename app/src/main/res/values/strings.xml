@@ -21,4 +21,12 @@
     <string name="important">Importante</string>
     <string name="important_login_text">Por favor, asegúrate de ingresar tu nombre de usuario y contraseña correctamente para acceder al sistema. </string>
     <string name="important_create_account_text">Por favor, si no eres el administrador de usuarios no realices ninguna acción en esta pestaña. </string>
+    <string name="table_screen_header">Mesas</string>
+    <string name="inventary_screen_header">Inventario</string>
+    <string name="order_screen_header">Pedido</string>
+    <string name="invoice_screen_header">Historial Ventas</string>
+    <string name="account_screen_header">Cuenta</string>
+    <string name="edit_product_screen_header">Editar Producto</string>
+    <string name="add_product_screen_header">Añadir Producto</string>
+    <string name="restaurant_screen_header">Resturante/Bar</string>
 </resources>

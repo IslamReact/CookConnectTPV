@@ -15,4 +15,15 @@ class AuthViewModel : ViewModel() {
         }
         return null
     }
+
+    suspend fun getRoleByEmail(email: String): String? {
+        val usersRef = FirebaseFirestore.getInstance().collection("workers")
+        val querySnapshot = usersRef.whereEqualTo("email", email).get().await()
+        if (!querySnapshot.isEmpty) {
+            return querySnapshot.documents.firstOrNull()?.getString("userRole")
+        }
+        return null
+    }
+
+
 }

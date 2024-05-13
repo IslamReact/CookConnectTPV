@@ -183,12 +183,9 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                 ButtonWithIcon(
                     buttonText = stringResource(id = R.string.register),
                     onClick = {
-                        val worker = auth.getCurrentUser()
-                            ?.let { Worker(name = name, email = email, userRole = selectedItem, uid = it.uid, password = password) }
+                        val worker = Worker(name = name, email = email, userRole = selectedItem, password = password)
                         scope.launch {
-                            if (worker != null) {
-                                signUp(email, password, worker, auth, context, navController)
-                            }
+                            signUp(email, password, worker, auth, context, navController)
                         }
                     },
                     lessRoundedShape = lessRoundedShape,
