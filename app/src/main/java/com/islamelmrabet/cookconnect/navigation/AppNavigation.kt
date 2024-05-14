@@ -22,12 +22,14 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 
 @Composable
 fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
+    val tableManager = TableManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 
@@ -51,7 +53,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
             ForgotPasswordScreen(auth = authManager,navController)
         }
         composable(Routes.TableScreen.route) {
-            TableScreen(auth = authManager,navController)
+            TableScreen(auth = authManager,navController, tableManager)
         }
         composable(Routes.OrderScreen.route) {
             OrderScreen(auth = authManager,navController)

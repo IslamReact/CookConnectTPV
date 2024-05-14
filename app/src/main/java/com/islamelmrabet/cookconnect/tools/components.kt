@@ -1,13 +1,15 @@
 package com.islamelmrabet.cookconnect.tools
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
@@ -26,31 +27,29 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -60,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.islamelmrabet.cookconnect.R
-import com.islamelmrabet.cookconnect.navigation.Routes
 
 // TODO: ALL TEXT FIELDS OF THE APP
 @Composable
@@ -139,6 +137,30 @@ fun ImportantInfoCard(content: @Composable () -> Unit) {
         }
     }
 }
+
+@Composable
+fun OutlinedTableTextField(
+    labelTableAttribute: String, tableAttribute: Int, onTableAttributeChange: (Int) -> Unit
+) {
+    Column {
+        Text(
+            text = labelTableAttribute,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = tableAttribute.toString(),
+            onValueChange = { onTableAttributeChange(it.toIntOrNull() ?: 0) },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            singleLine = true,
+            modifier = Modifier.padding(top = 10.dp)
+        )
+    }
+}
+
 
 // TODO: ALL BUTTONS OF THE APP
 @Composable
@@ -313,3 +335,108 @@ fun ClickableText(
     )
 }
 
+//TODO: DRAWER COMPONENTS
+@Composable
+fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun DrawerHeader() {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable._cropped),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "ItemPOS",
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+        Text(
+            text = stringResource(id = R.string.restaurant_screen_header),
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp,
+            lineHeight = 32.sp,
+            letterSpacing = 0.5.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp))
+    }
+}
+
+@Composable
+fun HeaderFooter(lastLogin: String) {
+    Row(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.inversePrimary)
+            .fillMaxSize(),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row (
+            modifier = Modifier
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icons8_time_38),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+            }
+            Spacer(modifier = Modifier.size(20.dp))
+            Column {
+                Text(
+                    text = "Último inicio de sesión:",
+                    color = MaterialTheme.colorScheme.scrim
+                )
+                Text(
+                    text = lastLogin,
+                    color = MaterialTheme.colorScheme.scrim
+
+                )
+            }
+        }
+    }
+}
