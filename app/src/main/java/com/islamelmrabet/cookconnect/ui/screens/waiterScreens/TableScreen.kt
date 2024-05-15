@@ -1,5 +1,9 @@
+
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,54 +17,82 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.TableBar
 import androidx.compose.material.icons.sharp.AddCircle
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
-import com.islamelmrabet.cookconnect.model.Table
+import com.islamelmrabet.cookconnect.model.firebaseModels.Table
+import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
+import com.islamelmrabet.cookconnect.tools.BasicButton
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.DrawerItem
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TableScreen(auth: AuthManager, navController: NavHostController, tableManager: TableManager) {
+fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel) {
+    val lessRoundedShape = RoundedCornerShape(8.dp)
+    val primaryColor = MaterialTheme.colorScheme.primary
+
+    val buttonColors = ButtonDefaults.buttonColors(
+        containerColor = primaryColor
+    )
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
+    val showDialogState = remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    var lastLogInDate by rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
 
     val (number, setNumber) = remember { mutableIntStateOf(0) }
     val (capacity, setCapacity) = remember { mutableIntStateOf(0) }
@@ -68,48 +100,67 @@ fun TableScreen(auth: AuthManager, navController: NavHostController, tableManage
     val onNumberChange: (Int) -> Unit = { setNumber(it) }
     val onCapacityChange: (Int) -> Unit = { setCapacity(it) }
 
+    LaunchedEffect(Unit) {
+        val fetchedLastLoginDate = authViewModel.getLastLoginDate()
+        fetchedLastLoginDate?.let { lastLogInDate = it }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet (
+                drawerContainerColor = MaterialTheme.colorScheme.primary
+            ){
                 DrawerHeader()
-                DrawerItem(
-                    text = "Mesas",
-                    icon = Icons.Default.ShoppingCart,
-                    onClick = {
-                        // Handle click action for Mesas
-                    }
-                )
-                DrawerItem(
-                    text = "Inventario",
-                    icon = Icons.Default.Build,
-                    onClick = {
-                        // Handle click action for Mesas
-                    }
-                )
-                DrawerItem(
-                    text = "Historial de Ventas",
-                    icon = Icons.Default.Create,
-                    onClick = {
-                        // Handle click action for Mesas
-                    }
-                )
-                DrawerItem(
-                    text = "Cuenta",
-                    icon = Icons.Default.Person,
-                    onClick = {
-                        // Handle click action for Mesas
-                    }
-                )
-                Spacer(modifier = Modifier.height(350.dp))
-                HeaderFooter("18/02/2004")
+                navigationItems.forEachIndexed { index, item ->
+                    NavigationDrawerItem(
+                        label = { Text(text = item.title) },
+                        selected = index == selectedItemIndex,
+                        onClick = {
+                            if (item.title == "Cerrar Sesion"){
+                                auth.signOut()
+                                Log.d("LogOut event","Succesfully logged out")
+                                navController.navigate(Routes.WelcomeScreen.route) {
+                                    popUpTo(Routes.WelcomeScreen.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }else{
+                                navController.navigate(item.route)
+
+                            }
+                            selectedItemIndex = index
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (index == selectedItemIndex){
+                                    item.selectedIcon
+                                } else item.unselectedIcon,
+                                contentDescription = item.title,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                            unselectedContainerColor = MaterialTheme.colorScheme.primary,
+                            unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        shape = RoundedCornerShape(1.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(275.dp))
+                HeaderFooter(lastLogInDate)
             }
         },
     ){
     Scaffold(
         topBar = {
             CookerAndWaiterAppBar(
-                stringResource(id = R.string.table_screen_header),
+                stringResource(id = R.string.account_screen_header),
                 onClick = {
                     scope.launch {
                     drawerState.apply {
@@ -130,7 +181,7 @@ fun TableScreen(auth: AuthManager, navController: NavHostController, tableManage
                     modifier = Modifier
                         .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "table" )
+                    Icon(imageVector = Icons.Default.TableBar, contentDescription = "table" )
                     Text(
                         text = stringResource(id = R.string.table_screen_header),
                         modifier = Modifier.padding(start = 10.dp)
@@ -144,7 +195,7 @@ fun TableScreen(auth: AuthManager, navController: NavHostController, tableManage
                     )
                     Spacer(modifier = Modifier.width(15.dp))
                     IconButton(
-                        onClick = { showDialog = true },
+                        onClick = { showDialogState.value = true },
                         modifier = Modifier
                     ) {
                         Icon(
@@ -177,41 +228,96 @@ fun TableScreen(auth: AuthManager, navController: NavHostController, tableManage
             }
         }
     )
+        if (showDialogState.value) {
+            ModalBottomSheetAddTable(
+                showDialogState = showDialogState,
+                sheetState = sheetState,
+                number = number,
+                onNumberChange = onNumberChange,
+                capacity = capacity,
+                onCapacityChange = onCapacityChange,
+                lessRoundedShape = lessRoundedShape,
+                buttonColors = buttonColors,
+                manager = tableManager,
+                context = context
+            )
+        }
+    }
+}
 
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Add Table") },
-            confirmButton = {
-                Button(
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ModalBottomSheetAddTable(
+    showDialogState: MutableState<Boolean>,
+    sheetState: SheetState,
+    number: Int,
+    onNumberChange: (Int) -> Unit,
+    capacity: Int,
+    onCapacityChange: (Int) -> Unit,
+    lessRoundedShape: RoundedCornerShape,
+    buttonColors: ButtonColors,
+    manager: TableManager,
+    context: Context
+) {
+    ModalBottomSheet(
+        onDismissRequest = {
+            showDialogState.value = false
+        },
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .padding(bottom = 30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = "Añadir Mesas",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.primary,
+                style = TextStyle(
+                    fontSize = 25.sp,
+                    shadow = Shadow(
+                        color = MaterialTheme.colorScheme.outline,
+                        offset = Offset(2.0f, 5.0f),
+                        blurRadius = 7f
+                    )
+                ),
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+            )
+            Column {
+                OutlinedTableTextField("Numero de la mesa", number, onNumberChange)
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTableTextField("Capacidad", capacity, onCapacityChange)
+            }
+            Row(
+                modifier = Modifier
+                    .padding(top = 30.dp)
+            ) {
+                BasicButton(
+                    buttonText = "Añadir mesa",
+                    lessRoundedShape = lessRoundedShape,
+                    buttonColors = buttonColors,
                     onClick = {
                         val table = Table(
                             number = number,
                             capacity = capacity,
                         )
-                        tableManager.addTable(table)
-                        showDialog = false
+                        manager.addTable(table).thenApply { isSuccess ->
+                            if (isSuccess) {
+                                Toast.makeText(context, "Mesa añadida", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al crear la mesa $number", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                ) {
-                    Text("Add")
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = { showDialog = false }
-                ) {
-                    Text("Cancel")
-                }
-            },
-            text = {
-                Column {
-                    OutlinedTableTextField("Number", number, onNumberChange)
-                    OutlinedTableTextField("Capacity", capacity, onCapacityChange)
-                }
+                )
             }
-        )
+        }
     }
-}
 }
 
 

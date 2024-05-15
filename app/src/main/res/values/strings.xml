@@ -5,6 +5,7 @@
     <string name="users_text">Usuarios</string>
     <string name="register">Registrarse</string>
     <string name="login">Iniciar Sesion</string>
+    <string name="logOut">Cerrar Sesion</string>
     <string name="email">Email</string>
     <string name="password">Contraseña</string>
     <string name="userName">Nombre de usuario</string>

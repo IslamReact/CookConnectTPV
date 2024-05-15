@@ -5,7 +5,8 @@ import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.islamelmrabet.cookconnect.model.Table
+import com.islamelmrabet.cookconnect.model.firebaseModels.Table
+import java.util.concurrent.CompletableFuture
 
 sealed class TableRes<out T> {
     data class Success<T>(val data: T) : TableRes<T>()
@@ -15,14 +16,19 @@ sealed class TableRes<out T> {
 class TableManager(context: Context) {
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("tables")
 
-    fun addTable(table: Table) {
+    fun addTable(table: Table): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
         FirebaseFirestore.getInstance().collection("tables")
             .add(table)
             .addOnSuccessListener {
                 Log.d("Worker", "Table created successfully")
-            }.addOnFailureListener { e ->
-                Log.d("Worker", "Error creating table: ${e.message}")
+                completableFuture.complete(true)
             }
+            .addOnFailureListener { e ->
+                Log.d("Worker", "Error creating table: ${e.message}")
+                completableFuture.complete(false)
+            }
+        return completableFuture
     }
 
     fun deleteTable(tableKey: String): TableRes<Unit> {

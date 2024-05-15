@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -27,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.islamelmrabet.cookconnect.R
-import com.islamelmrabet.cookconnect.model.Worker
+import com.islamelmrabet.cookconnect.model.firebaseModels.Worker
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.ButtonWithIcon
@@ -222,7 +219,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
     )
 }
 
-private suspend fun signUp(email: String, password: String,worker: Worker, auth: AuthManager, context: Context, navigation: NavController) {
+private suspend fun signUp(email: String, password: String, worker: Worker, auth: AuthManager, context: Context, navigation: NavController) {
     when (val result = auth.createUserWithEmailAndPassword(email, password, worker)) {
         is AuthRes.Success -> {
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()

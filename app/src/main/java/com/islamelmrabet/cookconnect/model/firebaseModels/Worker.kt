@@ -1,4 +1,4 @@
-package com.islamelmrabet.cookconnect.model
+package com.islamelmrabet.cookconnect.model.firebaseModels
 
 data class Worker(
     val key: String? = null,

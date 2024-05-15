@@ -1,6 +1,6 @@
-package com.islamelmrabet.cookconnect.model
+package com.islamelmrabet.cookconnect.model.firebaseModels
 
-data class Invoice(
+data class Product(
     val key: String? = null,
     val name: String = "",
     val email: String = "",

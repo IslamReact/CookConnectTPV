@@ -1,7 +1,6 @@
 package com.islamelmrabet.cookconnect.utils
 
 import android.content.Context
-import androidx.room.util.copy
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -10,7 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import com.islamelmrabet.cookconnect.model.Worker
+import com.islamelmrabet.cookconnect.model.firebaseModels.Worker
 
 class RealtimeManager(context: Context) {
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("contacts")
