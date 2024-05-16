@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TableBar
-import androidx.compose.material.icons.sharp.AddCircle
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -199,7 +199,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                         modifier = Modifier
                     ) {
                         Icon(
-                            imageVector = Icons.Sharp.AddCircle,
+                            imageVector = Icons.Outlined.AddCircleOutline,
                             contentDescription = ""
                         )
                     }

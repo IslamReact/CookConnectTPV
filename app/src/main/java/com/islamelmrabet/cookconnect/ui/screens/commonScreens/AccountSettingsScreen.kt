@@ -51,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
+import com.islamelmrabet.cookconnect.model.localModels.NavigationItem
+import com.islamelmrabet.cookconnect.model.localModels.cookerNavigationItem
 import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.model.localModels.settingsList
 import com.islamelmrabet.cookconnect.navigation.Routes
@@ -80,27 +82,33 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
     var workerName by rememberSaveable { mutableStateOf("")}
     var workerID by rememberSaveable { mutableStateOf("")}
     var workerEmail by rememberSaveable { mutableStateOf("")}
+    var workerRole by rememberSaveable { mutableStateOf("") }
+    var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
 
+// Use LaunchedEffect to fetch worker information
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
         fetchedLastLoginDate?.let { lastLogInDate = it }
-    }
 
-    LaunchedEffect(Unit) {
         val fetchedWorkerName = authViewModel.getUsername()
         fetchedWorkerName?.let { workerName = it }
-    }
 
-    LaunchedEffect(Unit) {
         val fetchedWorkerId = authViewModel.getUserID()
         fetchedWorkerId?.let { workerID = it }
-    }
 
-    LaunchedEffect(Unit) {
         val fetchedWorkerEmail = authViewModel.getEmail()
         fetchedWorkerEmail?.let { workerEmail = it }
-    }
 
+        val fetchedRole = authViewModel.getRole()
+        fetchedRole?.let {
+            workerRole = it
+            currentWorkerMenu = if (workerRole == "Camarero") {
+                navigationItems
+            } else {
+                cookerNavigationItem
+            }
+        }
+    }
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -108,7 +116,7 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                 drawerContainerColor = MaterialTheme.colorScheme.primary
             ){
                 DrawerHeader()
-                navigationItems.forEachIndexed { index, item ->
+                currentWorkerMenu.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,

@@ -30,4 +30,7 @@
     <string name="edit_product_screen_header">Editar Producto</string>
     <string name="add_product_screen_header">Añadir Producto</string>
     <string name="restaurant_screen_header">Resturante/Bar</string>
+    <string name="order_search_header">Pedidos</string>
+    <string name="invoice_search_header">Facturas</string>
+    <string name="order_products_header">Productos</string>
 </resources>

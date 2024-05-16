@@ -21,11 +21,11 @@ class TableManager(context: Context) {
         FirebaseFirestore.getInstance().collection("tables")
             .add(table)
             .addOnSuccessListener {
-                Log.d("Worker", "Table created successfully")
+                Log.d("Table", "Table created successfully")
                 completableFuture.complete(true)
             }
             .addOnFailureListener { e ->
-                Log.d("Worker", "Error creating table: ${e.message}")
+                Log.d("Table", "Error creating table: ${e.message}")
                 completableFuture.complete(false)
             }
         return completableFuture

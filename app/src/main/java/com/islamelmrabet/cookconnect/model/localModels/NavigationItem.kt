@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.TableBar
@@ -57,7 +58,7 @@ val navigationItems = listOf(
 val cookerNavigationItem = listOf(
     NavigationItem(
         title = "Pedidos",
-        selectedIcon = Icons.Filled.TableBar,
+        selectedIcon = Icons.Filled.Coffee,
         unselectedIcon = Icons.Outlined.TableBar,
         route = Routes.TableScreen.route,
     ),

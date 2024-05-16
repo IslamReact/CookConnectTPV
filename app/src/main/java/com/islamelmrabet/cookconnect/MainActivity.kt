@@ -1,20 +1,21 @@
 package com.islamelmrabet.cookconnect
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.content.ContextCompat
-import com.islamelmrabet.cookconnect.navigation.AppNavigation
-import com.islamelmrabet.cookconnect.ui.CookConnectContent
-import android.Manifest
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.islamelmrabet.cookconnect.navigation.AppNavigation
+import com.islamelmrabet.cookconnect.ui.CookConnectContent
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,10 +24,11 @@ class MainActivity : ComponentActivity() {
         askNotificationPermission()
         tokenNew()
         val authViewModel by viewModels<AuthViewModel>()
+        val productViewModel by viewModels<ProductViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this,authViewModel)
+               AppNavigation(this,authViewModel,productViewModel)
             }
         }
     }

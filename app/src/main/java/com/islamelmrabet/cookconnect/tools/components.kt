@@ -234,7 +234,7 @@ fun ButtonWithIcon(
     onClick: () -> Unit,
     lessRoundedShape: RoundedCornerShape,
     buttonColors: ButtonColors,
-    icon : ImageVector,
+    icon: ImageVector? = null,
     enabled: Boolean
 ) {
     Button(
@@ -247,13 +247,15 @@ fun ButtonWithIcon(
         enabled = enabled,
         content = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "Forward Arrow",
-                    modifier = Modifier
-                        .size(25.dp)
-                        .padding(end = 5.dp)
-                )
+                icon?.let {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = "Forward Arrow",
+                        modifier = Modifier
+                            .size(25.dp)
+                            .padding(end = 5.dp)
+                    )
+                }
                 Text(
                     text = buttonText,
                     modifier = Modifier.padding(end = 4.dp)
@@ -262,6 +264,33 @@ fun ButtonWithIcon(
                     imageVector = Icons.Default.ArrowForward,
                     contentDescription = "Forward Arrow",
                     modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun BasicLongButton(
+    buttonText: String,
+    onClick: () -> Unit,
+    lessRoundedShape: RoundedCornerShape,
+    buttonColors: ButtonColors,
+    enabled: Boolean
+) {
+    Button(
+        onClick = onClick,
+        shape = lessRoundedShape,
+        modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(),
+        colors = buttonColors,
+        enabled = enabled,
+        content = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = buttonText,
+                    modifier = Modifier.padding(end = 4.dp)
                 )
             }
         }

@@ -3,12 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +13,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -48,8 +46,8 @@ import com.islamelmrabet.cookconnect.tools.ButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.ClickableText
 import com.islamelmrabet.cookconnect.tools.ImportantInfoCard
 import com.islamelmrabet.cookconnect.tools.TextFieldLogin
-import com.islamelmrabet.cookconnect.utils.AuthRes
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.AuthRes
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -69,11 +67,11 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     val scope = rememberCoroutineScope()
     val userRole  = remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
 
     val onEmailChange: (String) -> Unit = { setEmail(it) }
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
 
-    var isButtonEnabled by remember { mutableStateOf(false) }
     LaunchedEffect(email, password) {
         isButtonEnabled = email.isNotBlank() && password.isNotBlank()
     }
@@ -83,9 +81,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
             val fetchedPassword = authViewModel.getPasswordByEmail(initialEmail)
             fetchedPassword?.let { setPassword(it) }
         }
-    }
 
-    LaunchedEffect(Unit) {
         if (initialEmail != null) {
             val fetchedRole = authViewModel.getRoleByEmail(initialEmail)
             fetchedRole?.let { userRole.value = it }

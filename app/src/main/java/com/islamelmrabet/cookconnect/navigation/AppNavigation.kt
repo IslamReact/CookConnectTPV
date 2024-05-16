@@ -20,14 +20,17 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
+    val productManager = ProductManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 
@@ -57,22 +60,22 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel) {
             OrderScreen(auth = authManager,navController)
         }
         composable(Routes.InventoryScreen.route) {
-            InventoryScreen(auth = authManager,navController)
+            InventoryScreen(auth = authManager,navController,authViewModel)
         }
         composable(Routes.EditProductScreen.route) {
             EditProductScreen(auth = authManager,navController)
         }
         composable(Routes.AddProductScreen.route) {
-            AddProductScreen(auth = authManager,navController)
+            AddProductScreen(auth = authManager,navController, productViewModel, productManager)
         }
         composable(Routes.OrderCookerScreen.route) {
-            OrderCookerScreen(auth = authManager,navController)
-        }
-        composable(Routes.InventoryScreen.route) {
-            InvoiceScreen(auth = authManager,navController)
+            OrderCookerScreen(auth = authManager,navController, authViewModel)
         }
         composable(Routes.AccountSettingsScreen.route) {
             AccountSettingsScreen(auth = authManager,navController,authViewModel)
+        }
+        composable(Routes.InvoiceScreen.route) {
+            InvoiceScreen(auth = authManager,navController,authViewModel)
         }
     }
 }

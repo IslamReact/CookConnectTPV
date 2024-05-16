@@ -9,6 +9,7 @@ import kotlinx.coroutines.tasks.await
 
 class AuthViewModel : ViewModel() {
     val auth: FirebaseAuth by lazy { Firebase.auth }
+    val uid: String? by lazy { auth.currentUser?.uid }
 
     suspend fun getPasswordByEmail(email: String): String? {
         val usersRef = FirebaseFirestore.getInstance().collection("workers")
@@ -70,5 +71,18 @@ class AuthViewModel : ViewModel() {
     suspend fun getUserID(): String? {
         val userId = auth.currentUser?.uid
         return userId
+    }
+
+    suspend fun getRole(): String? {
+
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            val usersRef = FirebaseFirestore.getInstance().collection("workers")
+            val documentSnapshot = usersRef.document(userId).get().await()
+            if (documentSnapshot.exists()) {
+                return documentSnapshot.getString("userRole")
+            }
+        }
+        return null
     }
 }
