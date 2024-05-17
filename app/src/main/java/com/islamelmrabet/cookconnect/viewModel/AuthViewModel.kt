@@ -68,9 +68,8 @@ class AuthViewModel : ViewModel() {
         return null
     }
 
-    suspend fun getUserID(): String? {
-        val userId = auth.currentUser?.uid
-        return userId
+    fun getUserID(): String? {
+        return auth.currentUser?.uid
     }
 
     suspend fun getRole(): String? {

@@ -9,11 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Fastfood
+import androidx.compose.material.icons.sharp.MonetizationOn
+import androidx.compose.material.icons.sharp.Numbers
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -21,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +50,7 @@ import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -56,24 +63,27 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
     val buttonColors = ButtonDefaults.buttonColors(
         containerColor = primaryColor
     )
-    val categoryOptions = listOf("Bebida", "Postre", "Platos Principales", "Licores")
+    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores","Verdura",)
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val (productName, setproductName) = remember { mutableStateOf("") }
     val (quantity, setQuantity) = remember { mutableIntStateOf(0) }
-    val (unitPrice, setUnitPrice) = remember { mutableStateOf(0.00) }
+    val (unitPrice, setUnitPrice) = remember { mutableDoubleStateOf(0.00) }
 
     val onProductNameChange: (String) -> Unit = { setproductName(it) }
     val onQuantityChange: (Int) -> Unit = { setQuantity(it) }
     val onUnitPriceChange: (Double) -> Unit = { setUnitPrice(it) }
 
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
-    var isButtonEnabled by remember { mutableStateOf(false) }
-    LaunchedEffect(productName, quantity,unitPrice,selectedItem) {
-        isButtonEnabled = productName.isNotBlank() && selectedItem.isNotBlank()
+    LaunchedEffect(productName, quantity, unitPrice, selectedItem) {
+        isButtonEnabled = productName.isNotBlank() &&
+                quantity > 0 &&
+                unitPrice > 0.00 &&
+                selectedItem.isNotBlank()
     }
 
     Scaffold(
@@ -93,30 +103,39 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Nombre del producto",
+                    text = "Nombre del producto *",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = productName,
                     onValueChange = onProductNameChange,
-                    placeholder = { Text(text = "Azucar Hacendado...") },
+                    placeholder = {
+                        Text(text = "Azucar Hacendado...") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola" )
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Cantidad",
+                    text = "Cantidad *",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = quantity.toString(),
                     onValueChange = { onQuantityChange(it.toIntOrNull() ?: 0) },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola" )
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
@@ -128,13 +147,16 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Precio unitario",
+                    text = "Precio unitario *",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = unitPrice.toString(),
                     onValueChange = { onUnitPriceChange(it.toDoubleOrNull() ?: 0.00) },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola" )
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
@@ -146,7 +168,7 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Categoria",
+                    text = "Categoria *",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -157,7 +179,9 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     ExposedDropdownMenuBox(
                         expanded = expandedState,
                         onExpandedChange = { expandedState = !expandedState },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .fillMaxWidth()
                     ) {
                         OutlinedTextField(
                             value = selectedItem,
@@ -196,6 +220,9 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                             scope.launch {
                                 productViewModel.addProduct(product,productManager,context)
                             }
+                            setQuantity(0)
+                            setUnitPrice(0.00)
+                            setproductName("")
                         },
                         lessRoundedShape = lessRoundedShape,
                         buttonColors = buttonColors,

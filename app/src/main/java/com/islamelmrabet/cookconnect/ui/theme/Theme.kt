@@ -42,6 +42,7 @@ private val LightColors = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
+    surfaceDim = md_theme_light_lightError
 )
 
 
@@ -87,16 +88,6 @@ fun CookConnectTheme(
     } else {
         DarkColors
     }
-
-    val view = LocalView.current
-    if(!view.isInEditMode){
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colors.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDarkTheme
-        }
-    }
-
 
     MaterialTheme(
         colorScheme = colors,

@@ -308,14 +308,10 @@ fun AppBar(navController: NavController, topAppBarText : String, route: String) 
                     text = topAppBarText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
                         fontSize = 25.sp,
-                        shadow = Shadow(
-                            color = MaterialTheme.colorScheme.outline,
-                            offset = Offset(2.0f, 5.0f),
-                            blurRadius = 7f
-                        )
                     )
                 )
             },
@@ -357,15 +353,10 @@ fun CookerAndWaiterAppBar(topAppBarText : String, onClick: () -> Unit) {
                     text = topAppBarText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
-                        fontSize = 25.sp,
-                        shadow = Shadow(
-                            color = MaterialTheme.colorScheme.outline,
-                            offset = Offset(2.0f, 5.0f),
-                            blurRadius = 7f
-                        )
+                        fontSize = 25.sp
                     )
                 )
             },
@@ -373,20 +364,13 @@ fun CookerAndWaiterAppBar(topAppBarText : String, onClick: () -> Unit) {
                 containerColor = MaterialTheme.colorScheme.background
             ),
             navigationIcon = {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(30.dp)
-                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
-                ) {
-                    IconButton(onClick = onClick ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Back",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                IconButton(onClick = onClick ) {
+                    Icon(
+                        Icons.Default.Menu,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
             },
             modifier = Modifier

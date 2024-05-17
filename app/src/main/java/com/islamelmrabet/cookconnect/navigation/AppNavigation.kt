@@ -60,10 +60,10 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             OrderScreen(auth = authManager,navController)
         }
         composable(Routes.InventoryScreen.route) {
-            InventoryScreen(auth = authManager,navController,authViewModel)
+            InventoryScreen(auth = authManager,navController,authViewModel,productViewModel)
         }
         composable(Routes.EditProductScreen.route) {
-            EditProductScreen(auth = authManager,navController)
+            EditProductScreen(auth = authManager,navController, productViewModel,productManager)
         }
         composable(Routes.AddProductScreen.route) {
             AddProductScreen(auth = authManager,navController, productViewModel, productManager)
