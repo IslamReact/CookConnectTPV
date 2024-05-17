@@ -62,8 +62,9 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
         composable(Routes.InventoryScreen.route) {
             InventoryScreen(auth = authManager,navController,authViewModel,productViewModel)
         }
-        composable(Routes.EditProductScreen.route) {
-            EditProductScreen(auth = authManager,navController, productViewModel,productManager)
+        composable(Routes.EditProductScreen.route + "/{productName}" ) { backStackEntry ->
+            val productName = backStackEntry.arguments?.getString("productName")
+            EditProductScreen(auth = authManager,navController, productViewModel,productManager,productName)
         }
         composable(Routes.AddProductScreen.route) {
             AddProductScreen(auth = authManager,navController, productViewModel, productManager)

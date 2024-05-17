@@ -58,7 +58,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EditProductScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, productManager: ProductManager){
+fun EditProductScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, productManager: ProductManager, productNameToEdit: String?){
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -77,7 +77,8 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val (productName, setproductName) = remember { mutableStateOf("") }
+
+    val (productName, setproductName) = remember { mutableStateOf(productNameToEdit ?: "") }
     val (quantity, setQuantity) = remember { mutableIntStateOf(0) }
     val (unitPrice, setUnitPrice) = remember { mutableDoubleStateOf(0.00) }
 
@@ -91,6 +92,15 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
                 quantity > 0 &&
                 unitPrice > 0.00 &&
                 selectedItem.isNotBlank()
+
+        if (productNameToEdit != null) {
+            val fetchedProduct = productViewModel.getProduct(productNameToEdit)
+            fetchedProduct?.let {
+                setproductName(it.productName)
+                setQuantity(it.quantity)
+                setUnitPrice(it.unitPrice)
+            }
+        }
     }
 
     Scaffold(
@@ -235,7 +245,6 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
                         buttonText = "Modificar Producto",
                         onClick = {
                             val product = Product(productName = productName, unitPrice = unitPrice, quantity = quantity, category = selectedItem )
-
                         },
                         lessRoundedShape = lessRoundedShape,
                         buttonColors = buttonColors,

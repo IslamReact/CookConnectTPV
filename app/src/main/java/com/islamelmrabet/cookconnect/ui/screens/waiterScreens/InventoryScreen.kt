@@ -280,7 +280,9 @@ fun ShowLazyListOfProducts(products: List<Product>, navController: NavController
 fun ProductCard(product: Product, navController: NavController) {
 
     Card(
-        onClick = {navController.navigate(Routes.EditProductScreen.route)},
+        onClick = {
+            navController.navigate("${Routes.EditProductScreen.route}/${product.productName}")
+                  },
         modifier = Modifier
             .padding(4.dp)
             .height(35.dp),

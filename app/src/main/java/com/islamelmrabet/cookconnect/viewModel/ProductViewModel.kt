@@ -14,6 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.ProductManager
+import kotlinx.coroutines.tasks.await
 
 
 class ProductViewModel : ViewModel() {
@@ -52,4 +53,16 @@ class ProductViewModel : ViewModel() {
             }
         }
     }
+
+    suspend fun getProduct(productName: String): Product? {
+        val productsRef = FirebaseFirestore.getInstance().collection("products")
+        val querySnapshot = productsRef.whereEqualTo("productName", productName).get().await()
+        return if (!querySnapshot.isEmpty) {
+            querySnapshot.documents.firstOrNull()?.toObject(Product::class.java)
+        } else {
+            null
+        }
+    }
+
+
 }
