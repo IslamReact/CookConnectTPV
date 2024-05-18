@@ -1,41 +1,44 @@
 package com.islamelmrabet.cookconnect.viewModel
 
+import androidx.lifecycle.ViewModel
 import android.content.Context
 import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
+import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.ProductManager
+import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.utils.TableRes
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+class TableViewModel : ViewModel() {
 
-class ProductViewModel : ViewModel() {
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("products")
+    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("tables")
 
-    val response: MutableState<Result<Product>> = mutableStateOf(Result.Empty)
+    val response: MutableState<Result<Table>> = mutableStateOf(Result.Empty)
     init {
-        fetchProductData()
+        fetchTableData()
     }
 
-    fun addProduct(product: Product, productManager: ProductManager, context: Context) {
-        when (val result = productManager.addProduct(product)) {
+    fun addTable(table: Table, tableManager: TableManager, context: Context,onSuccess: () -> Unit) {
+        when (val result = tableManager.addTable(table)) {
             else -> {
-                Toast.makeText(context, "Product added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Table added successfully", Toast.LENGTH_LONG).show()
+                onSuccess()
             }
         }
     }
 
-    fun deleteProduct(productName: String, productManager: ProductManager, context: Context) {
+    fun deleteTable(productName: String, productManager: ProductManager, context: Context) {
         viewModelScope.launch {
             val productId = productManager.getProductDocumentIdByName(productName)
             if (productId != null) {
@@ -51,7 +54,7 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    fun updateProduct(originalProductName : String,product: Product, productManager: ProductManager, context: Context) {
+    fun updateTable(originalProductName : String,product: Product, productManager: ProductManager, context: Context) {
         viewModelScope.launch {
             val productId = productManager.getProductDocumentIdByName(originalProductName)
             if (productId!= null) {
@@ -77,23 +80,23 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    fun fetchProductData() {
+    fun fetchTableData() {
         response.value = Result.Loading
-        val productTempList = mutableListOf<Product>()
+        val tableTempList = mutableListOf<Table>()
         val db = FirebaseFirestore.getInstance()
-        val mQuery = db.collection("products")
+        val mQuery = db.collection("tables")
 
         mQuery.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 for (document in task.result) {
-                    val productItem = document.toObject(Product::class.java)
-                    productTempList.add(productItem)
+                    val tableItenm = document.toObject(Table::class.java)
+                    tableTempList.add(tableItenm)
                 }
-                response.value = Result.Success(productTempList)
-                Log.d("FetchProductData", "Products fetched successfully: ${productTempList.size}")
+                response.value = Result.Success(tableTempList)
+                Log.d("FetchProductData", "Tables fetched successfully: ${tableTempList.size}")
             } else {
-                Log.e("FetchProductData", "Error fetching products", task.exception)
-                response.value = Result.Failure("Error fetching products: ${task.exception?.message}")
+                Log.e("FetchProductData", "Error fetching tables", task.exception)
+                response.value = Result.Failure("Error fetching tables: ${task.exception?.message}")
             }
         }
     }

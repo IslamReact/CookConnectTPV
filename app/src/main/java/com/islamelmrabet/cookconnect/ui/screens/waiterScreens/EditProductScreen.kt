@@ -67,41 +67,41 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
         containerColor = primaryColor
     )
 
-    val OutlinedbuttonColors = ButtonDefaults.outlinedButtonColors(
+    val outlinedbuttonColors = ButtonDefaults.outlinedButtonColors(
         contentColor = MaterialTheme.colorScheme.error,
     )
+
     val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores","Verdura",)
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
     var isButtonEnabled by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    var productName by remember { mutableStateOf(productNameToEdit ?: "") }
+    var quantity by remember { mutableIntStateOf(0) }
+    var unitPrice by remember { mutableDoubleStateOf(0.00) }
 
-    val (productName, setproductName) = remember { mutableStateOf(productNameToEdit ?: "") }
-    val (quantity, setQuantity) = remember { mutableIntStateOf(0) }
-    val (unitPrice, setUnitPrice) = remember { mutableDoubleStateOf(0.00) }
 
-    val onProductNameChange: (String) -> Unit = { setproductName(it) }
-    val onQuantityChange: (Int) -> Unit = { setQuantity(it) }
-    val onUnitPriceChange: (Double) -> Unit = { setUnitPrice(it) }
 
+    LaunchedEffect(productNameToEdit) {
+        if (productNameToEdit != null) {
+            val fetchedProduct = productViewModel.getProduct(productNameToEdit)
+            fetchedProduct?.let {
+                productName = it.productName
+                quantity = it.quantity
+                unitPrice = it.unitPrice
+                selectedItem = it.category
+            }
+        }
+    }
 
     LaunchedEffect(productName, quantity, unitPrice, selectedItem) {
         isButtonEnabled = productName.isNotBlank() &&
                 quantity > 0 &&
                 unitPrice > 0.00 &&
                 selectedItem.isNotBlank()
-
-        if (productNameToEdit != null) {
-            val fetchedProduct = productViewModel.getProduct(productNameToEdit)
-            fetchedProduct?.let {
-                setproductName(it.productName)
-                setQuantity(it.quantity)
-                setUnitPrice(it.unitPrice)
-            }
-        }
     }
+
 
     Scaffold(
         topBar = {
@@ -110,148 +110,159 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
                 stringResource(id = R.string.edit_product_screen_header),
                 Routes.InventoryScreen.route
             )
-        },
-        content = { contentPadding ->
-            Column(
+        }
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .padding(start = 25.dp, end = 25.dp)
+                .padding(top = contentPadding.calculateTopPadding() + 30.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Nombre del producto *",
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = productName,
+                onValueChange = { productName = it },
+                placeholder = {
+                    Text(text = "Azucar Hacendado...")
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola")
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .padding(top = contentPadding.calculateTopPadding() + 30.dp)
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Text(
+                text = "Cantidad *",
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = quantity.toString(),
+                onValueChange = { quantity = it.toIntOrNull() ?: 0 },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola")
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Text(
+                text = "Precio unitario *",
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = unitPrice.toString(),
+                onValueChange = { unitPrice = it.toDoubleOrNull() ?: 0.00 },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola")
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Text(
+                text = "Categoria *",
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Nombre del producto *",
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = productName,
-                    onValueChange = onProductNameChange,
-                    placeholder = {
-                        Text(text = "Azucar Hacendado...") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola" )
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
+                ExposedDropdownMenuBox(
+                    expanded = expandedState,
+                    onExpandedChange = { expandedState = !expandedState },
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(50.dp))
-                Text(
-                    text = "Cantidad *",
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = quantity.toString(),
-                    onValueChange = { onQuantityChange(it.toIntOrNull() ?: 0) },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola" )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(50.dp))
-                Text(
-                    text = "Precio unitario *",
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = unitPrice.toString(),
-                    onValueChange = { onUnitPriceChange(it.toDoubleOrNull() ?: 0.00) },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola" )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(50.dp))
-                Text(
-                    text = "Categoria *",
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(),
                 ) {
-                    ExposedDropdownMenuBox(
+                    OutlinedTextField(
+                        value = selectedItem,
+                        modifier = Modifier.menuAnchor(),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
+                    )
+                    ExposedDropdownMenu(
                         expanded = expandedState,
-                        onExpandedChange = { expandedState = !expandedState },
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .fillMaxWidth()
+                        onDismissRequest = { expandedState = false },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        OutlinedTextField(
-                            value = selectedItem,
-                            modifier = Modifier.menuAnchor(),
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expandedState,
-                            onDismissRequest = { expandedState = false },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            categoryOptions.forEachIndexed { index, option ->
-                                DropdownMenuItem(
-                                    text = { Text(text = option) },
-                                    onClick = {
-                                        selectedItem = categoryOptions[index]
-                                        expandedState = false
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
+                        categoryOptions.forEachIndexed { index, option ->
+                            DropdownMenuItem(
+                                text = { Text(text = option) },
+                                onClick = {
+                                    selectedItem = categoryOptions[index]
+                                    expandedState = false
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Column (
-                    modifier = Modifier
-                        .padding(bottom = 16.dp),
-                ) {
-                    OutlinedBasicButton(
-                        buttonText = "Borrar Producto",
-                        lessRoundedShape = lessRoundedShape,
-                        buttonColors = OutlinedbuttonColors,
-                        border = BorderStroke(1.dp, color =  MaterialTheme.colorScheme.error),
-                        onClick = {
-                            Log.d("Delete Product","Product deleted sucessfully")
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 16.dp),
+            ) {
+                OutlinedBasicButton(
+                    buttonText = "Borrar Producto",
+                    lessRoundedShape = lessRoundedShape,
+                    buttonColors = outlinedbuttonColors,
+                    border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
+                    onClick = {
+                        if (productNameToEdit != null) {
+                            productViewModel.deleteProduct(productName, productManager, context)
+                        }
+                        navController.navigate(Routes.InventoryScreen.route)
+                    }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                BasicLongButton(
+                    buttonText = "Modificar Producto",
+                    onClick = {
+                        val product = Product(
+                            productName = productName,
+                            unitPrice = unitPrice,
+                            quantity = quantity,
+                            category = selectedItem
+                        )
+                        if (productNameToEdit != null) {
+                            productViewModel.updateProduct(productNameToEdit,product,productManager,context)
                             navController.navigate(Routes.InventoryScreen.route)
                         }
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    BasicLongButton(
-                        buttonText = "Modificar Producto",
-                        onClick = {
-                            val product = Product(productName = productName, unitPrice = unitPrice, quantity = quantity, category = selectedItem )
-                        },
-                        lessRoundedShape = lessRoundedShape,
-                        buttonColors = buttonColors,
-                        enabled = isButtonEnabled
-                    )
-                }
+                    },
+                    lessRoundedShape = lessRoundedShape,
+                    buttonColors = buttonColors,
+                    enabled = isButtonEnabled
+                )
             }
         }
-    )
+    }
 }

@@ -16,6 +16,7 @@ import com.islamelmrabet.cookconnect.navigation.AppNavigation
 import com.islamelmrabet.cookconnect.ui.CookConnectContent
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,10 +26,11 @@ class MainActivity : ComponentActivity() {
         tokenNew()
         val authViewModel by viewModels<AuthViewModel>()
         val productViewModel by viewModels<ProductViewModel>()
+        val tableViewModel by viewModels<TableViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this,authViewModel,productViewModel)
+               AppNavigation(this,authViewModel,productViewModel,tableViewModel)
             }
         }
     }

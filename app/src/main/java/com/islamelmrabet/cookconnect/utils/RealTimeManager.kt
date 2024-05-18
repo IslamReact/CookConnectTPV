@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import com.islamelmrabet.cookconnect.model.firebaseModels.Worker
 
 class RealtimeManager(context: Context) {
+
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("contacts")
     private val authManager = AuthManager(context)
 

@@ -4,10 +4,14 @@ package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +21,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TableBar
@@ -24,6 +33,10 @@ import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -56,13 +69,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
+import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
@@ -71,14 +87,17 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
+import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel) {
+fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel, tableViewModel: TableViewModel) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -103,6 +122,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
         fetchedLastLoginDate?.let { lastLogInDate = it }
+        tableViewModel.fetchTableData()
     }
 
     ModalNavigationDrawer(
@@ -160,7 +180,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     Scaffold(
         topBar = {
             CookerAndWaiterAppBar(
-                stringResource(id = R.string.account_screen_header),
+                stringResource(id = R.string.table_screen_header),
                 onClick = {
                     scope.launch {
                     drawerState.apply {
@@ -212,19 +232,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                         .height(1.dp)
                         .background(color = Color.Transparent)
                 )
-                Button(
-                    onClick = {
-                        auth.signOut()
-                        navController.navigate(Routes.WelcomeScreen.route) {
-                            popUpTo(Routes.WelcomeScreen.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(text = "Sign Out")
-                }
+                SetTableData(tableViewModel,navController)
             }
         }
     )
@@ -239,7 +247,8 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                 lessRoundedShape = lessRoundedShape,
                 buttonColors = buttonColors,
                 manager = tableManager,
-                context = context
+                context = context,
+                tableViewModel = tableViewModel
             )
         }
     }
@@ -257,7 +266,8 @@ private fun ModalBottomSheetAddTable(
     lessRoundedShape: RoundedCornerShape,
     buttonColors: ButtonColors,
     manager: TableManager,
-    context: Context
+    context: Context,
+    tableViewModel: TableViewModel
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -306,12 +316,9 @@ private fun ModalBottomSheetAddTable(
                             number = number,
                             capacity = capacity,
                         )
-                        manager.addTable(table).thenApply { isSuccess ->
-                            if (isSuccess) {
-                                Toast.makeText(context, "Mesa añadida", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, "Error al crear la mesa $number", Toast.LENGTH_SHORT).show()
-                            }
+                        tableViewModel.addTable(table, manager, context) {
+                            tableViewModel.fetchTableData()
+                            showDialogState.value = false
                         }
                     }
                 )
@@ -320,4 +327,78 @@ private fun ModalBottomSheetAddTable(
     }
 }
 
+@Composable
+fun SetTableData(tableViewModel: TableViewModel, navController: NavController) {
+    when (val result = tableViewModel.response.value) {
+        is Result.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is Result.Success -> {
+            ShowLazyListOfTables(result.data, navController)
+        }
+        is Result.Failure -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = result.message)
+            }
+        }
+        is Result.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "No tables found")
+            }
+        }
+    }
+}
 
+@Composable
+fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 80.dp),
+        userScrollEnabled = true
+    ) {
+        items(tables) { table ->
+            TableIcon(table, navController )
+        }
+    }
+}
+
+@Composable
+fun TableIcon(table: Table, navController: NavController) {
+    Column(
+        modifier = Modifier
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IconButton(
+            onClick = {
+
+            }
+        ) {
+            if (table.capacity > 4) {
+                Image(
+                    painter = painterResource(id = R.drawable.order_large_table),
+                    contentDescription = "table icon",
+                )
+            }else {
+                Image(
+                    painter = painterResource(id = R.drawable.order_table),
+                    contentDescription = "table icon",
+                )
+            }
+        }
+        Text(
+            text = table.number.toString(),
+            color = MaterialTheme.colorScheme.scrim,
+        )
+    }
+}

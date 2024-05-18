@@ -24,9 +24,10 @@ import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
@@ -54,7 +55,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             ForgotPasswordScreen(auth = authManager,navController)
         }
         composable(Routes.TableScreen.route) {
-            TableScreen(auth = authManager,navController, tableManager, authViewModel)
+            TableScreen(auth = authManager,navController, tableManager, authViewModel, tableViewModel)
         }
         composable(Routes.OrderScreen.route) {
             OrderScreen(auth = authManager,navController)
