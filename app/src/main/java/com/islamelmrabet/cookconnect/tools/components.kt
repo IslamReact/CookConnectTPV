@@ -23,6 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.sharp.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -288,6 +290,42 @@ fun BasicLongButton(
         enabled = enabled,
         content = {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = buttonText,
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun BasicLongButtonWithIcon(
+    buttonText: String,
+    onClick: () -> Unit,
+    lessRoundedShape: RoundedCornerShape,
+    buttonColors: ButtonColors,
+    enabled: Boolean
+) {
+    Button(
+        onClick = onClick,
+        shape = lessRoundedShape,
+        modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(),
+        colors = buttonColors,
+        enabled = enabled,
+        content = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ShoppingCart,
+                    contentDescription = ""
+                )
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = buttonText,
                     modifier = Modifier.padding(end = 4.dp)

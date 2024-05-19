@@ -179,16 +179,12 @@ private suspend fun emailPassSignIn(email: String, password: String, auth: AuthM
             when (userRole) {
                 "Cocinero" -> {
                     navigation.navigate(Routes.OrderCookerScreen.route) {
-                        popUpTo(Routes.WelcomeScreen.route) {
-                            inclusive = true
-                        }
+                        navigation.popBackStack()
                     }
                 }
                 "Camarero" -> {
                     navigation.navigate(Routes.TableScreen.route) {
-                        popUpTo(Routes.LogInScreen.route) {
-                            inclusive = true
-                        }
+                        navigation.popBackStack()
                     }
                 }
                 else -> {

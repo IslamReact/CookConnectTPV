@@ -23,11 +23,12 @@ import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
@@ -55,13 +56,13 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             ForgotPasswordScreen(auth = authManager,navController)
         }
         composable(Routes.TableScreen.route) {
-            TableScreen(auth = authManager,navController, tableManager, authViewModel, tableViewModel)
+            TableScreen(auth = authManager,navController, tableManager, authViewModel, tableViewModel,mainViewModel)
         }
         composable(Routes.OrderScreen.route) {
-            OrderScreen(auth = authManager,navController)
+            OrderScreen(auth = authManager,navController,productViewModel,authViewModel)
         }
         composable(Routes.InventoryScreen.route) {
-            InventoryScreen(auth = authManager,navController,authViewModel,productViewModel)
+            InventoryScreen(auth = authManager,navController,authViewModel,productViewModel,mainViewModel)
         }
         composable(Routes.EditProductScreen.route + "/{productName}" ) { backStackEntry ->
             val productName = backStackEntry.arguments?.getString("productName")
@@ -74,10 +75,10 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             OrderCookerScreen(auth = authManager,navController, authViewModel)
         }
         composable(Routes.AccountSettingsScreen.route) {
-            AccountSettingsScreen(auth = authManager,navController,authViewModel)
+            AccountSettingsScreen(auth = authManager,navController,authViewModel, mainViewModel)
         }
         composable(Routes.InvoiceScreen.route) {
-            InvoiceScreen(auth = authManager,navController,authViewModel)
+            InvoiceScreen(auth = authManager,navController,authViewModel, mainViewModel)
         }
     }
 }

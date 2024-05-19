@@ -33,4 +33,5 @@
     <string name="order_search_header">Pedidos</string>
     <string name="invoice_search_header">Facturas</string>
     <string name="order_products_header">Productos</string>
+    <string name="order_summary_header">Resumen del pedido</string>
 </resources>

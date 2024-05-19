@@ -1,14 +1,27 @@
 package com.islamelmrabet.cookconnect.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 
-//class MainViewModel : ViewModel() {
-//    //first state whether the search is happening or not
+class MainViewModel : ViewModel() {
+
+    private val _drawerSelectedIndex = MutableStateFlow<Int>(0)
+    val drawerSelectedIndex: StateFlow<Int> = _drawerSelectedIndex
+
+    // Function to update the selected index
+    fun updateSelectedIndex(index: Int) {
+        _drawerSelectedIndex.value = index
+    }
+
+
+}
 //    private val _isSearching = MutableStateFlow(false)
 //    val isSearching = _isSearching.asStateFlow()
 //

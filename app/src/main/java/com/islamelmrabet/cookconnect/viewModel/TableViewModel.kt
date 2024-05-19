@@ -2,11 +2,12 @@ package com.islamelmrabet.cookconnect.viewModel
 
 import androidx.lifecycle.ViewModel
 import android.content.Context
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -23,6 +24,9 @@ import kotlinx.coroutines.tasks.await
 class TableViewModel : ViewModel() {
 
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("tables")
+
+    private val _tableNumber = MutableLiveData<Int>()
+    val tableNumber: LiveData<Int> = _tableNumber
 
     val response: MutableState<Result<Table>> = mutableStateOf(Result.Empty)
     init {
@@ -54,6 +58,9 @@ class TableViewModel : ViewModel() {
         }
     }
 
+// ----------------------------------------------------------------
+// TODO: THIS FUNCITION MAY BE VALUABLE IN A FUTURE TO UPDATE TABLES
+// ----------------------------------------------------------------
     fun updateTable(originalProductName : String,product: Product, productManager: ProductManager, context: Context) {
         viewModelScope.launch {
             val productId = productManager.getProductDocumentIdByName(originalProductName)
@@ -101,11 +108,11 @@ class TableViewModel : ViewModel() {
         }
     }
 
-    suspend fun getProduct(productName: String): Product? {
-        val productsRef = FirebaseFirestore.getInstance().collection("products")
-        val querySnapshot = productsRef.whereEqualTo("productName", productName).get().await()
+    suspend fun getTable(tableNumber: Int): Table? {
+        val productsRef = FirebaseFirestore.getInstance().collection("table")
+        val querySnapshot = productsRef.whereEqualTo("number", tableNumber).get().await()
         return if (!querySnapshot.isEmpty) {
-            querySnapshot.documents.firstOrNull()?.toObject(Product::class.java)
+            querySnapshot.documents.firstOrNull()?.toObject(Table::class.java)
         } else {
             null
         }

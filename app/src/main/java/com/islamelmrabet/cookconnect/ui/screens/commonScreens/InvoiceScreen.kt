@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,11 +57,12 @@ import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewModel: AuthViewModel){
+fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewModel: AuthViewModel, mainViewModel: MainViewModel){
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
     val buttonColors = ButtonDefaults.outlinedButtonColors(
@@ -69,7 +71,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     var workerName by rememberSaveable { mutableStateOf("") }
     var workerID by rememberSaveable { mutableStateOf("") }
@@ -124,7 +126,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                                 navController.navigate(item.route)
 
                             }
-                            selectedItemIndex = index
+                            mainViewModel.updateSelectedIndex(index)
                             scope.launch {
                                 drawerState.close()
                             }

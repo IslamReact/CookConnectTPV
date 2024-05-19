@@ -55,6 +55,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -91,13 +92,14 @@ import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel, tableViewModel: TableViewModel) {
+fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel, tableViewModel: TableViewModel, mainViewModel: MainViewModel) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -109,7 +111,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     val scope = rememberCoroutineScope()
     val showDialogState = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -149,7 +151,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                                 navController.navigate(item.route)
 
                             }
-                            selectedItemIndex = index
+                            mainViewModel.updateSelectedIndex(index)
                             scope.launch {
                                 drawerState.close()
                             }
@@ -381,7 +383,7 @@ fun TableIcon(table: Table, navController: NavController) {
     ) {
         IconButton(
             onClick = {
-
+                navController.navigate(Routes.OrderScreen.route)
             }
         ) {
             if (table.capacity > 4) {

@@ -15,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.islamelmrabet.cookconnect.navigation.AppNavigation
 import com.islamelmrabet.cookconnect.ui.CookConnectContent
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
@@ -27,10 +28,11 @@ class MainActivity : ComponentActivity() {
         val authViewModel by viewModels<AuthViewModel>()
         val productViewModel by viewModels<ProductViewModel>()
         val tableViewModel by viewModels<TableViewModel>()
+        val mainViewModel by viewModels<MainViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this,authViewModel,productViewModel,tableViewModel)
+               AppNavigation(this,authViewModel,productViewModel,tableViewModel,mainViewModel)
             }
         }
     }
