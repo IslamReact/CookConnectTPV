@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Coffee
@@ -28,7 +27,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,10 +41,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -64,28 +62,26 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
-import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderCookerManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import com.islamelmrabet.cookconnect.viewModel.SharedViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderCookerViewModel: OrderCookerViewModel, orderCookerManager: OrderCookerManager, sharedViewModel: SharedViewModel) {
+fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderCookerViewModel: OrderCookerViewModel, orderCookerManager: OrderCookerManager) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
+    val allOrders by orderCookerViewModel.fetchOrderDataFlow().collectAsState(initial = emptyList())
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
         fetchedLastLoginDate?.let { lastLogInDate = it }
-        sharedViewModel.fetchOrderData()
     }
 
     ModalNavigationDrawer(
@@ -196,53 +192,10 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    SetOrderCookerData(sharedViewModel)
+                    ShowLazyListOfOrders(allOrders)
                 }
             }
         )
-    }
-}
-
-@Composable
-fun SetOrderCookerData(sharedViewModel: SharedViewModel) {
-    val responseState by remember { mutableStateOf(sharedViewModel.response.value) }
-
-    when (val result = responseState) {
-        is Result.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        is Result.Success -> {
-            ShowLazyListOfOrders(result.data)
-        }
-        is Result.Failure -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = result.message)
-            }
-        }
-        is Result.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "No Orders found")
-            }
-        }
-        else -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Unknown error")
-            }
-        }
     }
 }
 
@@ -254,8 +207,10 @@ fun ShowLazyListOfOrders(orders: List<Order>) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        items(orders) { order ->
-            OrderCard(order)
+        orders.forEachIndexed { _, order ->
+            item {
+                OrderCard(order)
+            }
         }
     }
 }

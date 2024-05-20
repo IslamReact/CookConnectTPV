@@ -12,7 +12,7 @@ data class Order(
     val orderDateCreated: String = "",
     val tableNumber: Int = 0,
     val price: Double = 0.0,
-    val isReady: Boolean = false,
+    var isReady: Boolean = false,
     val isPaidByCash: Boolean = false,
     val isPaid: Boolean = false,
     val orderNote: String = "",

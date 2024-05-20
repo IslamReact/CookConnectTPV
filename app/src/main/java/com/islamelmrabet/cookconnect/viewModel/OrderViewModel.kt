@@ -1,8 +1,11 @@
 package com.islamelmrabet.cookconnect.viewModel
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.utils.OrderManager
 
@@ -22,13 +25,13 @@ class OrderViewModel : ViewModel() {
         _totalPrice.value = _totalPrice.value?.minus(totalPriceOrder)
     }
 
-//    fun addOrder(order: Order, orderManager: OrderManager, context: Context) {
-//        when (val result = orderManager.addOrderManager(order)) {
-//            else -> {
-//                Toast.makeText(context, "Order successfully sent to kitchen", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
+    fun addOrder(order: Order, orderManager: OrderManager, context: Context) {
+        when (val result = orderManager.addOrderManager(order)) {
+            else -> {
+                Toast.makeText(context, "Order successfully sent to kitchen", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     fun addProductToList( selectedProducts: MutableList<Product>, product: Product) {
         selectedProducts.add(product)

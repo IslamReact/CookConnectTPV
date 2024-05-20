@@ -64,8 +64,8 @@ import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import com.islamelmrabet.cookconnect.viewModel.SharedViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -73,7 +73,7 @@ import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
-fun OrderScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, sharedViewModel: SharedViewModel, orderManager: OrderManager ,tableNumber : Int?){
+fun OrderScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderViewModel: OrderViewModel, orderManager: OrderManager ,tableNumber : Int?){
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -176,7 +176,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                             price = totalPrice.doubleValue,
                             productQuantityMap = productQuantityMap
                         )
-                        sharedViewModel.addOrder(orderCreated,orderManager,context)
+                        orderViewModel.addOrder(orderCreated,orderManager,context)
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,

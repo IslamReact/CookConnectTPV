@@ -196,5 +196,9 @@ private suspend fun emailPassSignIn(email: String, password: String, auth: AuthM
         is AuthRes.Error -> {
             Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT).show()
         }
+
+        else -> {
+            Toast.makeText(context, "Unknown Error", Toast.LENGTH_SHORT).show()
+        }
     }
 }
