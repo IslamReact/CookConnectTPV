@@ -1,20 +1,22 @@
 package com.islamelmrabet.cookconnect.model.firebaseModels
 
 /*
- * Order model
+ * Modelo de Pedido
  *
- *
- * OrderDateCreated and TableNumber are the primary keys
+ * OrderDateCreated y TableNumber son las claves principales
  */
+
 data class Order(
     val key: String? = null,
-    // TODO: OrderDateCreatd and TableNumber are the primary keys
+    // TODO: OrderDateCreated y TableNumber son las claves principales
     val orderDateCreated: String = "",
     val tableNumber: Int = 0,
-    val price : Double = 0.0,
+    val price: Double = 0.0,
     val isReady: Boolean = false,
     val isPaidByCash: Boolean = false,
     val isPaid: Boolean = false,
     val orderNote: String = "",
-    val products: MutableList<Product> = mutableListOf(),
-)
+    val productQuantityMap: Map<String, Int>
+){
+    constructor() : this(null,"",0,0.0,false,false,false,"", emptyMap() )
+}

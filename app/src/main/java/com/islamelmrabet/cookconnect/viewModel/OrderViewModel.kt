@@ -1,58 +1,45 @@
 package com.islamelmrabet.cookconnect.viewModel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.islamelmrabet.cookconnect.model.firebaseModels.Order
+import androidx.lifecycle.ViewModel
+import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.utils.OrderManager
-import kotlinx.coroutines.launch
 
 
 class OrderViewModel : ViewModel() {
 
     private val orderManager = OrderManager()
 
-    private val _orders = MutableLiveData<MutableList<Order>>().apply {
-        value = mutableListOf()
+    private val _totalPrice = MutableLiveData<Double>()
+    val totalPrice: LiveData<Double> = _totalPrice
+
+    fun setTotalPrice(totalPriceOrder: Double) {
+        _totalPrice.value = totalPriceOrder
     }
 
-    val orders: LiveData<MutableList<Order>> = _orders
-
-    init {
-        fetchOrders()
+    fun restTotalPrice(totalPriceOrder: Double) {
+        _totalPrice.value = _totalPrice.value?.minus(totalPriceOrder)
     }
 
-    private fun fetchOrders() {
-        viewModelScope.launch {
-            val orderList = orderManager.getOrders()
-            _orders.value = orderList.toMutableList()
+//    fun addOrder(order: Order, orderManager: OrderManager, context: Context) {
+//        when (val result = orderManager.addOrderManager(order)) {
+//            else -> {
+//                Toast.makeText(context, "Order successfully sent to kitchen", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
+
+    fun addProductToList( selectedProducts: MutableList<Product>, product: Product) {
+        selectedProducts.add(product)
+        _totalPrice.value = _totalPrice.value?.plus(product.unitPrice)
+    }
+
+    fun removeProductFromList( selectedProducts: MutableList<Product>, product: Product) {
+        selectedProducts.remove(product)
+        if (selectedProducts.size != 0) {
+            _totalPrice.value = _totalPrice.value?.minus(product.unitPrice)
         }
     }
 
-    fun addOrder(order: Order) {
-        viewModelScope.launch {
-            orderManager.addOrder(order)
-            fetchOrders() // Refresh orders after adding
-        }
-    }
-
-    fun updateOrder(order: Order) {
-        viewModelScope.launch {
-            orderManager.updateOrder(order)
-            fetchOrders() // Refresh orders after updating
-        }
-    }
-
-    fun deleteOrder(order: Order) {
-        viewModelScope.launch {
-            orderManager.deleteOrder(order)
-            fetchOrders() // Refresh orders after deleting
-        }
-    }
-
-    fun clearOrders() {
-        _orders.value?.clear()
-        _orders.value = _orders.value
-    }
 }

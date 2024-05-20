@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.sharp.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -49,8 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -302,6 +299,7 @@ fun BasicLongButton(
 @Composable
 fun BasicLongButtonWithIcon(
     buttonText: String,
+    secondaryText : String,
     onClick: () -> Unit,
     lessRoundedShape: RoundedCornerShape,
     buttonColors: ButtonColors,
@@ -329,6 +327,11 @@ fun BasicLongButtonWithIcon(
                 Text(
                     text = buttonText,
                     modifier = Modifier.padding(end = 4.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                text = secondaryText,
+                modifier = Modifier.padding(end = 4.dp)
                 )
             }
         }

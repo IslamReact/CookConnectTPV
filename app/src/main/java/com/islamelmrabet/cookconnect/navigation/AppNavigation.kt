@@ -20,19 +20,26 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.OrderCookerManager
+import com.islamelmrabet.cookconnect.utils.OrderManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
+import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
+import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.SharedViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel, orderViewModel: OrderViewModel, orderCookerViewModel: OrderCookerViewModel, sharedViewModel: SharedViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
     val productManager = ProductManager(context)
+    val orderManager = OrderManager()
+    val orderCookerManager = OrderCookerManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 
@@ -58,8 +65,10 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
         composable(Routes.TableScreen.route) {
             TableScreen(auth = authManager,navController, tableManager, authViewModel, tableViewModel,mainViewModel)
         }
-        composable(Routes.OrderScreen.route) {
-            OrderScreen(auth = authManager,navController,productViewModel,authViewModel)
+        composable(Routes.OrderScreen.route + "/{tableNumber}") { backStackEntry ->
+            val tableNumberString = backStackEntry.arguments?.getString("tableNumber")
+            val tableNumber = tableNumberString?.toIntOrNull()
+            OrderScreen(auth = authManager, navController, productViewModel, authViewModel, sharedViewModel, orderManager,tableNumber)
         }
         composable(Routes.InventoryScreen.route) {
             InventoryScreen(auth = authManager,navController,authViewModel,productViewModel,mainViewModel)
@@ -72,7 +81,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             AddProductScreen(auth = authManager,navController, productViewModel, productManager)
         }
         composable(Routes.OrderCookerScreen.route) {
-            OrderCookerScreen(auth = authManager,navController, authViewModel)
+            OrderCookerScreen(auth = authManager,navController, productViewModel,authViewModel, orderCookerViewModel,orderCookerManager, sharedViewModel)
         }
         composable(Routes.AccountSettingsScreen.route) {
             AccountSettingsScreen(auth = authManager,navController,authViewModel, mainViewModel)

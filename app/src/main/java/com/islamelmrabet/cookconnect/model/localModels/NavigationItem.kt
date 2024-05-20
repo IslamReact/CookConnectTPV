@@ -60,7 +60,7 @@ val cookerNavigationItem = listOf(
         title = "Pedidos",
         selectedIcon = Icons.Filled.Coffee,
         unselectedIcon = Icons.Outlined.TableBar,
-        route = Routes.TableScreen.route,
+        route = Routes.OrderCookerScreen.route,
     ),
     NavigationItem(
         title = "Historial de Ventas",

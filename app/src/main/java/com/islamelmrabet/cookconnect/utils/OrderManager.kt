@@ -1,72 +1,43 @@
 package com.islamelmrabet.cookconnect.utils
 
+import android.util.Log
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.CompletableFuture
 
-class OrderManager {
+class OrderManager() {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val ordersCollection = db.collection("orders")
+    private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
+    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("orders")
 
     // Function to add a new order
-    suspend fun addOrder(order: Order) {
-        try {
-            val newOrderRef = ordersCollection.document()
-            val key = newOrderRef.id
-            val orderWithKey = order.copy(key = key)
-            newOrderRef.set(orderWithKey).await()
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
-        }
+    fun addOrderManager(order: Order): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
+        collectionReference
+            .add(order)
+            .addOnSuccessListener {
+                Log.d("Order", "Order created successfully")
+                completableFuture.complete(true)
+            }
+            .addOnFailureListener { e ->
+                Log.d("Order", "Error creating Order: ${e.message}")
+                completableFuture.complete(false)
+            }
+        return completableFuture
     }
 
     // Function to get all orders
     suspend fun getOrders(): List<Order> {
         return try {
-            val snapshot = ordersCollection.get().await()
+            val snapshot = collectionReference.get().await()
             snapshot.toObjects(Order::class.java)
         } catch (e: Exception) {
             // Handle exception
             e.printStackTrace()
             emptyList()
-        }
-    }
-
-    // Function to update an existing order
-    suspend fun updateOrder(order: Order) {
-        try {
-            order.key?.let { key ->
-                ordersCollection.document(key).set(order).await()
-            }
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
-        }
-    }
-
-    // Function to delete an order
-    suspend fun deleteOrder(order: Order) {
-        try {
-            order.key?.let { key ->
-                ordersCollection.document(key).delete().await()
-            }
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
-        }
-    }
-
-    // Function to get an order by key
-    suspend fun getOrderByKey(key: String): Order? {
-        return try {
-            val document = ordersCollection.document(key).get().await()
-            document.toObject(Order::class.java)
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
-            null
         }
     }
 }
