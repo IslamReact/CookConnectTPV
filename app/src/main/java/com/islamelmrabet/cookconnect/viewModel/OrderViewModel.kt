@@ -5,9 +5,10 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
-import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.utils.OrderManager
+import kotlinx.coroutines.tasks.await
 
 
 class OrderViewModel : ViewModel() {
@@ -33,16 +34,13 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun addProductToList( selectedProducts: MutableList<Product>, product: Product) {
-        selectedProducts.add(product)
-        _totalPrice.value = _totalPrice.value?.plus(product.unitPrice)
-    }
-
-    fun removeProductFromList( selectedProducts: MutableList<Product>, product: Product) {
-        selectedProducts.remove(product)
-        if (selectedProducts.size != 0) {
-            _totalPrice.value = _totalPrice.value?.minus(product.unitPrice)
+    suspend fun getOrder(tableNumber: Int): Order? {
+        val productsRef = FirebaseFirestore.getInstance().collection("orders")
+        val querySnapshot = productsRef.whereEqualTo("tableNumber", tableNumber).get().await()
+        return if (!querySnapshot.isEmpty) {
+            querySnapshot.documents.firstOrNull()?.toObject(Order::class.java)
+        } else {
+            null
         }
     }
-
 }

@@ -2,9 +2,6 @@ package com.islamelmrabet.cookconnect.utils
 
 import android.content.Context
 import android.util.Log
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import java.util.concurrent.CompletableFuture
@@ -17,6 +14,8 @@ sealed class TableRes<out T> {
 
 class TableManager(context: Context) {
     private val databaseReference = FirebaseFirestore.getInstance().collection("tables")
+    private val collectionReference = FirebaseFirestore.getInstance().collection("tables")
+
 
     fun addTable(table: Table): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
@@ -33,11 +32,71 @@ class TableManager(context: Context) {
         return completableFuture
     }
 
-    fun deleteTable(tableKey: String): TableRes<Unit> {
+    fun updateTableOrderStatus(tableNumber: Int, alreadyGotOrder : Boolean): TableRes<Unit> {
         return try {
+            collectionReference
+                .whereEqualTo("number", tableNumber)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty) {
+                        Log.e("Table", "No order found with the given orderDateCreated")
+                        TableRes.Error("No order found with the given orderDateCreated")
+                    } else {
+                        val document = querySnapshot.documents[0]
+                        document.reference
+                            .update("gotOrder", alreadyGotOrder)
+                            .addOnSuccessListener {
+                                Log.d("Table", "Table status updated successfully")
+                                TableRes.Success(Unit)
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Table", "Error updating Table status", e)
+                                TableRes.Error(e.message ?: "Error updating order status")
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Order", "Error finding Table", e)
+                    TableRes.Error(e.message ?: "Error finding Table")
+                }
             TableRes.Success(Unit)
         } catch (e: Exception) {
-            TableRes.Error(e.message ?: "Error deleting table")
+            TableRes.Error(e.message ?: "Error updating Table status")
+
+        }
+    }
+
+    fun updateIsReadyOrderStatus(tableNumber: Int, orderIsReady : Boolean): TableRes<Unit> {
+        return try {
+            collectionReference
+                .whereEqualTo("number", tableNumber)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty) {
+                        Log.e("Table", "No order found with the given orderDateCreated")
+                        TableRes.Error("No order found with the given orderDateCreated")
+                    } else {
+                        val document = querySnapshot.documents[0]
+                        document.reference
+                            .update("gotOrderReady", orderIsReady)
+                            .addOnSuccessListener {
+                                Log.d("Table", "Table status updated successfully")
+                                TableRes.Success(Unit)
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Table", "Error updating Table status", e)
+                                TableRes.Error(e.message ?: "Error updating order status")
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Order", "Error finding Table", e)
+                    TableRes.Error(e.message ?: "Error finding Table")
+                }
+            TableRes.Success(Unit)
+        } catch (e: Exception) {
+            TableRes.Error(e.message ?: "Error updating Table status")
+
         }
     }
 

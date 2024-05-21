@@ -1,5 +1,6 @@
 package com.islamelmrabet.cookconnect.ui.screens.cookerScreens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -43,7 +44,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -64,20 +65,24 @@ import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderCookerManager
+import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderCookerViewModel: OrderCookerViewModel, orderCookerManager: OrderCookerManager) {
+fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderCookerViewModel: OrderCookerViewModel, orderCookerManager: OrderCookerManager, mainViewModel: MainViewModel, tableViewModel: TableViewModel, tableManager: TableManager) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val allOrders by orderCookerViewModel.fetchOrderDataFlow().collectAsState(initial = emptyList())
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -108,7 +113,7 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                                 navController.navigate(item.route)
 
                             }
-                            selectedItemIndex = index
+                            mainViewModel.updateSelectedIndex(index)
                             scope.launch {
                                 drawerState.close()
                             }
@@ -192,7 +197,7 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    ShowLazyListOfOrders(allOrders)
+                    ShowLazyListOfOrders(allOrders, orderCookerViewModel,context,orderCookerManager, tableViewModel, tableManager)
                 }
             }
         )
@@ -200,7 +205,7 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
 }
 
 @Composable
-fun ShowLazyListOfOrders(orders: List<Order>) {
+fun ShowLazyListOfOrders(orders: List<Order>, orderCookerViewModel: OrderCookerViewModel, context: Context, orderCookerManager: OrderCookerManager, tableViewModel: TableViewModel, tableManager: TableManager) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -209,14 +214,17 @@ fun ShowLazyListOfOrders(orders: List<Order>) {
     ) {
         orders.forEachIndexed { _, order ->
             item {
-                OrderCard(order)
+                OrderCard(order, onOrderReadyClick = {
+                    orderCookerViewModel.updateOrderReadyStatus(order.orderDateCreated, orderCookerManager, context)
+                    tableViewModel.updateReadyOrderStatus(order.tableNumber, tableManager, context, true)
+                })
             }
         }
     }
 }
 
 @Composable
-fun OrderCard(order: Order) {
+fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(4.dp)
@@ -253,9 +261,6 @@ fun OrderCard(order: Order) {
                     Modifier.padding(start = 10.dp)
                 )
             }
-            Row {
-
-            }
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.primary,
@@ -271,9 +276,7 @@ fun OrderCard(order: Order) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                onClick = {
-
-                },
+                onClick = onOrderReadyClick,
                 colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,

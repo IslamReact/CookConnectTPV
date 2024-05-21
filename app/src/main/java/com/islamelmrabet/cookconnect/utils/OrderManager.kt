@@ -5,7 +5,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
-import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CompletableFuture
 
 class OrderManager() {
@@ -29,15 +28,4 @@ class OrderManager() {
         return completableFuture
     }
 
-    // Function to get all orders
-    suspend fun getOrders(): List<Order> {
-        return try {
-            val snapshot = collectionReference.get().await()
-            snapshot.toObjects(Order::class.java)
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
-            emptyList()
-        }
-    }
 }

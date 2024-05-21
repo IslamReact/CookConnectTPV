@@ -56,6 +56,7 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
     implementation ("androidx.compose.material:material-icons-extended")
     implementation("com.google.firebase:firebase-messaging:24.0.0")
+    implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.android.gms:play-services-auth:21.1.1")
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation("androidx.compose.material3:material3-android:1.2.1")

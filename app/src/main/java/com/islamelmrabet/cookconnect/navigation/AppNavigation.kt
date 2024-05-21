@@ -68,7 +68,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
         composable(Routes.OrderScreen.route + "/{tableNumber}") { backStackEntry ->
             val tableNumberString = backStackEntry.arguments?.getString("tableNumber")
             val tableNumber = tableNumberString?.toIntOrNull()
-            OrderScreen(auth = authManager, navController, productViewModel, authViewModel,orderViewModel ,orderManager,tableNumber)
+            OrderScreen(auth = authManager, navController, productViewModel, authViewModel,orderViewModel ,orderManager,tableNumber, tableViewModel, tableManager)
         }
         composable(Routes.InventoryScreen.route) {
             InventoryScreen(auth = authManager,navController,authViewModel,productViewModel,mainViewModel)
@@ -81,7 +81,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             AddProductScreen(auth = authManager,navController, productViewModel, productManager)
         }
         composable(Routes.OrderCookerScreen.route) {
-            OrderCookerScreen(auth = authManager,navController, productViewModel,authViewModel, orderCookerViewModel,orderCookerManager)
+            OrderCookerScreen(auth = authManager,navController, productViewModel,authViewModel, orderCookerViewModel,orderCookerManager, mainViewModel, tableViewModel, tableManager)
         }
         composable(Routes.AccountSettingsScreen.route) {
             AccountSettingsScreen(auth = authManager,navController,authViewModel, mainViewModel)

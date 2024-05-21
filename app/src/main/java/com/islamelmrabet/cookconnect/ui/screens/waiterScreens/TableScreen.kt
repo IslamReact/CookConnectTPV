@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,14 +20,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.TableBar
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,6 +58,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -77,7 +81,6 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
-import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
@@ -102,6 +105,8 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
+    val allTables by tableViewModel.fetchTableDataFlow().collectAsState(initial = emptyList())
+
 
     val (number, setNumber) = remember { mutableIntStateOf(0) }
     val (capacity, setCapacity) = remember { mutableIntStateOf(0) }
@@ -112,7 +117,6 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
         fetchedLastLoginDate?.let { lastLogInDate = it }
-        tableViewModel.fetchTableData()
     }
 
     ModalNavigationDrawer(
@@ -222,7 +226,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                         .height(1.dp)
                         .background(color = Color.Transparent)
                 )
-                SetTableData(tableViewModel,navController)
+                ShowLazyListOfTables(allTables,navController)
             }
         }
     )
@@ -305,9 +309,10 @@ private fun ModalBottomSheetAddTable(
                         val table = Table(
                             number = number,
                             capacity = capacity,
+                            gotOrder = false,
+                            gotOrderReady = false
                         )
                         tableViewModel.addTable(table, manager, context) {
-                            tableViewModel.fetchTableData()
                             showDialogState.value = false
                         }
                     }
@@ -318,77 +323,92 @@ private fun ModalBottomSheetAddTable(
 }
 
 @Composable
-fun SetTableData(tableViewModel: TableViewModel, navController: NavController) {
-    when (val result = tableViewModel.response.value) {
-        is Result.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        is Result.Success -> {
-            ShowLazyListOfTables(result.data, navController)
-        }
-        is Result.Failure -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = result.message)
-            }
-        }
-        is Result.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "No tables found")
-            }
-        }
-    }
-}
-
-@Composable
 fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 80.dp),
+        columns = GridCells.Adaptive(minSize = 100.dp),
         userScrollEnabled = true
     ) {
-        items(tables) { table ->
-            TableIcon(table, navController )
+        tables.forEachIndexed { _, table ->
+            item{
+                TableIcon(table, navController)
+            }
         }
     }
 }
 
 @Composable
 fun TableIcon(table: Table, navController: NavController) {
-    Column(
+    Card(
         modifier = Modifier
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(10.dp)
+            .clip(shape = RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 15.dp
+        ),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.onTertiary,
+            contentColor = MaterialTheme.colorScheme.scrim,
+            disabledContainerColor = MaterialTheme.colorScheme.outline,
+            disabledContentColor = MaterialTheme.colorScheme.outline
+        ),
+        border = BorderStroke(
+            0.3.dp,
+            MaterialTheme.colorScheme.primary
+        ),
     ) {
-        IconButton(
-            onClick = {
-                navController.navigate("${Routes.OrderScreen.route}/${table.number}")
-            }
+        Column(
+            modifier = Modifier
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (table.capacity > 4) {
-                Image(
-                    painter = painterResource(id = R.drawable.order_large_table),
-                    contentDescription = "table icon",
+            IconButton(
+                onClick = {
+                    navController.navigate("${Routes.OrderScreen.route}/${table.number}")
+                }
+            ) {
+                if (table.capacity > 4) {
+                    Image(
+                        painter = painterResource(id = R.drawable.order_large_table),
+                        contentDescription = "table icon",
+                    )
+                }else {
+                    Image(
+                        painter = painterResource(id = R.drawable.order_table),
+                        contentDescription = "table icon",
+                    )
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Mesa ${table.number} ",
+                    color = MaterialTheme.colorScheme.scrim,
                 )
-            }else {
-                Image(
-                    painter = painterResource(id = R.drawable.order_table),
-                    contentDescription = "table icon",
-                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(8.dp))
+                        .background(
+                            color = if (table.gotOrderReady) {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                MaterialTheme.colorScheme.outline
+                            }
+                        )
+                        .padding(1.dp),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Order Ready",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
             }
         }
-        Text(
-            text = table.number.toString(),
-            color = MaterialTheme.colorScheme.scrim,
-        )
     }
 }

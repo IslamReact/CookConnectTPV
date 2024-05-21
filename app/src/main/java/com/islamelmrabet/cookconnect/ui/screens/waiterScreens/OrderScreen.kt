@@ -38,13 +38,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -56,6 +53,7 @@ import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
+import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
@@ -63,9 +61,11 @@ import com.islamelmrabet.cookconnect.tools.BasicLongButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderManager
+import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -73,7 +73,7 @@ import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
-fun OrderScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderViewModel: OrderViewModel, orderManager: OrderManager ,tableNumber : Int?){
+fun OrderScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderViewModel: OrderViewModel, orderManager: OrderManager ,tableNumber : Int?, tableViewModel: TableViewModel, tableManager: TableManager){
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -83,14 +83,24 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
 
     val productCountMap = remember { mutableStateMapOf<Product, Int>() }
     val showDialogState = remember { mutableStateOf(false) }
-    var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val totalPrice = remember { mutableDoubleStateOf(0.0) }
     val context = LocalContext.current
+    val tableGotAnOrder = remember { mutableStateOf(Table()) }
 
     LaunchedEffect(Unit) {
-        val fetchedLastLoginDate = authViewModel.getLastLoginDate()
-        fetchedLastLoginDate?.let { lastLogInDate = it }
         productViewModel.fetchProductData()
+        val table = tableNumber?.let { tableViewModel.getTable(it) }
+        if (table != null) {
+            tableGotAnOrder.value = table
+        }
+        if (table != null) {
+            if(table.gotOrder) {
+                val order = tableNumber.let { orderViewModel.getOrder(it) }
+                order?.let { orderData ->
+                    totalPrice.doubleValue = orderData.price
+                }
+            }
+        }
     }
 
     val onProductCountChanged: (Product, Int) -> Unit = { product, count ->
@@ -154,6 +164,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                         productViewModel,
                         productCountMap,
                         onProductCountChanged,
+                        !tableGotAnOrder.value.gotOrder
                     )
                 }else {
                     Toast.makeText(context, "An error Ocurred", Toast.LENGTH_LONG).show()
@@ -177,10 +188,18 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                             productQuantityMap = productQuantityMap
                         )
                         orderViewModel.addOrder(orderCreated,orderManager,context)
+                        if (tableNumber != null) {
+                            tableViewModel.updateTableOrderStatus(
+                                tableNumber = tableNumber,
+                                tableManager = tableManager,
+                                context = context,
+                                alreadyGotOrder = true
+                            )
+                        }
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
-                    enabled = true
+                    enabled = !tableGotAnOrder.value.gotOrder
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BasicLongButtonWithIcon(
@@ -203,6 +222,7 @@ fun SetDataForOrder(
     productViewModel: ProductViewModel,
     selectedProducts: MutableMap<Product, Int>,
     onProductCountChanged: (Product, Int) -> Unit,
+    alreadyGotAnOrder: Boolean
 ) {
     when (val result = productViewModel.response.value) {
         is Result.Loading -> {
@@ -218,6 +238,7 @@ fun SetDataForOrder(
                 products = result.data,
                 selectedProducts = selectedProducts,
                 onProductCountChanged = onProductCountChanged,
+                alreadyGotAnOrder = alreadyGotAnOrder
             )
         }
         is Result.Failure -> {
@@ -245,6 +266,7 @@ fun ShowLazyListOfProductsForOrder(
     products: List<Product>,
     selectedProducts: MutableMap<Product, Int>,
     onProductCountChanged: (Product, Int) -> Unit,
+    alreadyGotAnOrder: Boolean
 ) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
@@ -258,6 +280,7 @@ fun ShowLazyListOfProductsForOrder(
                 selectedProducts = selectedProducts,
                 productCount = selectedProducts[product] ?: 0,
                 onProductCountChanged = onProductCountChanged,
+                alreadyGotAnOrder = alreadyGotAnOrder,
             )
         }
     }
@@ -269,6 +292,7 @@ fun ProductCardForOrder(
     selectedProducts: MutableMap<Product, Int>,
     productCount: Int,
     onProductCountChanged: (Product, Int) -> Unit,
+    alreadyGotAnOrder: Boolean
 ) {
     val selectedCount = selectedProducts[product] ?: 0
 
@@ -314,7 +338,7 @@ fun ProductCardForOrder(
             Button(
                 onClick = { onProductCountChanged(product, selectedCount + 1) },
                 shape = RoundedCornerShape(5.dp),
-                enabled = product.quantity > 0,
+                enabled = alreadyGotAnOrder && product.quantity > 0,
                 modifier = Modifier.size(24.dp),
                 contentPadding = PaddingValues(0.dp)
             ) {
