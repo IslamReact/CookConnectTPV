@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -80,10 +81,8 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
         if (initialEmail != null) {
             val fetchedPassword = authViewModel.getPasswordByEmail(initialEmail)
             fetchedPassword?.let { setPassword(it) }
-        }
-
-        if (initialEmail != null) {
             val fetchedRole = authViewModel.getRoleByEmail(initialEmail)
+            Log.d("ROL", fetchedRole.toString())
             fetchedRole?.let { userRole.value = it }
         }
     }

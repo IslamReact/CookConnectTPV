@@ -1,11 +1,12 @@
 package com.islamelmrabet.cookconnect.viewModel
 
 import android.content.Context
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DatabaseReference
@@ -21,6 +22,9 @@ import kotlinx.coroutines.tasks.await
 
 class ProductViewModel : ViewModel() {
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("products")
+
+    private val _productList = MutableLiveData<List<Product>>()
+    val productList: LiveData<List<Product>> get() = _productList
 
     val response: MutableState<Result<Product>> = mutableStateOf(Result.Empty)
     init {
@@ -89,6 +93,7 @@ class ProductViewModel : ViewModel() {
                     val productItem = document.toObject(Product::class.java)
                     productTempList.add(productItem)
                 }
+                _productList.value = productTempList
                 response.value = Result.Success(productTempList)
                 Log.d("FetchProductData", "Products fetched successfully: ${productTempList.size}")
             } else {

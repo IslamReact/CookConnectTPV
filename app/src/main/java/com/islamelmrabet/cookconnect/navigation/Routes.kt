@@ -14,5 +14,6 @@ sealed class Routes(val route:String){
     object  OrderCookerScreen : Routes("order_cooker_screen")
     object  InvoiceScreen : Routes("invoice_screen")
     object  AccountSettingsScreen : Routes("account_settings_screen")
+    object  OrderSummaryScreen : Routes("order_summary_screen")
 
 }

@@ -18,6 +18,7 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.AddProductScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.EditProductScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
+import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderSummaryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderCookerManager
@@ -88,6 +89,9 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
         }
         composable(Routes.InvoiceScreen.route) {
             InvoiceScreen(auth = authManager,navController,authViewModel, mainViewModel)
+        }
+        composable(Routes.OrderSummaryScreen.route) {
+            OrderSummaryScreen(navController,orderViewModel, productViewModel)
         }
     }
 }

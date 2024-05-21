@@ -15,17 +15,11 @@ class OrderViewModel : ViewModel() {
 
     private val orderManager = OrderManager()
 
-    private val _totalPrice = MutableLiveData<Double>()
-    val totalPrice: LiveData<Double> = _totalPrice
-
-    fun setTotalPrice(totalPriceOrder: Double) {
-        _totalPrice.value = totalPriceOrder
+    private val _orderOrderSummary = MutableLiveData<Order>()
+    val orderOrderSummary: LiveData<Order> = _orderOrderSummary
+    fun setOrderOrderSummary(order: Order) {
+        _orderOrderSummary.value = order
     }
-
-    fun restTotalPrice(totalPriceOrder: Double) {
-        _totalPrice.value = _totalPrice.value?.minus(totalPriceOrder)
-    }
-
     fun addOrder(order: Order, orderManager: OrderManager, context: Context) {
         when (val result = orderManager.addOrderManager(order)) {
             else -> {

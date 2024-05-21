@@ -93,11 +93,21 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
         if (table != null) {
             tableGotAnOrder.value = table
         }
-        if (table != null) {
-            if(table.gotOrder) {
-                val order = tableNumber.let { orderViewModel.getOrder(it) }
-                order?.let { orderData ->
-                    totalPrice.doubleValue = orderData.price
+        if (table != null && table.gotOrder ) {
+            val order = tableNumber.let { orderViewModel.getOrder(it) }
+            if (order != null) {
+                orderViewModel.setOrderOrderSummary(order)
+            }
+            order?.let { orderData ->
+                totalPrice.doubleValue = orderData.price
+                val products = productViewModel.response.value
+                if (products is Result.Success) {
+                    val productMap = products.data.associateBy { it.productName }
+                    orderData.productQuantityMap.forEach { (productName, quantity) ->
+                        productMap[productName]?.let { product ->
+                            productCountMap[product] = quantity
+                        }
+                    }
                 }
             }
         }
@@ -206,7 +216,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                     buttonText = "${productCountMap.size} items",
                     secondaryText = String.format("%.2f", totalPrice.doubleValue),
                     onClick = {
-
+                        navController.navigate(Routes.OrderSummaryScreen.route)
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
@@ -358,7 +368,7 @@ fun ProductCardForOrder(
                     }
                 },
                 shape = RoundedCornerShape(5.dp),
-                enabled = selectedCount > 0,
+                enabled = alreadyGotAnOrder && selectedCount > 0,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceDim
                 ),
