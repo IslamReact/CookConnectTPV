@@ -197,7 +197,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                             price = totalPrice.doubleValue,
                             productQuantityMap = productQuantityMap
                         )
-                        orderViewModel.addOrder(orderCreated,orderManager,context)
+                        orderViewModel.addOrder(orderCreated,context)
                         if (tableNumber != null) {
                             tableViewModel.updateTableOrderStatus(
                                 tableNumber = tableNumber,
@@ -206,6 +206,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                                 alreadyGotOrder = true
                             )
                         }
+                        navController.navigate(Routes.TableScreen.route)
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
@@ -220,7 +221,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
-                    enabled = true
+                    enabled = tableGotAnOrder.value.gotOrder
                 )
             }
         }
@@ -346,7 +347,11 @@ fun ProductCardForOrder(
                 }
             )
             Button(
-                onClick = { onProductCountChanged(product, selectedCount + 1) },
+                onClick = {
+                    if (selectedCount < product.quantity) {
+                        onProductCountChanged(product, selectedCount + 1)
+                    }
+                },
                 shape = RoundedCornerShape(5.dp),
                 enabled = alreadyGotAnOrder && product.quantity > 0,
                 modifier = Modifier.size(24.dp),

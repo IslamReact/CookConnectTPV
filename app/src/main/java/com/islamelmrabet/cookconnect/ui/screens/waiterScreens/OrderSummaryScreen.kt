@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RestoreFromTrash
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -31,28 +32,50 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
+import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
+import com.islamelmrabet.cookconnect.utils.InvoiceManager
+import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
+import com.islamelmrabet.cookconnect.viewModel.TableViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
-fun OrderSummaryScreen(navController: NavHostController, orderViewModel: OrderViewModel, productViewModel: ProductViewModel) {
+fun OrderSummaryScreen(
+    navController: NavHostController,
+    orderViewModel: OrderViewModel,
+    productViewModel: ProductViewModel,
+    tableViewModel: TableViewModel,
+    tableManager: TableManager,
+    invoiceViewModel: InvoiceViewModel,
+    invoiceManager: InvoiceManager,
+
+) {
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
@@ -62,6 +85,8 @@ fun OrderSummaryScreen(navController: NavHostController, orderViewModel: OrderVi
 
     val orderSummary by orderViewModel.orderOrderSummary.observeAsState()
     val productList by productViewModel.productList.observeAsState(emptyList())
+    val context = LocalContext.current
+    var isPayedByCash by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -77,7 +102,26 @@ fun OrderSummaryScreen(navController: NavHostController, orderViewModel: OrderVi
                     .padding(contentPadding)
                     .fillMaxSize()
             ) {
-                orderSummary?.let { OrderListSummary(it, productList) }
+                orderSummary?.let { it ->
+                    OrderListSummary(
+                        orderSummary = it,
+                        productList = productList,
+                        isPayedByCash = isPayedByCash,
+                        onPayedByCashChange = { isPayedByCash = it },
+                        onClick = {
+                            tableViewModel.updateTableOrderStatus(
+                                it.tableNumber,
+                                tableManager,
+                                context,
+                                false
+                            )
+                            orderViewModel.deleteOrder(it.tableNumber, context)
+                            tableViewModel.updateTableOrderStatus(it.tableNumber , tableManager, context, false)
+                            orderViewModel.clearOrderOrderSummary()
+                            navController.navigate(Routes.TableScreen.route)
+                        }
+                    )
+                }
             }
         },
         bottomBar = {
@@ -117,7 +161,23 @@ fun OrderSummaryScreen(navController: NavHostController, orderViewModel: OrderVi
                     BasicLongButton(
                         buttonText = "Cobrar",
                         onClick = {
-                            //CREAR LA FACTURA Y BORRAR EL PEDIDO
+                            if (orderSummary != null) {
+                                val currentDate = SimpleDateFormat("dd/MM/yyyy (HH:mm)", Locale.getDefault()).format(Date())
+                                val invoice =
+                                    Invoice(
+                                        invoiceDateCreated = currentDate,
+                                        isPayedByCash = isPayedByCash,
+                                        isPayed = true,
+                                        orderDateCreated = orderSummary!!.orderDateCreated,
+                                        tableNumber = orderSummary!!.tableNumber,
+                                        price = orderSummary!!.price,
+                                        productQuantityMap = orderSummary!!.productQuantityMap
+                                    )
+                                invoiceViewModel.addInvoice(invoice, invoiceManager, context)
+                                tableViewModel.updateTableOrderStatus(orderSummary!!.tableNumber , tableManager, context, false)
+                                orderViewModel.deleteOrder(orderSummary!!.tableNumber, context)
+                                navController.navigate(Routes.TableScreen.route)
+                            }
                         },
                         lessRoundedShape = lessRoundedShape,
                         buttonColors = buttonColors,
@@ -131,7 +191,7 @@ fun OrderSummaryScreen(navController: NavHostController, orderViewModel: OrderVi
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun OrderListSummary(orderSummary: Order, productList: List<Product>) {
+fun OrderListSummary(orderSummary: Order, productList: List<Product>, onClick: () -> Unit,onPayedByCashChange: (Boolean) -> Unit,isPayedByCash: Boolean) {
     val productMap = productList.associateBy { it.productName }
     val productQuantityMap = orderSummary.productQuantityMap
     val productCountMap = productQuantityMap.mapNotNull { (productName, quantity) ->
@@ -181,21 +241,26 @@ fun OrderListSummary(orderSummary: Order, productList: List<Product>) {
                 Row(
                     modifier = Modifier
                         .padding(16.dp)
-                        .padding(start = 45.dp),
+                        .padding(start = 45.dp)
+                        .clickable {
+                            onClick()
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = "Delete Order",
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        textDecoration = TextDecoration.Underline
                     )
                     Icon(
-                        imageVector = Icons.Default.RestoreFromTrash,
+                        imageVector = Icons.Default.Delete,
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
+
             }
         }
         Row(
@@ -209,7 +274,10 @@ fun OrderListSummary(orderSummary: Order, productList: List<Product>) {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
             )
-            Checkbox(checked = true, onCheckedChange = {})
+            Checkbox(
+                checked = isPayedByCash,
+                onCheckedChange = onPayedByCashChange
+            )
         }
     }
 }
@@ -256,4 +324,8 @@ private fun OrderSummaryCard(product: Product, quantity: Int) {
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp)
     )
+}
+
+fun setAllValuesTo0(Order: Order) {
+
 }

@@ -21,26 +21,28 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderSummaryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.InvoiceManager
 import com.islamelmrabet.cookconnect.utils.OrderCookerManager
 import com.islamelmrabet.cookconnect.utils.OrderManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import com.islamelmrabet.cookconnect.viewModel.SharedViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel, orderViewModel: OrderViewModel, orderCookerViewModel: OrderCookerViewModel, sharedViewModel: SharedViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel, orderViewModel: OrderViewModel, orderCookerViewModel: OrderCookerViewModel, invoiceViewModel: InvoiceViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
     val productManager = ProductManager(context)
     val orderManager = OrderManager()
     val orderCookerManager = OrderCookerManager(context)
+    val invoiceManager = InvoiceManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 
@@ -88,10 +90,10 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             AccountSettingsScreen(auth = authManager,navController,authViewModel, mainViewModel)
         }
         composable(Routes.InvoiceScreen.route) {
-            InvoiceScreen(auth = authManager,navController,authViewModel, mainViewModel)
+            InvoiceScreen(auth = authManager,navController,authViewModel, mainViewModel, invoiceManager, invoiceViewModel)
         }
         composable(Routes.OrderSummaryScreen.route) {
-            OrderSummaryScreen(navController,orderViewModel, productViewModel)
+            OrderSummaryScreen(navController,orderViewModel, productViewModel, tableViewModel, tableManager, invoiceViewModel, invoiceManager)
         }
     }
 }

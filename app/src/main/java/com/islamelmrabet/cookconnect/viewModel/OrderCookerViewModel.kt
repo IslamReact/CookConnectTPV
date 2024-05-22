@@ -19,25 +19,25 @@ class OrderCookerViewModel : ViewModel() {
 
     val response: MutableState<Result<Order>> = mutableStateOf(Result.Empty)
 
-    fun fetchOrderDataFlow(): Flow<List<Order>> = callbackFlow{
-        val collectionReference = firestore.collection("orders")
+    fun fetchOrderDataFlow(): Flow<List<Order>> = callbackFlow {
+        val collectionReference = FirebaseFirestore.getInstance().collection("orders")
             .whereEqualTo("ready", false)
 
-        val subscription = collectionReference.addSnapshotListener{ snapshot, exception  ->
-            if (exception  != null) {
-                close(exception )
+        val subscription = collectionReference.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                close(exception)
                 return@addSnapshotListener
             }
-            snapshot?.let {querySnapshot ->
+            snapshot?.let { querySnapshot ->
                 val allOrders = mutableListOf<Order>()
-                for (document in querySnapshot.documents){
+                for (document in querySnapshot.documents) {
                     val order = document.toObject(Order::class.java)
                     order?.let { allOrders.add(it) }
                 }
                 trySend(allOrders).isSuccess
             }
         }
-        awaitClose { subscription.remove()}
+        awaitClose { subscription.remove() }
     }
 
     fun updateOrderReadyStatus(orderDateCreated: String, orderCookerManager: OrderCookerManager, context: Context) {

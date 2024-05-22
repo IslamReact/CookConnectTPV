@@ -1,11 +1,13 @@
 package com.islamelmrabet.cookconnect.ui.screens.commonScreens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,11 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,10 +49,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
+import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import com.islamelmrabet.cookconnect.model.localModels.NavigationItem
 import com.islamelmrabet.cookconnect.model.localModels.cookerNavigationItem
 import com.islamelmrabet.cookconnect.model.localModels.navigationItems
@@ -56,13 +64,15 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
 import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.utils.InvoiceManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewModel: AuthViewModel, mainViewModel: MainViewModel){
+fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewModel: AuthViewModel, mainViewModel: MainViewModel, invoiceManager: InvoiceManager, invoiceViewModel: InvoiceViewModel){
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
     val buttonColors = ButtonDefaults.outlinedButtonColors(
@@ -78,6 +88,8 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
     var workerEmail by rememberSaveable { mutableStateOf("") }
     var workerRole by rememberSaveable { mutableStateOf("") }
     var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
+    val allInvoices by invoiceViewModel.fetchInvoiceDataFlow().collectAsState(initial = emptyList())
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -179,7 +191,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                         modifier = Modifier
                             .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
                     ) {
-                        Icon(imageVector = Icons.Filled.AccountBalance, contentDescription = "table")
+                        Icon(imageVector = Icons.Filled.AccountBalance, contentDescription = "account balance")
                         Text(
                             text = stringResource(id = R.string.invoice_search_header),
                             modifier = Modifier.padding(start = 10.dp)
@@ -211,8 +223,88 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
+
+                    ShowLazyListOfInvoices(allInvoices, invoiceViewModel, context, invoiceManager)
                 }
             }
         )
+    }
+}
+
+@Composable
+fun ShowLazyListOfInvoices(invoices: List<Invoice>, invoiceViewModel: InvoiceViewModel, context: Context, invoiceManager: InvoiceManager) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        invoices.forEach() {invoice ->
+            item{
+                InvoiceCard(invoice)
+            }
+        }
+    }
+}
+
+@Composable
+fun InvoiceCard(invoice: Invoice) {
+    Card(
+        modifier = Modifier
+            .padding(4.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 15.dp
+        ),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.onTertiary,
+            contentColor = MaterialTheme.colorScheme.scrim,
+            disabledContainerColor = MaterialTheme.colorScheme.outline,
+            disabledContentColor = MaterialTheme.colorScheme.outline
+        ),
+    ) {
+        Row (
+            modifier = Modifier
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "$${invoice.price}",
+                    fontSize = 25.sp,
+                )
+                Text(
+                    text = invoice.invoiceDateCreated.toString(),
+                    fontSize = 15.sp,
+                )
+            }
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center
+            ){
+                Box(
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(100.dp)
+                        .background(
+                            color = if (invoice.isPayed) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            },
+                            shape = RoundedCornerShape(8.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (invoice.isPayed) "Pagado" else "No pagado",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+            }
+        }
     }
 }

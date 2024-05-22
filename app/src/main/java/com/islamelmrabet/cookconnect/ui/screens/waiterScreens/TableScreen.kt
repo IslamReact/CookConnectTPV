@@ -325,7 +325,7 @@ private fun ModalBottomSheetAddTable(
 @Composable
 fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 100.dp),
+        columns = GridCells.Adaptive(minSize = 120.dp),
         userScrollEnabled = true
     ) {
         tables.forEachIndexed { _, table ->

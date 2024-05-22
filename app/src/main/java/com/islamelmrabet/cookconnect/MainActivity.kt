@@ -15,11 +15,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.islamelmrabet.cookconnect.navigation.AppNavigation
 import com.islamelmrabet.cookconnect.ui.CookConnectContent
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import com.islamelmrabet.cookconnect.viewModel.SharedViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 class MainActivity : ComponentActivity() {
@@ -34,11 +34,11 @@ class MainActivity : ComponentActivity() {
         val mainViewModel by viewModels<MainViewModel>()
         val orderViewModel by viewModels<OrderViewModel>()
         val orderCookerViewModel by viewModels<OrderCookerViewModel>()
-        val sharedViewModel by viewModels<SharedViewModel>()
+        val invoiceViewModel by viewModels<InvoiceViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this,authViewModel,productViewModel,tableViewModel,mainViewModel,orderViewModel, orderCookerViewModel, sharedViewModel)
+               AppNavigation(this,authViewModel,productViewModel,tableViewModel,mainViewModel,orderViewModel, orderCookerViewModel,invoiceViewModel)
             }
         }
     }

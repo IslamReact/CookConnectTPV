@@ -20,12 +20,15 @@ class OrderViewModel : ViewModel() {
     fun setOrderOrderSummary(order: Order) {
         _orderOrderSummary.value = order
     }
-    fun addOrder(order: Order, orderManager: OrderManager, context: Context) {
-        when (val result = orderManager.addOrderManager(order)) {
-            else -> {
-                Toast.makeText(context, "Order successfully sent to kitchen", Toast.LENGTH_SHORT).show()
+    fun addOrder(order: Order, context: Context) {
+        orderManager.addOrderManager(order)
+            .thenAccept { success ->
+                if (success) {
+                    Toast.makeText(context, "Order successfully sent to kitchen", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to send order to kitchen", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
     }
 
     suspend fun getOrder(tableNumber: Int): Order? {
@@ -36,5 +39,20 @@ class OrderViewModel : ViewModel() {
         } else {
             null
         }
+    }
+
+    fun deleteOrder(tableNumber: Int, context: Context) {
+        orderManager.deleteOrderManager(tableNumber)
+            .thenAccept { success ->
+                if (success) {
+                    Toast.makeText(context, "Order successfully deleted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to delete order", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    fun clearOrderOrderSummary() {
+        _orderOrderSummary.value = Order()
     }
 }

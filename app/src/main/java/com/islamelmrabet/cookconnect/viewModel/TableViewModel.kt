@@ -64,10 +64,10 @@ class TableViewModel : ViewModel() {
         val result = tableManager.updateTableOrderStatus(tableNumber, alreadyGotOrder)
         when (result) {
             is TableRes.Success -> {
-
+                Log.d("Estado de la mesa sobre el pedido", "Correctamente establecido a $alreadyGotOrder")
             }
             is TableRes.Error -> {
-
+                Log.d("Estado de la mesa sobre el pedido", "No se puedo establecer el estado a $alreadyGotOrder de la mesa $tableNumber")
             }
         }
     }
@@ -76,10 +76,10 @@ class TableViewModel : ViewModel() {
         val result = tableManager.updateIsReadyOrderStatus(tableNumber, isReadyOrder)
         when (result) {
             is TableRes.Success -> {
-
+                Log.d("Estado del pedido de cocina a mesa", "Correctamente establecido a $isReadyOrder")
             }
             is TableRes.Error -> {
-
+                Log.d("Estado del pedido de cocina a mesa", "Correctamente establecido a $isReadyOrder")
             }
         }
     }
