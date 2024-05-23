@@ -15,6 +15,7 @@ import com.islamelmrabet.cookconnect.ui.screens.commonScreens.InvoiceScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.SplashScreen
 import com.islamelmrabet.cookconnect.ui.screens.commonScreens.WelcomeScreen
 import com.islamelmrabet.cookconnect.ui.screens.cookerScreens.OrderCookerScreen
+import com.islamelmrabet.cookconnect.ui.screens.onBoardingScreens.FirstOnBoardingScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.AddProductScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.EditProductScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
@@ -32,11 +33,12 @@ import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
+import com.islamelmrabet.cookconnect.viewModel.PreferencesViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
 @Composable
-fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel, orderViewModel: OrderViewModel, orderCookerViewModel: OrderCookerViewModel, invoiceViewModel: InvoiceViewModel) {
+fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewModel: ProductViewModel, tableViewModel : TableViewModel,mainViewModel: MainViewModel, orderViewModel: OrderViewModel, orderCookerViewModel: OrderCookerViewModel, invoiceViewModel: InvoiceViewModel, preferencesViewModel: PreferencesViewModel) {
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
@@ -48,10 +50,13 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
     val user: FirebaseUser? = authManager.getCurrentUser()
 
     NavHost(navController = navController,
-        startDestination = Routes.SplashScreen.route,
+        startDestination = Routes.FisrtOnBoardingScreen.route,
     ){
         composable(Routes.SplashScreen.route) {
-            SplashScreen(navController)
+            SplashScreen(navController, preferencesViewModel)
+        }
+        composable(Routes.FisrtOnBoardingScreen.route) {
+            FirstOnBoardingScreen(navController, preferencesViewModel)
         }
         composable(Routes.WelcomeScreen.route) {
             WelcomeScreen(navController)

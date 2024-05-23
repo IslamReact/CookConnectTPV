@@ -2,7 +2,7 @@ package com.islamelmrabet.cookconnect.model.localModels
 
 import com.islamelmrabet.cookconnect.navigation.Routes
 
-class SettingItem (
+data class SettingItem (
     val title: String,
     val route : String,
 )

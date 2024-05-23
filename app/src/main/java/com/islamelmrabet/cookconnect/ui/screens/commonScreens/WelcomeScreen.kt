@@ -86,7 +86,6 @@ fun WelcomeScreen(navController: NavController) {
         modifier = Modifier.padding(start = 25.dp, top = 60.dp, end = 25.dp, bottom = 10.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        // Primera row: Bienvenido a ItemPOS
         Text(
             text = stringResource(id = R.string.welcome),
             fontWeight = FontWeight.Bold,
@@ -94,8 +93,6 @@ fun WelcomeScreen(navController: NavController) {
             lineHeight = 32.sp,
             letterSpacing = 0.5.sp
         )
-
-        // Segunda row: Descripción
         Text(
             modifier = Modifier.padding(top = 15.dp),
             text = stringResource(id = R.string.welcome_text),
@@ -104,8 +101,6 @@ fun WelcomeScreen(navController: NavController) {
             letterSpacing = 0.5.sp,
             textAlign = TextAlign.Justify
         )
-
-        // Tercera row: Lista desplegable
         Row(
             modifier = Modifier
                 .padding(vertical = 30.dp)
@@ -114,7 +109,6 @@ fun WelcomeScreen(navController: NavController) {
             if (loading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp))
             } else {
-                // Mostrar menú desplegable solo cuando los datos están cargados
                 ExposedDropdownMenuBox(
                     expanded = expandedState,
                     onExpandedChange = { expandedState = !expandedState },
@@ -166,7 +160,6 @@ fun WelcomeScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.weight(0.5f))
 
-        // Cuarta row: Botones
         Row {
             BasicButton(
                 buttonText = stringResource(id = R.string.register),

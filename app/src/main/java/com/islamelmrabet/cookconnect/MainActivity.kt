@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,8 +20,10 @@ import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
+import com.islamelmrabet.cookconnect.viewModel.PreferencesViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,13 +38,16 @@ class MainActivity : ComponentActivity() {
         val orderViewModel by viewModels<OrderViewModel>()
         val orderCookerViewModel by viewModels<OrderCookerViewModel>()
         val invoiceViewModel by viewModels<InvoiceViewModel>()
+        val preferencesViewModel by viewModels<PreferencesViewModel>()
 
         setContent {
             CookConnectContent {
-               AppNavigation(this,authViewModel,productViewModel,tableViewModel,mainViewModel,orderViewModel, orderCookerViewModel,invoiceViewModel)
+               AppNavigation(this,authViewModel,productViewModel,tableViewModel,mainViewModel,orderViewModel, orderCookerViewModel,invoiceViewModel, preferencesViewModel)
             }
         }
+
     }
+
 
     private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -74,6 +80,13 @@ class MainActivity : ComponentActivity() {
             Log.d("FCM TOKEN", token.toString())
         })
     }
+
+     fun onBackPressedCallback() {
+        super.onBackPressedDispatcher
+        Toast.makeText(this@MainActivity, "There is no back action", Toast.LENGTH_LONG).show()
+        return
+    }
+
 }
 
 

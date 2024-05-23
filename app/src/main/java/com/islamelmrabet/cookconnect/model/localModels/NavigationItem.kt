@@ -15,7 +15,7 @@ import androidx.compose.material.icons.outlined.TableBar
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.islamelmrabet.cookconnect.navigation.Routes
 
-class NavigationItem (
+data class NavigationItem (
     val title: String,
     val selectedIcon : ImageVector,
     val unselectedIcon : ImageVector,

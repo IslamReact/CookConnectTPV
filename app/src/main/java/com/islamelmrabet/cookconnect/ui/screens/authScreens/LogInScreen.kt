@@ -195,14 +195,16 @@ private suspend fun emailPassSignIn(
             Toast.makeText(context, "Inicio de sesion correcto", Toast.LENGTH_SHORT).show()
             when (userRole) {
                 "Cocinero" -> {
-                    navigation.navigate(Routes.OrderCookerScreen.route) {
+                    navigation.navigate(Routes.OrderCookerScreen.route){
                         popUpTo(Routes.LogInScreen.route) { inclusive = true }
+                        popUpTo(Routes.WelcomeScreen.route) { inclusive = true }
                     }
                 }
 
                 "Camarero" -> {
                     navigation.navigate(Routes.TableScreen.route) {
                         popUpTo(Routes.LogInScreen.route) { inclusive = true }
+                        popUpTo(Routes.WelcomeScreen.route) { inclusive = true }
                     }
                 }
 
