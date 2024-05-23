@@ -21,12 +21,15 @@ import kotlinx.coroutines.tasks.await
 
 
 class ProductViewModel : ViewModel() {
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("products")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("products")
 
+    private val productManager = ProductManager()
     private val _productList = MutableLiveData<List<Product>>()
     val productList: LiveData<List<Product>> get() = _productList
 
     val response: MutableState<Result<Product>> = mutableStateOf(Result.Empty)
+
     init {
         fetchProductData()
     }
@@ -45,7 +48,8 @@ class ProductViewModel : ViewModel() {
             if (productId != null) {
                 val result = productManager.deleteProduct(productId)
                 if (result is TableRes.Success) {
-                    Toast.makeText(context, "Product deleted successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Product deleted successfully", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     Toast.makeText(context, "Error deleting product", Toast.LENGTH_SHORT).show()
                 }
@@ -55,10 +59,15 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    fun updateProduct(originalProductName : String,product: Product, productManager: ProductManager, context: Context) {
+    fun updateProduct(
+        originalProductName: String,
+        product: Product,
+        productManager: ProductManager,
+        context: Context
+    ) {
         viewModelScope.launch {
             val productId = productManager.getProductDocumentIdByName(originalProductName)
-            if (productId!= null) {
+            if (productId != null) {
                 val productName: String = product.productName
                 val quantity: Int = product.quantity
                 val unitPrice = product.unitPrice
@@ -71,7 +80,8 @@ class ProductViewModel : ViewModel() {
                 )
                 val result = productManager.updateProduct(productId, newProduct)
                 if (result is TableRes.Success) {
-                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     Toast.makeText(context, "Error updating product", Toast.LENGTH_SHORT).show()
                 }
@@ -98,7 +108,8 @@ class ProductViewModel : ViewModel() {
                 Log.d("FetchProductData", "Products fetched successfully: ${productTempList.size}")
             } else {
                 Log.e("FetchProductData", "Error fetching products", task.exception)
-                response.value = Result.Failure("Error fetching products: ${task.exception?.message}")
+                response.value =
+                    Result.Failure("Error fetching products: ${task.exception?.message}")
             }
         }
     }
@@ -113,4 +124,34 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    fun updateProductQuantities(productCountMap: Map<Product, Int>, context: Context) {
+        viewModelScope.launch {
+            val db = FirebaseFirestore.getInstance()
+            productCountMap.forEach { (product, count) ->
+                val newQuantity = product.quantity - count
+                if (newQuantity >= 0) {
+                    val productId = productManager.getProductDocumentIdByName(product.productName)
+                    if (productId != null) {
+                        val productRef = db.collection("products").document(productId)
+                        productRef.update("quantity", newQuantity).addOnSuccessListener {
+                            Log.d("UpdateProduct", "Product quantity updated successfully")
+                        }.addOnFailureListener { e ->
+                            Log.e("UpdateProduct", "Error updating product quantity", e)
+                            Toast.makeText(
+                                context,
+                                "Error updating product quantity",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Not enough quantity for product: ${product.productName}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }

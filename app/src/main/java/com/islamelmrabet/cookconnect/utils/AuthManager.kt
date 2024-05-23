@@ -13,8 +13,8 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Worker
 import kotlinx.coroutines.tasks.await
 
 sealed class AuthRes<out T> {
-    data class Success<T>(val data: T): AuthRes<T>()
-    data class Error(val errorMessage: String): AuthRes<Nothing>()
+    data class Success<T>(val data: T) : AuthRes<T>()
+    data class Error(val errorMessage: String) : AuthRes<Nothing>()
 }
 
 class AuthManager(private val context: Context) {
@@ -23,22 +23,29 @@ class AuthManager(private val context: Context) {
     private val signInClient = Identity.getSignInClient(context)
 
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String, worker: Worker): AuthRes<FirebaseUser?> {
+    suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+        worker: Worker
+    ): AuthRes<FirebaseUser?> {
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             createWorker(worker)
             AuthRes.Success(authResult.user)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             AuthRes.Error(e.message ?: "Error al crear el usuario")
         }
     }
 
-    suspend fun signInWithEmailAndPassword(email: String, password: String): AuthRes<FirebaseUser?> {
+    suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ): AuthRes<FirebaseUser?> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
             updateLastLoginDate(authResult.user?.uid)
             AuthRes.Success(authResult.user)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             AuthRes.Error(e.message ?: "Error al iniciar sesión")
         }
     }
@@ -47,7 +54,7 @@ class AuthManager(private val context: Context) {
         return try {
             auth.sendPasswordResetEmail(email).await()
             AuthRes.Success(Unit)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             AuthRes.Error(e.message ?: "Error al restablecer la contraseña")
         }
     }
@@ -56,7 +63,7 @@ class AuthManager(private val context: Context) {
         auth.signOut()
     }
 
-    fun getCurrentUser(): FirebaseUser?{
+    fun getCurrentUser(): FirebaseUser? {
         return auth.currentUser
     }
 
@@ -89,7 +96,7 @@ class AuthManager(private val context: Context) {
                     Log.e("AuthManager", "User document does not exist for UID: $uid")
                 }
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.e("AuthManager", "Error updating last login date: ${e.message}")
         }
     }

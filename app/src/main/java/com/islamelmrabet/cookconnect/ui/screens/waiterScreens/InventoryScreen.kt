@@ -18,18 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Inventory
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
@@ -47,20 +44,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -72,17 +64,23 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
-import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
+import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun InventoryScreen(auth: AuthManager, navController: NavHostController,authViewModel: AuthViewModel, productViewModel: ProductViewModel, mainViewModel: MainViewModel){
+fun InventoryScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    productViewModel: ProductViewModel,
+    mainViewModel: MainViewModel
+) {
 
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -100,24 +98,24 @@ fun InventoryScreen(auth: AuthManager, navController: NavHostController,authView
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet (
+            ModalDrawerSheet(
                 drawerContainerColor = MaterialTheme.colorScheme.primary
-            ){
+            ) {
                 DrawerHeader()
                 navigationItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion"){
+                            if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
-                            }else{
+                            } else {
                                 navController.navigate(item.route)
 
                             }
@@ -128,7 +126,7 @@ fun InventoryScreen(auth: AuthManager, navController: NavHostController,authView
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == selectedItemIndex){
+                                imageVector = if (index == selectedItemIndex) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title,
@@ -148,7 +146,7 @@ fun InventoryScreen(auth: AuthManager, navController: NavHostController,authView
                 HeaderFooter(lastLogInDate)
             }
         },
-    ){
+    ) {
         Scaffold(
             topBar = {
                 CookerAndWaiterAppBar(
@@ -217,7 +215,7 @@ fun InventoryScreen(auth: AuthManager, navController: NavHostController,authView
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    SetData(productViewModel,navController)
+                    SetData(productViewModel, navController)
                 }
             }
         )
@@ -236,9 +234,11 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
                 CircularProgressIndicator()
             }
         }
+
         is Result.Success -> {
             ShowLazyListOfProducts(result.data, navController)
         }
+
         is Result.Failure -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -247,6 +247,7 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
                 Text(text = result.message)
             }
         }
+
         is Result.Empty -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -255,6 +256,7 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
                 Text(text = "No products found")
             }
         }
+
         else -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -275,7 +277,7 @@ fun ShowLazyListOfProducts(products: List<Product>, navController: NavController
             .fillMaxSize()
     ) {
         items(products) { product ->
-            ProductCard(product, navController )
+            ProductCard(product, navController)
         }
     }
 }
@@ -286,7 +288,7 @@ fun ProductCard(product: Product, navController: NavController) {
     Card(
         onClick = {
             navController.navigate("${Routes.EditProductScreen.route}/${product.productName}")
-                  },
+        },
         modifier = Modifier
             .padding(4.dp)
             .height(35.dp),
@@ -294,7 +296,7 @@ fun ProductCard(product: Product, navController: NavController) {
             defaultElevation = 15.dp
         ),
         border = BorderStroke(
-            0.3.dp,MaterialTheme.colorScheme.primary
+            0.3.dp, MaterialTheme.colorScheme.primary
         ),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onTertiary,
@@ -303,17 +305,18 @@ fun ProductCard(product: Product, navController: NavController) {
             disabledContentColor = MaterialTheme.colorScheme.outline
         ),
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-        ){
+        ) {
             Text(
                 text = product.productName,
-                Modifier.padding(start = 10.dp))
+                Modifier.padding(start = 10.dp)
+            )
             Spacer(modifier = Modifier.weight(1f))
-            Box (
+            Box(
                 modifier = Modifier
                     .background(
                         color = if (product.quantity > 10) {
@@ -326,7 +329,7 @@ fun ProductCard(product: Product, navController: NavController) {
                     .fillMaxHeight()
                     .width(70.dp),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     text = product.quantity.toString(),
                     color = MaterialTheme.colorScheme.onPrimary

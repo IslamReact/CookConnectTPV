@@ -50,12 +50,16 @@ import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, productViewModel: ProductViewModel, productManager: ProductManager){
+fun AddProductScreen(
+    auth: AuthManager,
+    navCotroller: NavHostController,
+    productViewModel: ProductViewModel,
+    productManager: ProductManager
+) {
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -63,7 +67,7 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
     val buttonColors = ButtonDefaults.buttonColors(
         containerColor = primaryColor
     )
-    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores","Verdura",)
+    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
     var isButtonEnabled by remember { mutableStateOf(false) }
@@ -111,9 +115,10 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     value = productName,
                     onValueChange = onProductNameChange,
                     placeholder = {
-                        Text(text = "Azucar Hacendado...") },
+                        Text(text = "Azucar Hacendado...")
+                    },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola" )
+                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola")
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -134,7 +139,7 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     value = quantity.toString(),
                     onValueChange = { onQuantityChange(it.toIntOrNull() ?: 0) },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola" )
+                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -155,7 +160,7 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     value = unitPrice.toString(),
                     onValueChange = { onUnitPriceChange(it.toDoubleOrNull() ?: 0.00) },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola" )
+                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -172,7 +177,7 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                 ) {
@@ -209,16 +214,21 @@ fun AddProductScreen(auth: AuthManager, navCotroller: NavHostController, product
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Column (
+                Column(
                     modifier = Modifier
                         .padding(bottom = 16.dp),
                 ) {
                     BasicLongButton(
                         buttonText = "Añadir Producto",
                         onClick = {
-                            val product = Product(productName = productName, unitPrice = unitPrice, quantity = quantity, category = selectedItem )
+                            val product = Product(
+                                productName = productName,
+                                unitPrice = unitPrice,
+                                quantity = quantity,
+                                category = selectedItem
+                            )
                             scope.launch {
-                                productViewModel.addProduct(product,productManager,context)
+                                productViewModel.addProduct(product, productManager, context)
                             }
                             setQuantity(0)
                             setUnitPrice(0.00)

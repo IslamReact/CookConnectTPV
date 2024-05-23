@@ -26,10 +26,10 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController : NavHostController) {
+fun SplashScreen(navController: NavHostController) {
     // TODO: Implement the SplashScreen
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         delay(5000)
         navController.popBackStack()
         navController.navigate(Routes.WelcomeScreen.route)
@@ -56,5 +56,5 @@ fun Splash() {
 @Preview(showBackground = true)
 @Composable
 fun SplashScreenPreview() {
-        Splash()
+    Splash()
 }

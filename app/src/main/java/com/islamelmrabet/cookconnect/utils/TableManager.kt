@@ -32,7 +32,7 @@ class TableManager(context: Context) {
         return completableFuture
     }
 
-    fun updateTableOrderStatus(tableNumber: Int, alreadyGotOrder : Boolean): TableRes<Unit> {
+    fun updateTableOrderStatus(tableNumber: Int, alreadyGotOrder: Boolean): TableRes<Unit> {
         return try {
             collectionReference
                 .whereEqualTo("number", tableNumber)
@@ -66,7 +66,7 @@ class TableManager(context: Context) {
         }
     }
 
-    fun updateIsReadyOrderStatus(tableNumber: Int, orderIsReady : Boolean): TableRes<Unit> {
+    fun updateIsReadyOrderStatus(tableNumber: Int, orderIsReady: Boolean): TableRes<Unit> {
         return try {
             collectionReference
                 .whereEqualTo("number", tableNumber)

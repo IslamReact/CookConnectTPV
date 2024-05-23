@@ -1,4 +1,3 @@
-
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.content.Context
@@ -90,7 +89,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TableScreen( auth: AuthManager, navController: NavHostController, tableManager: TableManager,authViewModel: AuthViewModel, tableViewModel: TableViewModel, mainViewModel: MainViewModel) {
+fun TableScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    tableManager: TableManager,
+    authViewModel: AuthViewModel,
+    tableViewModel: TableViewModel,
+    mainViewModel: MainViewModel
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -122,24 +128,24 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet (
+            ModalDrawerSheet(
                 drawerContainerColor = MaterialTheme.colorScheme.primary
-            ){
+            ) {
                 DrawerHeader()
                 navigationItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion"){
+                            if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
-                            }else{
+                            } else {
                                 navController.navigate(item.route)
 
                             }
@@ -150,7 +156,7 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == selectedItemIndex){
+                                imageVector = if (index == selectedItemIndex) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title,
@@ -170,66 +176,67 @@ fun TableScreen( auth: AuthManager, navController: NavHostController, tableManag
                 HeaderFooter(lastLogInDate)
             }
         },
-    ){
-    Scaffold(
-        topBar = {
-            CookerAndWaiterAppBar(
-                stringResource(id = R.string.table_screen_header),
-                onClick = {
-                    scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open() else close()
+    ) {
+        Scaffold(
+            topBar = {
+                CookerAndWaiterAppBar(
+                    stringResource(id = R.string.table_screen_header),
+                    onClick = {
+                        scope.launch {
+                            drawerState.apply {
+                                if (isClosed) open() else close()
+                            }
+                        }
                     }
-                }}
-            )
-        },
-        content = { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
+                )
+            },
+            content = { contentPadding ->
+                Column(
                     modifier = Modifier
-                        .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
+                        .padding(contentPadding)
+                        .fillMaxSize()
                 ) {
-                    Icon(imageVector = Icons.Default.TableBar, contentDescription = "table" )
-                    Text(
-                        text = stringResource(id = R.string.table_screen_header),
-                        modifier = Modifier.padding(start = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.TableBar, contentDescription = "table")
+                        Text(
+                            text = stringResource(id = R.string.table_screen_header),
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .size(1.dp, 30.dp)
+                                .background(color = Color.Gray)
+                                .fillMaxHeight()
+                        )
+                        Spacer(modifier = Modifier.width(15.dp))
+                        IconButton(
+                            onClick = { showDialogState.value = true },
+                            modifier = Modifier
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.AddCircleOutline,
+                                contentDescription = ""
+                            )
+                        }
+                    }
                     Box(
                         modifier = Modifier
-                            .size(1.dp, 30.dp)
-                            .background(color = Color.Gray)
-                            .fillMaxHeight()
+                            .fillMaxWidth()
+                            .padding(top = 0.dp)
+                            .shadow(5.dp)
+                            .height(1.dp)
+                            .background(color = Color.Transparent)
                     )
-                    Spacer(modifier = Modifier.width(15.dp))
-                    IconButton(
-                        onClick = { showDialogState.value = true },
-                        modifier = Modifier
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.AddCircleOutline,
-                            contentDescription = ""
-                        )
-                    }
+                    ShowLazyListOfTables(allTables, navController)
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 0.dp)
-                        .shadow(5.dp)
-                        .height(1.dp)
-                        .background(color = Color.Transparent)
-                )
-                ShowLazyListOfTables(allTables,navController)
             }
-        }
-    )
+        )
         if (showDialogState.value) {
             ModalBottomSheetAddTable(
                 showDialogState = showDialogState,
@@ -329,7 +336,7 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
         userScrollEnabled = true
     ) {
         tables.forEachIndexed { _, table ->
-            item{
+            item {
                 TableIcon(table, navController)
             }
         }
@@ -372,7 +379,7 @@ fun TableIcon(table: Table, navController: NavController) {
                         painter = painterResource(id = R.drawable.order_large_table),
                         contentDescription = "table icon",
                     )
-                }else {
+                } else {
                     Image(
                         painter = painterResource(id = R.drawable.order_table),
                         contentDescription = "table icon",
@@ -400,7 +407,7 @@ fun TableIcon(table: Table, navController: NavController) {
                         )
                         .padding(1.dp),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Order Ready",

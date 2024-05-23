@@ -1,6 +1,5 @@
 package com.islamelmrabet.cookconnect.utils
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -9,10 +8,11 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CompletableFuture
 
-class ProductManager(private val context: Context) {
+class ProductManager() {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("products")
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("products")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("products")
 
     fun addProduct(product: Product): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
@@ -47,14 +47,14 @@ class ProductManager(private val context: Context) {
     fun updateProduct(productId: String, product: Product): TableRes<Unit> {
         return try {
             collectionReference
-               .document(productId)
-               .set(product)
-               .addOnSuccessListener {
+                .document(productId)
+                .set(product)
+                .addOnSuccessListener {
                     Log.d("Product", "Product updated successfully")
                 }
             TableRes.Success(Unit)
         } catch (e: Exception) {
-            TableRes.Error(e.message?: "Error updating Product")
+            TableRes.Error(e.message ?: "Error updating Product")
         }
     }
 

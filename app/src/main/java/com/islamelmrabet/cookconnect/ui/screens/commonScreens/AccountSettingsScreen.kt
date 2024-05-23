@@ -36,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -69,7 +68,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,authViewModel: AuthViewModel,mainViewModel: MainViewModel){
+fun AccountSettingsScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    mainViewModel: MainViewModel
+) {
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
@@ -81,9 +85,9 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
     val scope = rememberCoroutineScope()
     val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
-    var workerName by rememberSaveable { mutableStateOf("")}
-    var workerID by rememberSaveable { mutableStateOf("")}
-    var workerEmail by rememberSaveable { mutableStateOf("")}
+    var workerName by rememberSaveable { mutableStateOf("") }
+    var workerID by rememberSaveable { mutableStateOf("") }
+    var workerEmail by rememberSaveable { mutableStateOf("") }
     var workerRole by rememberSaveable { mutableStateOf("") }
     var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
 
@@ -114,24 +118,24 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet (
+            ModalDrawerSheet(
                 drawerContainerColor = MaterialTheme.colorScheme.primary
-            ){
+            ) {
                 DrawerHeader()
                 currentWorkerMenu.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion"){
+                            if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
-                            }else{
+                            } else {
                                 navController.navigate(item.route)
 
                             }
@@ -142,7 +146,7 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == selectedItemIndex){
+                                imageVector = if (index == selectedItemIndex) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title,
@@ -162,7 +166,7 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                 HeaderFooter(lastLogInDate)
             }
         },
-    ){
+    ) {
         Scaffold(
             topBar = {
                 CookerAndWaiterAppBar(
@@ -172,21 +176,22 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                             drawerState.apply {
                                 if (isClosed) open() else close()
                             }
-                        }}
+                        }
+                    }
                 )
             },
             content = { contentPadding ->
-                Column (
+                Column(
                     modifier = Modifier
                         .padding(contentPadding)
                         .fillMaxSize()
-                ){
-                    Row (
+                ) {
+                    Row(
                         modifier = Modifier
-                           .padding(16.dp),
+                            .padding(16.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.profile_male_png),
                             contentDescription = "",
@@ -194,7 +199,7 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                         )
                         Column(
                             modifier = Modifier
-                               .padding(horizontal = 16.dp),
+                                .padding(horizontal = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.Start
                         ) {
@@ -235,10 +240,10 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                         }
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Column (
+                    Column(
                         modifier = Modifier
                             .padding(16.dp),
-                        ){
+                    ) {
                         Text(
                             text = "Item POS 1.0v",
                             textAlign = TextAlign.End,
@@ -249,10 +254,10 @@ fun AccountSettingsScreen(auth: AuthManager, navController: NavHostController,au
                             buttonText = stringResource(id = R.string.logOut),
                             lessRoundedShape = lessRoundedShape,
                             buttonColors = buttonColors,
-                            border = BorderStroke(1.dp, color =  MaterialTheme.colorScheme.error),
+                            border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
                             onClick = {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true

@@ -58,7 +58,13 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EditProductScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, productManager: ProductManager, productNameToEdit: String?){
+fun EditProductScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    productViewModel: ProductViewModel,
+    productManager: ProductManager,
+    productNameToEdit: String?
+) {
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -71,7 +77,7 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
         contentColor = MaterialTheme.colorScheme.error,
     )
 
-    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores","Verdura",)
+    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
     var isButtonEnabled by remember { mutableStateOf(false) }
@@ -254,7 +260,12 @@ fun EditProductScreen(auth: AuthManager, navController: NavHostController, produ
                             category = selectedItem
                         )
                         if (productNameToEdit != null) {
-                            productViewModel.updateProduct(productNameToEdit,product,productManager,context)
+                            productViewModel.updateProduct(
+                                productNameToEdit,
+                                product,
+                                productManager,
+                                context
+                            )
                             navController.navigate(Routes.InventoryScreen.route)
                         }
                     },

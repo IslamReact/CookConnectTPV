@@ -2,6 +2,8 @@ package com.islamelmrabet.cookconnect.ui.screens.cookerScreens
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -214,10 +217,18 @@ fun ShowLazyListOfOrders(orders: List<Order>, orderCookerViewModel: OrderCookerV
     ) {
         orders.forEachIndexed { _, order ->
             item {
-                OrderCard(order, onOrderReadyClick = {
-                    orderCookerViewModel.updateOrderReadyStatus(order.orderDateCreated, orderCookerManager, context)
-                    tableViewModel.updateReadyOrderStatus(order.tableNumber, tableManager, context, true)
-                })
+                var visible by remember { mutableStateOf(true) }
+
+                AnimatedVisibility(
+                    visible = visible,
+                    exit = slideOutVertically()
+                ) {
+                    OrderCard(order, onOrderReadyClick = {
+                        orderCookerViewModel.updateOrderReadyStatus(order.orderDateCreated, orderCookerManager, context)
+                        tableViewModel.updateReadyOrderStatus(order.tableNumber, tableManager, context, true)
+                        visible = false
+                    })
+                }
             }
         }
     }

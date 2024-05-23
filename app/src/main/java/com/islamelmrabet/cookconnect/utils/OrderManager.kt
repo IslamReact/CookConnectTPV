@@ -10,7 +10,8 @@ import java.util.concurrent.CompletableFuture
 class OrderManager() {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("orders")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("orders")
 
     // Function to add a new order
     fun addOrderManager(order: Order): CompletableFuture<Boolean> {

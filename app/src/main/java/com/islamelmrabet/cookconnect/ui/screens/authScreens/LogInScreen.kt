@@ -1,4 +1,3 @@
-
 package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
@@ -54,7 +53,12 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: String? = null, authViewModel: AuthViewModel) {
+fun LogInScreen(
+    auth: AuthManager,
+    navController: NavController,
+    initialEmail: String? = null,
+    authViewModel: AuthViewModel
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -66,7 +70,7 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     val (password, setPassword) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val userRole  = remember { mutableStateOf("") }
+    val userRole = remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var isButtonEnabled by remember { mutableStateOf(false) }
 
@@ -97,17 +101,17 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
         },
         content = { contentPadding ->
             Column(
-            modifier = Modifier
-                .padding(start = 25.dp, end = 25.dp)
-                .padding(top = contentPadding.calculateTopPadding() + 30.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .padding(start = 25.dp, end = 25.dp)
+                    .padding(top = contentPadding.calculateTopPadding() + 30.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextFieldLogin(
                     labelEmailText = stringResource(id = R.string.email),
-                    labelEmailTextField =  stringResource(id = R.string.email_example),
+                    labelEmailTextField = stringResource(id = R.string.email_example),
                     labelPasswordText = stringResource(id = R.string.password),
-                    labelPasswordTextField =  stringResource(id = R.string.password_label),
+                    labelPasswordTextField = stringResource(id = R.string.password_label),
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
                     emailValue = email,
@@ -127,7 +131,14 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
                         isLoading = true
                         scope.launch {
                             try {
-                                emailPassSignIn(email, password, auth, context, navController, userRole.value)
+                                emailPassSignIn(
+                                    email,
+                                    password,
+                                    auth,
+                                    context,
+                                    navController,
+                                    userRole.value
+                                )
                             } finally {
                                 isLoading = false
                             }
@@ -171,29 +182,40 @@ fun LogInScreen(auth: AuthManager, navController: NavController, initialEmail: S
     )
 }
 
-private suspend fun emailPassSignIn(email: String, password: String, auth: AuthManager, context: Context, navigation: NavController, userRole: String) {
+private suspend fun emailPassSignIn(
+    email: String,
+    password: String,
+    auth: AuthManager,
+    context: Context,
+    navigation: NavController,
+    userRole: String
+) {
     when (val result = auth.signInWithEmailAndPassword(email, password)) {
         is AuthRes.Success -> {
             Toast.makeText(context, "Inicio de sesion correcto", Toast.LENGTH_SHORT).show()
             when (userRole) {
                 "Cocinero" -> {
                     navigation.navigate(Routes.OrderCookerScreen.route) {
-                        navigation.popBackStack()
+                        popUpTo(Routes.LogInScreen.route) { inclusive = true }
                     }
                 }
+
                 "Camarero" -> {
                     navigation.navigate(Routes.TableScreen.route) {
-                        navigation.popBackStack()
+                        popUpTo(Routes.LogInScreen.route) { inclusive = true }
                     }
                 }
+
                 else -> {
                     Toast.makeText(context, "Rol desconocido: $userRole", Toast.LENGTH_SHORT).show()
                     navigation.navigate(Routes.WelcomeScreen.route)
                 }
             }
         }
+
         is AuthRes.Error -> {
-            Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT)
+                .show()
         }
 
         else -> {

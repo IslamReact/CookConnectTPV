@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
+fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -122,9 +122,9 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                 Spacer(modifier = Modifier.height(50.dp))
                 TextFieldLogin(
                     labelEmailText = stringResource(id = R.string.email),
-                    labelEmailTextField =  stringResource(id = R.string.email_example),
+                    labelEmailTextField = stringResource(id = R.string.email_example),
                     labelPasswordText = stringResource(id = R.string.password),
-                    labelPasswordTextField =  stringResource(id = R.string.password_label),
+                    labelPasswordTextField = stringResource(id = R.string.password_label),
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
                     emailValue = email,
@@ -133,7 +133,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                 ClickableText(
                     text = stringResource(id = R.string.already_got_account),
                     onClick = {
-                          navController.navigate("${Routes.LogInScreen.route}/@gmail.com")
+                        navController.navigate("${Routes.LogInScreen.route}/@gmail.com")
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -143,10 +143,10 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                ){
+                ) {
                     ExposedDropdownMenuBox(
                         expanded = expandedState,
                         onExpandedChange = { expandedState = !expandedState },
@@ -157,7 +157,7 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                             modifier = Modifier.menuAnchor(),
                             onValueChange = {},
                             readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState)}
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
                         )
                         ExposedDropdownMenu(
                             expanded = expandedState,
@@ -181,7 +181,12 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
                 ButtonWithIcon(
                     buttonText = stringResource(id = R.string.register),
                     onClick = {
-                        val worker = Worker(name = name, email = email, userRole = selectedItem, password = password)
+                        val worker = Worker(
+                            name = name,
+                            email = email,
+                            userRole = selectedItem,
+                            password = password
+                        )
                         scope.launch {
                             signUp(email, password, worker, auth, context, navController)
                         }
@@ -219,7 +224,14 @@ fun CreateAccountScreen(auth : AuthManager, navController: NavController) {
     )
 }
 
-private suspend fun signUp(email: String, password: String, worker: Worker, auth: AuthManager, context: Context, navigation: NavController) {
+private suspend fun signUp(
+    email: String,
+    password: String,
+    worker: Worker,
+    auth: AuthManager,
+    context: Context,
+    navigation: NavController
+) {
     when (val result = auth.createUserWithEmailAndPassword(email, password, worker)) {
         is AuthRes.Success -> {
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()

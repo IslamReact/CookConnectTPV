@@ -40,14 +40,20 @@ class OrderCookerViewModel : ViewModel() {
         awaitClose { subscription.remove() }
     }
 
-    fun updateOrderReadyStatus(orderDateCreated: String, orderCookerManager: OrderCookerManager, context: Context) {
+    fun updateOrderReadyStatus(
+        orderDateCreated: String,
+        orderCookerManager: OrderCookerManager,
+        context: Context
+    ) {
         val result = orderCookerManager.updateOrderReadyStatus(orderDateCreated)
         when (result) {
             is TableRes.Success -> {
-                Toast.makeText(context, "Order status updated successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Order status updated successfully", Toast.LENGTH_SHORT)
+                    .show()
             }
+
             is TableRes.Error -> {
-                Toast.makeText(context, "Error updating Order" , Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error updating Order", Toast.LENGTH_SHORT).show()
             }
         }
     }

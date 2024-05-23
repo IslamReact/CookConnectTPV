@@ -62,6 +62,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 
 // TODO: ALL TEXT FIELDS OF THE APP
@@ -177,7 +181,7 @@ fun BasicButton(
     onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick ,
+        onClick = onClick,
         shape = lessRoundedShape,
         modifier = Modifier
             .height(50.dp)
@@ -204,11 +208,11 @@ fun OutlinedBasicButton(
     buttonText: String,
     lessRoundedShape: RoundedCornerShape,
     buttonColors: ButtonColors,
-    border : BorderStroke,
+    border: BorderStroke,
     onClick: () -> Unit
 ) {
     OutlinedButton(
-        onClick = onClick ,
+        onClick = onClick,
         shape = lessRoundedShape,
         modifier = Modifier
             .height(50.dp)
@@ -278,7 +282,7 @@ fun BasicLongButton(
     enabled: Boolean
 ) {
     Button(
-        onClick = onClick,
+        onClick = { onClick() },
         shape = lessRoundedShape,
         modifier = Modifier
             .height(50.dp)
@@ -299,7 +303,7 @@ fun BasicLongButton(
 @Composable
 fun BasicLongButtonWithIcon(
     buttonText: String,
-    secondaryText : String,
+    secondaryText: String,
     onClick: () -> Unit,
     lessRoundedShape: RoundedCornerShape,
     buttonColors: ButtonColors,
@@ -330,8 +334,8 @@ fun BasicLongButtonWithIcon(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                text = secondaryText,
-                modifier = Modifier.padding(end = 4.dp)
+                    text = secondaryText,
+                    modifier = Modifier.padding(end = 4.dp)
                 )
             }
         }
@@ -341,7 +345,7 @@ fun BasicLongButtonWithIcon(
 // TODO: APP BAR
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppBar(navController: NavController, topAppBarText : String, route: String) {
+fun AppBar(navController: NavController, topAppBarText: String, route: String) {
     Box {
         CenterAlignedTopAppBar(
             title = {
@@ -386,7 +390,7 @@ fun AppBar(navController: NavController, topAppBarText : String, route: String) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CookerAndWaiterAppBar(topAppBarText : String, onClick: () -> Unit) {
+fun CookerAndWaiterAppBar(topAppBarText: String, onClick: () -> Unit) {
     Box {
         CenterAlignedTopAppBar(
             title = {
@@ -405,7 +409,7 @@ fun CookerAndWaiterAppBar(topAppBarText : String, onClick: () -> Unit) {
                 containerColor = MaterialTheme.colorScheme.background
             ),
             navigationIcon = {
-                IconButton(onClick = onClick ) {
+                IconButton(onClick = onClick) {
                     Icon(
                         Icons.Default.Menu,
                         contentDescription = "Back",
@@ -477,9 +481,11 @@ fun DrawerHeader() {
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp))
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp)
+        )
     }
 }
 
@@ -492,12 +498,12 @@ fun HeaderFooter(lastLogin: String) {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .padding(16.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -525,4 +531,15 @@ fun HeaderFooter(lastLogin: String) {
             }
         }
     }
+}
+
+//TODO: ANIMATION COMPONENTS
+@Composable
+fun OrderSuccessful() {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.Url("https://lottie.host/351beb02-ab0c-4715-bee0-bf9498a0a5ae/rsGvAATjm3.json"))
+
+    LottieAnimation(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 }

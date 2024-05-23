@@ -75,7 +75,7 @@ fun OrderSummaryScreen(
     invoiceViewModel: InvoiceViewModel,
     invoiceManager: InvoiceManager,
 
-) {
+    ) {
 
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
@@ -87,6 +87,7 @@ fun OrderSummaryScreen(
     val productList by productViewModel.productList.observeAsState(emptyList())
     val context = LocalContext.current
     var isPayedByCash by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -115,8 +116,13 @@ fun OrderSummaryScreen(
                                 context,
                                 false
                             )
-                            orderViewModel.deleteOrder(it.tableNumber, context)
-                            tableViewModel.updateTableOrderStatus(it.tableNumber , tableManager, context, false)
+                            tableViewModel.updateReadyOrderStatus(
+                                it.tableNumber,
+                                tableManager,
+                                context,
+                                false
+                            )
+                            orderViewModel.deleteOrder(it.tableNumber, context, true)
                             orderViewModel.clearOrderOrderSummary()
                             navController.navigate(Routes.TableScreen.route)
                         }
@@ -162,7 +168,10 @@ fun OrderSummaryScreen(
                         buttonText = "Cobrar",
                         onClick = {
                             if (orderSummary != null) {
-                                val currentDate = SimpleDateFormat("dd/MM/yyyy (HH:mm)", Locale.getDefault()).format(Date())
+                                val currentDate = SimpleDateFormat(
+                                    "dd/MM/yyyy (HH:mm)",
+                                    Locale.getDefault()
+                                ).format(Date())
                                 val invoice =
                                     Invoice(
                                         invoiceDateCreated = currentDate,
@@ -174,9 +183,25 @@ fun OrderSummaryScreen(
                                         productQuantityMap = orderSummary!!.productQuantityMap
                                     )
                                 invoiceViewModel.addInvoice(invoice, invoiceManager, context)
-                                tableViewModel.updateTableOrderStatus(orderSummary!!.tableNumber , tableManager, context, false)
-                                orderViewModel.deleteOrder(orderSummary!!.tableNumber, context)
-                                navController.navigate(Routes.TableScreen.route)
+                                tableViewModel.updateTableOrderStatus(
+                                    orderSummary!!.tableNumber,
+                                    tableManager,
+                                    context,
+                                    false
+                                )
+                                tableViewModel.updateReadyOrderStatus(
+                                    orderSummary!!.tableNumber,
+                                    tableManager,
+                                    context,
+                                    false
+                                )
+                                orderViewModel.deleteOrder(
+                                    orderSummary!!.tableNumber,
+                                    context,
+                                    false
+                                )
+                                orderViewModel.clearOrderOrderSummary()
+                                navController.navigate(Routes.OrderSuccessfulScreen.route)
                             }
                         },
                         lessRoundedShape = lessRoundedShape,
@@ -191,7 +216,13 @@ fun OrderSummaryScreen(
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun OrderListSummary(orderSummary: Order, productList: List<Product>, onClick: () -> Unit,onPayedByCashChange: (Boolean) -> Unit,isPayedByCash: Boolean) {
+fun OrderListSummary(
+    orderSummary: Order,
+    productList: List<Product>,
+    onClick: () -> Unit,
+    onPayedByCashChange: (Boolean) -> Unit,
+    isPayedByCash: Boolean
+) {
     val productMap = productList.associateBy { it.productName }
     val productQuantityMap = orderSummary.productQuantityMap
     val productCountMap = productQuantityMap.mapNotNull { (productName, quantity) ->
@@ -326,6 +357,3 @@ private fun OrderSummaryCard(product: Product, quantity: Int) {
     )
 }
 
-fun setAllValuesTo0(Order: Order) {
-
-}

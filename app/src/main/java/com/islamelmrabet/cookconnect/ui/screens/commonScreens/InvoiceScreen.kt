@@ -72,7 +72,14 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewModel: AuthViewModel, mainViewModel: MainViewModel, invoiceManager: InvoiceManager, invoiceViewModel: InvoiceViewModel){
+fun InvoiceScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    mainViewModel: MainViewModel,
+    invoiceManager: InvoiceManager,
+    invoiceViewModel: InvoiceViewModel
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
 
     val buttonColors = ButtonDefaults.outlinedButtonColors(
@@ -117,24 +124,24 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet (
+            ModalDrawerSheet(
                 drawerContainerColor = MaterialTheme.colorScheme.primary
-            ){
+            ) {
                 DrawerHeader()
                 currentWorkerMenu.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion"){
+                            if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
-                            }else{
+                            } else {
                                 navController.navigate(item.route)
 
                             }
@@ -145,7 +152,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == selectedItemIndex){
+                                imageVector = if (index == selectedItemIndex) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title,
@@ -165,7 +172,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                 HeaderFooter(lastLogInDate)
             }
         },
-    ){
+    ) {
         Scaffold(
             topBar = {
                 CookerAndWaiterAppBar(
@@ -191,7 +198,10 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                         modifier = Modifier
                             .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
                     ) {
-                        Icon(imageVector = Icons.Filled.AccountBalance, contentDescription = "account balance")
+                        Icon(
+                            imageVector = Icons.Filled.AccountBalance,
+                            contentDescription = "account balance"
+                        )
                         Text(
                             text = stringResource(id = R.string.invoice_search_header),
                             modifier = Modifier.padding(start = 10.dp)
@@ -205,7 +215,7 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
                         )
                         Spacer(modifier = Modifier.width(15.dp))
                         IconButton(
-                            onClick = {  },
+                            onClick = { },
                             modifier = Modifier
                         ) {
                             Icon(
@@ -232,15 +242,20 @@ fun InvoiceScreen(auth: AuthManager, navController: NavHostController, authViewM
 }
 
 @Composable
-fun ShowLazyListOfInvoices(invoices: List<Invoice>, invoiceViewModel: InvoiceViewModel, context: Context, invoiceManager: InvoiceManager) {
+fun ShowLazyListOfInvoices(
+    invoices: List<Invoice>,
+    invoiceViewModel: InvoiceViewModel,
+    context: Context,
+    invoiceManager: InvoiceManager
+) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxSize()
     ) {
-        invoices.forEach() {invoice ->
-            item{
+        invoices.forEach() { invoice ->
+            item {
                 InvoiceCard(invoice)
             }
         }
@@ -262,7 +277,7 @@ fun InvoiceCard(invoice: Invoice) {
             disabledContentColor = MaterialTheme.colorScheme.outline
         ),
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .padding(10.dp),
             horizontalArrangement = Arrangement.Center,
@@ -278,18 +293,18 @@ fun InvoiceCard(invoice: Invoice) {
                     fontSize = 15.sp,
                 )
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
-            ){
+            ) {
                 Box(
                     modifier = Modifier
                         .height(30.dp)
                         .width(100.dp)
                         .background(
-                            color = if (invoice.isPayed) {
+                            color = if (!invoice.isPayed) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 MaterialTheme.colorScheme.error
@@ -299,7 +314,7 @@ fun InvoiceCard(invoice: Invoice) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (invoice.isPayed) "Pagado" else "No pagado",
+                        text = if (!invoice.isPayed) "Pagado" else "No pagado",
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }

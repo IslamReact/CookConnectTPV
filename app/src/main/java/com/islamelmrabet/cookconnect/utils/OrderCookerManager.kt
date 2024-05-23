@@ -9,7 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class OrderCookerManager(private val context: Context) {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("orders")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("orders")
 
     fun updateOrderReadyStatus(orderDateCreated: String): TableRes<Unit> {
         return try {

@@ -22,7 +22,8 @@ import kotlinx.coroutines.tasks.await
 
 class TableViewModel : ViewModel() {
 
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("tables")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("tables")
     private val firestore = FirebaseFirestore.getInstance()
 
 
@@ -31,7 +32,12 @@ class TableViewModel : ViewModel() {
 
     val response: MutableState<Result<Table>> = mutableStateOf(Result.Empty)
 
-    fun addTable(table: Table, tableManager: TableManager, context: Context,onSuccess: () -> Unit) {
+    fun addTable(
+        table: Table,
+        tableManager: TableManager,
+        context: Context,
+        onSuccess: () -> Unit
+    ) {
         when (val result = tableManager.addTable(table)) {
             else -> {
                 Toast.makeText(context, "Table added successfully", Toast.LENGTH_LONG).show()
@@ -40,46 +46,70 @@ class TableViewModel : ViewModel() {
         }
     }
 
-    fun fetchTableDataFlow(): Flow<List<Table>> = callbackFlow{
+    fun fetchTableDataFlow(): Flow<List<Table>> = callbackFlow {
         val collectionReference = firestore.collection("tables")
 
-        val subscription = collectionReference.addSnapshotListener{ snapshot, exception  ->
-            if (exception  != null) {
-                close(exception )
+        val subscription = collectionReference.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                close(exception)
                 return@addSnapshotListener
             }
-            snapshot?.let {querySnapshot ->
+            snapshot?.let { querySnapshot ->
                 val allTables = mutableListOf<Table>()
-                for (document in querySnapshot.documents){
+                for (document in querySnapshot.documents) {
                     val order = document.toObject(Table::class.java)
                     order?.let { allTables.add(it) }
                 }
                 trySend(allTables).isSuccess
             }
         }
-        awaitClose { subscription.remove()}
+        awaitClose { subscription.remove() }
     }
 
-    fun updateTableOrderStatus(tableNumber: Int, tableManager: TableManager, context: Context, alreadyGotOrder: Boolean) {
+    fun updateTableOrderStatus(
+        tableNumber: Int,
+        tableManager: TableManager,
+        context: Context,
+        alreadyGotOrder: Boolean
+    ) {
         val result = tableManager.updateTableOrderStatus(tableNumber, alreadyGotOrder)
         when (result) {
             is TableRes.Success -> {
-                Log.d("Estado de la mesa sobre el pedido", "Correctamente establecido a $alreadyGotOrder")
+                Log.d(
+                    "Estado de la mesa sobre el pedido",
+                    "Correctamente establecido a $alreadyGotOrder"
+                )
             }
+
             is TableRes.Error -> {
-                Log.d("Estado de la mesa sobre el pedido", "No se puedo establecer el estado a $alreadyGotOrder de la mesa $tableNumber")
+                Log.d(
+                    "Estado de la mesa sobre el pedido",
+                    "No se puedo establecer el estado a $alreadyGotOrder de la mesa $tableNumber"
+                )
             }
         }
     }
 
-    fun updateReadyOrderStatus(tableNumber: Int, tableManager: TableManager, context: Context, isReadyOrder: Boolean) {
+    fun updateReadyOrderStatus(
+        tableNumber: Int,
+        tableManager: TableManager,
+        context: Context,
+        isReadyOrder: Boolean
+    ) {
         val result = tableManager.updateIsReadyOrderStatus(tableNumber, isReadyOrder)
         when (result) {
             is TableRes.Success -> {
-                Log.d("Estado del pedido de cocina a mesa", "Correctamente establecido a $isReadyOrder")
+                Log.d(
+                    "Estado del pedido de cocina a mesa",
+                    "Correctamente establecido a $isReadyOrder"
+                )
             }
+
             is TableRes.Error -> {
-                Log.d("Estado del pedido de cocina a mesa", "Correctamente establecido a $isReadyOrder")
+                Log.d(
+                    "Estado del pedido de cocina a mesa",
+                    "Correctamente establecido a $isReadyOrder"
+                )
             }
         }
     }

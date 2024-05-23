@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseUser
+import com.islamelmrabet.cookconnect.ui.screens.animationScreens.OrderSuccessfulScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.CreateAccountScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.ForgotPasswordScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.LogInScreen
@@ -39,7 +40,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
     val navController = rememberNavController()
     val authManager = AuthManager(context)
     val tableManager = TableManager(context)
-    val productManager = ProductManager(context)
+    val productManager = ProductManager()
     val orderManager = OrderManager()
     val orderCookerManager = OrderCookerManager(context)
     val invoiceManager = InvoiceManager(context)
@@ -94,6 +95,9 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
         }
         composable(Routes.OrderSummaryScreen.route) {
             OrderSummaryScreen(navController,orderViewModel, productViewModel, tableViewModel, tableManager, invoiceViewModel, invoiceManager)
+        }
+        composable(Routes.OrderSuccessfulScreen.route) {
+            OrderSuccessfulScreen(navController)
         }
     }
 }

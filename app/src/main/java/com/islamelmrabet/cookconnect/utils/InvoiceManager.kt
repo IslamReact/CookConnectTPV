@@ -8,9 +8,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import java.util.concurrent.CompletableFuture
 
-class InvoiceManager(context : Context) {
+class InvoiceManager(context: Context) {
     private val collectionReference = FirebaseFirestore.getInstance().collection("invoices")
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("invoices")
+    private val databaseReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("invoices")
 
     fun addInvoiceManager(invoice: Invoice): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()

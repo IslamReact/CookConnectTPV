@@ -198,6 +198,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                             productQuantityMap = productQuantityMap
                         )
                         orderViewModel.addOrder(orderCreated,context)
+                        productViewModel.updateProductQuantities(productCountMap, context)
                         if (tableNumber != null) {
                             tableViewModel.updateTableOrderStatus(
                                 tableNumber = tableNumber,
@@ -370,6 +371,7 @@ fun ProductCardForOrder(
                         val updatedMap = selectedProducts.toMutableMap()
                         updatedMap[product] = selectedCount - 1
                         onProductCountChanged(product, selectedCount - 1)
+                        selectedProducts.remove(product)
                     }
                 },
                 shape = RoundedCornerShape(5.dp),
