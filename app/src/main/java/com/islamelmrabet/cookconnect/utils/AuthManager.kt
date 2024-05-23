@@ -19,6 +19,8 @@ sealed class AuthRes<out T> {
 
 class AuthManager(private val context: Context) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
+    private val collectionReference = FirebaseFirestore.getInstance().collection("workers")
+
 
     private val signInClient = Identity.getSignInClient(context)
 
@@ -98,6 +100,50 @@ class AuthManager(private val context: Context) {
             }
         } catch (e: Exception) {
             Log.e("AuthManager", "Error updating last login date: ${e.message}")
+        }
+    }
+
+    suspend fun getWorkerDocumentIdByEmail(workerEmail: String): String? {
+        return try {
+            val querySnapshot = FirebaseFirestore.getInstance().collection("workers")
+                .whereEqualTo("email", workerEmail)
+                .get().await()
+            if (!querySnapshot.isEmpty) {
+                querySnapshot.documents.firstOrNull()?.id
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("EmailManager", "Error getting worker document ID: ${e.message}")
+            null
+        }
+    }
+
+    fun updatePassword(workerId: String, password: String): TableRes<Unit> {
+        return try {
+            collectionReference
+                .document(workerId)
+                .update("password", password)
+                .addOnSuccessListener {
+                    Log.d("Password", "Password updated successfully")
+                }
+            TableRes.Success(Unit)
+        } catch (e: Exception) {
+            TableRes.Error(e.message ?: "Error updating password")
+        }
+    }
+
+    fun updateIsANewPasswordWorker(workerId: String, isNewPassword: Boolean): TableRes<Unit> {
+        return try {
+            collectionReference
+                .document(workerId)
+                .update("anewPassword", isNewPassword)
+                .addOnSuccessListener {
+                    Log.d("isANewPassword", "isANewPassword updated successfully")
+                }
+            TableRes.Success(Unit)
+        } catch (e: Exception) {
+            TableRes.Error(e.message ?: "Error updating isANewPassword")
         }
     }
 

@@ -8,4 +8,5 @@ data class Worker(
     val uid: String = "",
     val userRole: String = "",
     val lastLogin: String = "",
+    val isANewPassword : Boolean = false
 )

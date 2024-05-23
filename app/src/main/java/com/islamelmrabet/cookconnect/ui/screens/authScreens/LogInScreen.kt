@@ -2,7 +2,6 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,7 +56,7 @@ fun LogInScreen(
     auth: AuthManager,
     navController: NavController,
     initialEmail: String? = null,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
 ) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -68,17 +67,18 @@ fun LogInScreen(
 
     val (email, setEmail) = remember { mutableStateOf(initialEmail ?: "") }
     val (password, setPassword) = remember { mutableStateOf("") }
+    val (userRole, setUserRole) = remember { mutableStateOf("") }
+    val (isANewPassword, setisANewPassword) = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val userRole = remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var isButtonEnabled by remember { mutableStateOf(false) }
 
     val onEmailChange: (String) -> Unit = { setEmail(it) }
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
 
-    LaunchedEffect(email, password) {
-        isButtonEnabled = email.isNotBlank() && password.isNotBlank()
+    LaunchedEffect(email, password, userRole) {
+        isButtonEnabled = email.isNotBlank() && password.isNotBlank() && userRole.isNotBlank( )
     }
 
     LaunchedEffect(Unit) {
@@ -86,8 +86,9 @@ fun LogInScreen(
             val fetchedPassword = authViewModel.getPasswordByEmail(initialEmail)
             fetchedPassword?.let { setPassword(it) }
             val fetchedRole = authViewModel.getRoleByEmail(initialEmail)
-            Log.d("ROL", fetchedRole.toString())
-            fetchedRole?.let { userRole.value = it }
+            fetchedRole?.let { setUserRole(it) }
+            val fetchedIsANewPassword = authViewModel.getIsANewPassword(initialEmail)
+            fetchedIsANewPassword?.let { setisANewPassword(it) }
         }
     }
 
@@ -130,17 +131,34 @@ fun LogInScreen(
                     onClick = {
                         isLoading = true
                         scope.launch {
-                            try {
-                                emailPassSignIn(
-                                    email,
-                                    password,
-                                    auth,
-                                    context,
-                                    navController,
-                                    userRole.value
-                                )
-                            } finally {
-                                isLoading = false
+                            if(isANewPassword){
+                                authViewModel.updatePassword(email,auth,context, password)
+                                authViewModel.updateIsANewPassword(email, auth, context, false)
+                                try {
+                                    emailPassSignIn(
+                                        email,
+                                        password,
+                                        auth,
+                                        context,
+                                        navController,
+                                        userRole
+                                    )
+                                } finally {
+                                    isLoading = false
+                                }
+                            }else {
+                                try {
+                                    emailPassSignIn(
+                                        email,
+                                        password,
+                                        auth,
+                                        context,
+                                        navController,
+                                        userRole
+                                    )
+                                } finally {
+                                    isLoading = false
+                                }
                             }
                         }
                     },

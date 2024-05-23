@@ -185,7 +185,8 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
                             name = name,
                             email = email,
                             userRole = selectedItem,
-                            password = password
+                            password = password,
+                            isANewPassword = false,
                         )
                         scope.launch {
                             signUp(email, password, worker, auth, context, navController)

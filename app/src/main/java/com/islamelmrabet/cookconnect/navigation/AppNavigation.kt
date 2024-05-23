@@ -69,7 +69,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
             CreateAccountScreen(auth = authManager,navController)
         }
         composable(Routes.ForgotPasswordScreen.route) {
-            ForgotPasswordScreen(auth = authManager,navController)
+            ForgotPasswordScreen(auth = authManager,navController, authViewModel)
         }
         composable(Routes.TableScreen.route) {
             TableScreen(auth = authManager,navController, tableManager, authViewModel, tableViewModel,mainViewModel)

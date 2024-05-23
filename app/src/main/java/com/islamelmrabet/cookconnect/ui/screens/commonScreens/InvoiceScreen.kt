@@ -3,7 +3,9 @@ package com.islamelmrabet.cookconnect.ui.screens.commonScreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +20,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -42,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -51,8 +54,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
@@ -254,51 +260,58 @@ fun ShowLazyListOfInvoices(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        invoices.forEach() { invoice ->
-            item {
-                InvoiceCard(invoice)
+        items(invoices) { invoice ->
+            var isExpanded by remember { mutableStateOf(false) }
+            InvoiceCard(invoice, isExpanded) {
+                isExpanded = !isExpanded
             }
         }
     }
 }
 
 @Composable
-fun InvoiceCard(invoice: Invoice) {
+fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) {
+    val baseHeight = 65.dp
+    val extraHeightPerItem = 30.dp
+    val targetHeight = if (isExpanded) baseHeight + (invoice.productQuantityMap.size * extraHeightPerItem) else baseHeight
+
+    val cardHeight by animateDpAsState(targetValue = targetHeight, label = "")
+
     Card(
         modifier = Modifier
-            .padding(4.dp),
+            .padding(4.dp)
+            .clickable { onCardClick() }
+            .height(cardHeight),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
         ),
-        colors = CardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onTertiary,
             contentColor = MaterialTheme.colorScheme.scrim,
             disabledContainerColor = MaterialTheme.colorScheme.outline,
             disabledContentColor = MaterialTheme.colorScheme.outline
         ),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .padding(10.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = "$${invoice.price}",
-                    fontSize = 25.sp,
-                )
-                Text(
-                    text = invoice.invoiceDateCreated.toString(),
-                    fontSize = 15.sp,
-                )
-            }
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Column {
+                    Text(
+                        text = "$${invoice.price}",
+                        fontSize = 25.sp,
+                    )
+                    Text(
+                        text = invoice.invoiceDateCreated.toString(),
+                        fontSize = 15.sp,
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .height(30.dp)
@@ -318,7 +331,34 @@ fun InvoiceCard(invoice: Invoice) {
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
+            }
 
+            if (isExpanded) {
+                invoice.productQuantityMap.forEach { (product, quantity) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = quantity.toString(),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.padding(top = 5.dp, start = 5.dp) ,
+                            text = product,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }
