@@ -50,7 +50,7 @@ fun AppNavigation(context: Context,authViewModel: AuthViewModel, productViewMode
     val user: FirebaseUser? = authManager.getCurrentUser()
 
     NavHost(navController = navController,
-        startDestination = Routes.FisrtOnBoardingScreen.route,
+        startDestination = Routes.SplashScreen.route,
     ){
         composable(Routes.SplashScreen.route) {
             SplashScreen(navController, preferencesViewModel)
