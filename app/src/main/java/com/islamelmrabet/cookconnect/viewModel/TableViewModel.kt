@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +19,8 @@ import com.islamelmrabet.cookconnect.utils.TableRes
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class TableViewModel : ViewModel() {
@@ -38,13 +41,22 @@ class TableViewModel : ViewModel() {
         context: Context,
         onSuccess: () -> Unit
     ) {
-        when (val result = tableManager.addTable(table)) {
-            else -> {
-                Toast.makeText(context, "Table added successfully", Toast.LENGTH_LONG).show()
-                onSuccess()
+        viewModelScope.launch {
+            val tableExists = tableManager.tableExists(table.number).await()
+            if (tableExists) {
+                Toast.makeText(context, "Table already exists", Toast.LENGTH_LONG).show()
+            } else {
+                val result = tableManager.addTable(table).await()
+                if (result) {
+                    Toast.makeText(context, "Table added successfully", Toast.LENGTH_LONG).show()
+                    onSuccess()
+                } else {
+                    Toast.makeText(context, "Error adding table", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
+
 
     fun fetchTableDataFlow(): Flow<List<Table>> = callbackFlow {
         val collectionReference = firestore.collection("tables")

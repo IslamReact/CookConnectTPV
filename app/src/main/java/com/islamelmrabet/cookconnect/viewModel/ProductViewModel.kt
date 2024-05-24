@@ -18,6 +18,7 @@ import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.utils.TableRes
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.Locale
 
 
 class ProductViewModel : ViewModel() {
@@ -153,5 +154,18 @@ class ProductViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    suspend fun productExists(productName: String): Boolean {
+        val normalizedProductName = productName.trim().lowercase(Locale.ROOT)
+        val productsRef = FirebaseFirestore.getInstance().collection("products")
+        val querySnapshot = productsRef.get().await()
+        for (document in querySnapshot.documents) {
+            val product = document.toObject(Product::class.java)
+            if (product != null && product.productName.trim().lowercase(Locale.ROOT) == normalizedProductName) {
+                return true
+            }
+        }
+        return false
     }
 }

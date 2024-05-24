@@ -100,6 +100,25 @@ class TableManager(context: Context) {
         }
     }
 
+    fun tableExists(tableNumber: Int): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
+        collectionReference
+            .whereEqualTo("number", tableNumber)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    completableFuture.complete(false)
+                } else {
+                    completableFuture.complete(true)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Table", "Error checking table existence: ${e.message}")
+                completableFuture.complete(false)
+            }
+        return completableFuture
+    }
+
 
 // ----------------------------------------------------------------
     // TODO: THIS FUNCITION MAY BE VALUABLE IN A FUTURE TO IMPLEMENT UID IN TABLES

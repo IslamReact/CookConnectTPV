@@ -120,7 +120,7 @@ fun EditProductScreen(
     ) { contentPadding ->
         Column(
             modifier = Modifier
-                .padding(start = 25.dp, end = 25.dp)
+                .padding(start = 16.dp, end = 16.dp)
                 .padding(top = contentPadding.calculateTopPadding() + 30.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally

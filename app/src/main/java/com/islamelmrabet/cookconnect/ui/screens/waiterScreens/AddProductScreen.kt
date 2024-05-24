@@ -1,6 +1,7 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -221,18 +222,27 @@ fun AddProductScreen(
                     BasicLongButton(
                         buttonText = "Añadir Producto",
                         onClick = {
-                            val product = Product(
-                                productName = productName,
-                                unitPrice = unitPrice,
-                                quantity = quantity,
-                                category = selectedItem
-                            )
                             scope.launch {
-                                productViewModel.addProduct(product, productManager, context)
+                                val exists = productViewModel.productExists(productName)
+                                if (exists) {
+                                    Toast.makeText(
+                                        context,
+                                        "El producto ya existe",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    val product = Product(
+                                        productName = productName,
+                                        unitPrice = unitPrice,
+                                        quantity = quantity,
+                                        category = selectedItem
+                                    )
+                                    productViewModel.addProduct(product, productManager, context)
+                                    setQuantity(0)
+                                    setUnitPrice(0.00)
+                                    setproductName("")
+                                }
                             }
-                            setQuantity(0)
-                            setUnitPrice(0.00)
-                            setproductName("")
                         },
                         lessRoundedShape = lessRoundedShape,
                         buttonColors = buttonColors,

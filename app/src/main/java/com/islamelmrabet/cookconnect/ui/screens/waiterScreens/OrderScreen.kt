@@ -211,7 +211,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
                     },
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
-                    enabled = !tableGotAnOrder.value.gotOrder
+                    enabled = !tableGotAnOrder.value.gotOrder && productCountMap.size > 0
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BasicLongButtonWithIcon(
