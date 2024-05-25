@@ -332,9 +332,11 @@ fun ProductCardForOrder(
             Column {
                 Text(
                     text = product.productName,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Text(
                     text = "Cantidad: $productCount",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
             Spacer(modifier = Modifier.weight(1f))

@@ -110,6 +110,7 @@ fun InventoryScreen(
                             if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
                                 Log.d("LogOut event", "Succesfully logged out")
+                                navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
@@ -313,7 +314,8 @@ fun ProductCard(product: Product, navController: NavController) {
         ) {
             Text(
                 text = product.productName,
-                Modifier.padding(start = 10.dp)
+                Modifier.padding(start = 10.dp),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Spacer(modifier = Modifier.weight(1f))
             Box(

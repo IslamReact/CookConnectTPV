@@ -154,7 +154,7 @@ fun OutlinedTableTextField(
         Text(
             text = labelTableAttribute,
             textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = tableAttribute.toString(),

@@ -141,6 +141,7 @@ fun TableScreen(
                             if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
                                 Log.d("LogOut event", "Succesfully logged out")
+                                navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
@@ -393,7 +394,7 @@ fun TableIcon(table: Table, navController: NavController) {
             ) {
                 Text(
                     text = "Mesa ${table.number} ",
-                    color = MaterialTheme.colorScheme.scrim,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
@@ -415,7 +416,6 @@ fun TableIcon(table: Table, navController: NavController) {
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-
             }
         }
     }

@@ -142,6 +142,7 @@ fun InvoiceScreen(
                             if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
                                 Log.d("LogOut event", "Succesfully logged out")
+                                navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
@@ -306,10 +307,12 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                     Text(
                         text = "$${invoice.price}",
                         fontSize = 25.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     Text(
                         text = invoice.invoiceDateCreated.toString(),
                         fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
                 Box(
@@ -318,7 +321,7 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                         .width(100.dp)
                         .background(
                             color = if (!invoice.isPayed) {
-                                MaterialTheme.colorScheme.primary
+                                MaterialTheme.colorScheme.secondary
                             } else {
                                 MaterialTheme.colorScheme.error
                             },
@@ -348,14 +351,15 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                         ) {
                             Text(
                                 text = quantity.toString(),
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = MaterialTheme.colorScheme.surface
                             )
                         }
                         Text(
                             modifier = Modifier.padding(top = 5.dp, start = 5.dp) ,
                             text = product,
                             fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
                 }

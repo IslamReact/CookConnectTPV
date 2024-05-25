@@ -91,7 +91,6 @@ fun AccountSettingsScreen(
     var workerRole by rememberSaveable { mutableStateOf("") }
     var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
 
-// Use LaunchedEffect to fetch worker information
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
         fetchedLastLoginDate?.let { lastLogInDate = it }
@@ -130,6 +129,7 @@ fun AccountSettingsScreen(
                             if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
                                 Log.d("LogOut event", "Succesfully logged out")
+                                navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true

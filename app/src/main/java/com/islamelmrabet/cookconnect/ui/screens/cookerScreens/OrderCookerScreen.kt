@@ -107,6 +107,7 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                             if (item.title == "Cerrar Sesion"){
                                 auth.signOut()
                                 Log.d("LogOut event","Succesfully logged out")
+                                navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
@@ -266,10 +267,11 @@ fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
             ) {
                 Text(
                     text = "Mesa ${order.tableNumber}",
-                )
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,)
                 Text(
                     text = order.orderDateCreated,
-                    Modifier.padding(start = 10.dp)
+                    Modifier.padding(start = 10.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -321,6 +323,9 @@ fun ProductRow(product: String, quantity: Int) {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-        Text(text = product)
+        Text(
+            text = product,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
     }
 }
