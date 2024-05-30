@@ -6,12 +6,20 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
-class OrderCookerManager(private val context: Context) {
+/**
+ * Class OrderCookerManager
+ *
+ */
+class OrderCookerManager() {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("orders")
 
+    /**
+     * Update order status in case the order is ready.
+     *
+     * @param orderDateCreated
+     * @return
+     */
     fun updateOrderReadyStatus(orderDateCreated: String): TableRes<Unit> {
         return try {
             collectionReference

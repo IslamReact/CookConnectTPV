@@ -1,9 +1,6 @@
 package com.islamelmrabet.cookconnect.viewModel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import com.islamelmrabet.cookconnect.utils.InvoiceManager
@@ -11,19 +8,32 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
+/**
+ * Class InvoiceViewModel
+ *
+ */
 class InvoiceViewModel : ViewModel() {
 
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("invoices")
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun addInvoice(invoice: Invoice, invoiceManager: InvoiceManager, context: Context) {
+    /**
+     * Adds Invoice
+     *
+     * @param invoice
+     * @param invoiceManager
+     */
+    fun addInvoice(invoice: Invoice, invoiceManager: InvoiceManager) {
         return when (val result = invoiceManager.addInvoiceManager(invoice)) {
             else -> {
             }
         }
     }
 
+    /**
+     * Fetch Invoice Data Flow
+     *
+     * @return Flow<List<Invoice>>
+     */
     fun fetchInvoiceDataFlow(): Flow<List<Invoice>> = callbackFlow {
         val collectionReference = firestore.collection("invoices")
 

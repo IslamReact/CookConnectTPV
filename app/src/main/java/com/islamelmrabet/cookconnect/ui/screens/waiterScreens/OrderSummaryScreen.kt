@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +62,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composable function OrderSummaryScreen
+ *
+ * @param navController
+ * @param orderViewModel
+ * @param productViewModel
+ * @param tableViewModel
+ * @param tableManager
+ * @param invoiceViewModel
+ * @param invoiceManager
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
 fun OrderSummaryScreen(
@@ -113,13 +122,11 @@ fun OrderSummaryScreen(
                             tableViewModel.updateTableOrderStatus(
                                 it.tableNumber,
                                 tableManager,
-                                context,
                                 false
                             )
                             tableViewModel.updateReadyOrderStatus(
                                 it.tableNumber,
                                 tableManager,
-                                context,
                                 false
                             )
                             orderViewModel.deleteOrder(it.tableNumber, context, true)
@@ -182,17 +189,15 @@ fun OrderSummaryScreen(
                                         price = orderSummary!!.price,
                                         productQuantityMap = orderSummary!!.productQuantityMap
                                     )
-                                invoiceViewModel.addInvoice(invoice, invoiceManager, context)
+                                invoiceViewModel.addInvoice(invoice, invoiceManager)
                                 tableViewModel.updateTableOrderStatus(
                                     orderSummary!!.tableNumber,
                                     tableManager,
-                                    context,
                                     false
                                 )
                                 tableViewModel.updateReadyOrderStatus(
                                     orderSummary!!.tableNumber,
                                     tableManager,
-                                    context,
                                     false
                                 )
                                 orderViewModel.deleteOrder(
@@ -214,6 +219,15 @@ fun OrderSummaryScreen(
     )
 }
 
+/**
+ * Composable function that displays the lazy column of orders
+ *
+ * @param orderSummary
+ * @param productList
+ * @param onClick
+ * @param onPayedByCashChange
+ * @param isPayedByCash
+ */
 @SuppressLint("DefaultLocale")
 @Composable
 fun OrderListSummary(
@@ -313,7 +327,12 @@ fun OrderListSummary(
     }
 }
 
-
+/**
+ * Composable function that displays the information about the order in a card.
+ *
+ * @param product
+ * @param quantity
+ */
 @Composable
 private fun OrderSummaryCard(product: Product, quantity: Int) {
     Row(

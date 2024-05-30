@@ -1,22 +1,34 @@
 package com.islamelmrabet.cookconnect.utils
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import java.util.concurrent.CompletableFuture
 
-
+/**
+ * Sealed class for the result.
+ *
+ * @param T
+ */
 sealed class TableRes<out T> {
     data class Success<T>(val data: T) : TableRes<T>()
     data class Error(val errorMessage: String) : TableRes<Nothing>()
 }
 
-class TableManager(context: Context) {
+/**
+ * Class TableManager
+ *
+ */
+class TableManager() {
     private val databaseReference = FirebaseFirestore.getInstance().collection("tables")
     private val collectionReference = FirebaseFirestore.getInstance().collection("tables")
 
-
+    /**
+     *  Adds a new table
+     *
+     * @param table
+     * @return CompletableFuture<Boolean>
+     */
     fun addTable(table: Table): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
         databaseReference
@@ -32,6 +44,13 @@ class TableManager(context: Context) {
         return completableFuture
     }
 
+    /**
+     * Update the field got order in case the table got an order
+     *
+     * @param tableNumber
+     * @param alreadyGotOrder
+     * @return TableRes<Unit>
+     */
     fun updateTableOrderStatus(tableNumber: Int, alreadyGotOrder: Boolean): TableRes<Unit> {
         return try {
             collectionReference
@@ -66,6 +85,13 @@ class TableManager(context: Context) {
         }
     }
 
+    /**
+     * Updates the field gotOrderReady if the order of a table is ready.
+     *
+     * @param tableNumber
+     * @param orderIsReady
+     * @return TableRes<Unit>
+     */
     fun updateIsReadyOrderStatus(tableNumber: Int, orderIsReady: Boolean): TableRes<Unit> {
         return try {
             collectionReference
@@ -100,6 +126,12 @@ class TableManager(context: Context) {
         }
     }
 
+    /**
+     * This method checks if the table number already exists.
+     *
+     * @param tableNumber
+     * @return CompletableFuture<Boolean>
+     */
     fun tableExists(tableNumber: Int): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
         collectionReference
@@ -118,23 +150,4 @@ class TableManager(context: Context) {
             }
         return completableFuture
     }
-
-
-// ----------------------------------------------------------------
-    // TODO: THIS FUNCITION MAY BE VALUABLE IN A FUTURE TO IMPLEMENT UID IN TABLES
-// ----------------------------------------------------------------
-//    fun isUidExists(uid: String, callback: (Boolean) -> Unit) {
-//        databaseReference.orderByChild("uid").equalTo(uid)
-//            .addListenerForSingleValueEvent(object :
-//                ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    callback(snapshot.exists())
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    callback(false)
-//                }
-//            }
-//        )
-//    }
 }

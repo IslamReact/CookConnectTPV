@@ -60,6 +60,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import com.islamelmrabet.cookconnect.model.localModels.NavigationItem
@@ -68,7 +72,7 @@ import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.InvoiceManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
@@ -76,6 +80,16 @@ import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable Screen InvoiceScreen
+ *
+ * @param auth
+ * @param navController
+ * @param authViewModel
+ * @param mainViewModel
+ * @param invoiceManager
+ * @param invoiceViewModel
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InvoiceScreen(
@@ -83,14 +97,8 @@ fun InvoiceScreen(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     mainViewModel: MainViewModel,
-    invoiceManager: InvoiceManager,
     invoiceViewModel: InvoiceViewModel
 ) {
-    val lessRoundedShape = RoundedCornerShape(8.dp)
-
-    val buttonColors = ButtonDefaults.outlinedButtonColors(
-        contentColor = MaterialTheme.colorScheme.error,
-    )
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -102,7 +110,6 @@ fun InvoiceScreen(
     var workerRole by rememberSaveable { mutableStateOf("") }
     var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
     val allInvoices by invoiceViewModel.fetchInvoiceDataFlow().collectAsState(initial = emptyList())
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -176,7 +183,7 @@ fun InvoiceScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(275.dp))
-                HeaderFooter(lastLogInDate)
+                DrawerFooter(lastLogInDate)
             }
         },
     ) {
@@ -241,40 +248,67 @@ fun InvoiceScreen(
                             .background(color = Color.Transparent)
                     )
 
-                    ShowLazyListOfInvoices(allInvoices, invoiceViewModel, context, invoiceManager)
+                    ShowLazyListOfInvoices(allInvoices)
                 }
             }
         )
     }
 }
 
+/**
+ * Composable function that contains the lazy Column of the list of invoices
+ *
+ * @param invoices
+ */
 @Composable
 fun ShowLazyListOfInvoices(
     invoices: List<Invoice>,
-    invoiceViewModel: InvoiceViewModel,
-    context: Context,
-    invoiceManager: InvoiceManager
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        items(invoices) { invoice ->
-            var isExpanded by remember { mutableStateOf(false) }
-            InvoiceCard(invoice, isExpanded) {
-                isExpanded = !isExpanded
+    if(invoices.isEmpty()){
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.Url("https://lottie.host/3e5d3a68-0a7d-4e34-bc01-47e4233b5a2f/L0fjp8aoNm.json")
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            LottieAnimation(
+                composition = composition,
+                iterations = LottieConstants.IterateForever
+            )
+        }
+    }
+    else{
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            items(invoices) { invoice ->
+                var isExpanded by remember { mutableStateOf(false) }
+                InvoiceCard(invoice, isExpanded) {
+                    isExpanded = !isExpanded
+                }
             }
         }
     }
 }
 
+/**
+ * Composable function that displays the design of the invoice card
+ *
+ * @param invoice
+ * @param isExpanded
+ * @param onCardClick
+ */
 @Composable
 fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) {
     val baseHeight = 65.dp
     val extraHeightPerItem = 30.dp
-    val targetHeight = if (isExpanded) baseHeight + (invoice.productQuantityMap.size * extraHeightPerItem) else baseHeight
+    val targetHeight =
+        if (isExpanded) baseHeight + (invoice.productQuantityMap.size * extraHeightPerItem) else baseHeight
 
     val cardHeight by animateDpAsState(targetValue = targetHeight, label = "")
 
@@ -346,7 +380,10 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                         Box(
                             modifier = Modifier
                                 .size(20.dp)
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    RoundedCornerShape(8.dp)
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -355,7 +392,7 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                             )
                         }
                         Text(
-                            modifier = Modifier.padding(top = 5.dp, start = 5.dp) ,
+                            modifier = Modifier.padding(top = 5.dp, start = 5.dp),
                             text = product,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,

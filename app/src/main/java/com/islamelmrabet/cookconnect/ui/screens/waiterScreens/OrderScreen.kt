@@ -38,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
@@ -70,10 +75,26 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
+/**
+ * Composable Screen OrderScreen
+ *
+ * @param navController
+ * @param productViewModel
+ * @param orderViewModel
+ * @param tableNumber
+ * @param tableViewModel
+ * @param tableManager
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
-fun OrderScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderViewModel: OrderViewModel, orderManager: OrderManager ,tableNumber : Int?, tableViewModel: TableViewModel, tableManager: TableManager){
+fun OrderScreen(
+    navController: NavHostController,
+    productViewModel: ProductViewModel,
+    orderViewModel: OrderViewModel,
+    tableNumber: Int?,
+    tableViewModel: TableViewModel,
+    tableManager: TableManager
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -93,7 +114,7 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
         if (table != null) {
             tableGotAnOrder.value = table
         }
-        if (table != null && table.gotOrder ) {
+        if (table != null && table.gotOrder) {
             val order = tableNumber.let { orderViewModel.getOrder(it) }
             if (order != null) {
                 orderViewModel.setOrderOrderSummary(order)
@@ -118,117 +139,123 @@ fun OrderScreen(auth: AuthManager, navController: NavHostController, productView
         totalPrice.doubleValue = calculateTotalPrice(productCountMap)
     }
 
-    Scaffold(
-        topBar = {
-            AppBar(
-                navController,
-                stringResource(id = R.string.order_screen_header),
-                Routes.TableScreen.route
-            )
-        },
-        content = { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
+    Scaffold(topBar = {
+        AppBar(
+            navController,
+            stringResource(id = R.string.order_screen_header),
+            Routes.TableScreen.route
+        )
+    }, content = { contentPadding ->
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    start = 15.dp,
+                    top = 10.dp,
+                    end = 15.dp,
+                    bottom = 10.dp
+                )
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
-                ) {
-                    Icon(imageVector = Icons.Outlined.NoteAlt, contentDescription = "table")
-                    Text(
-                        text = stringResource(id = R.string.order_products_header),
-                        modifier = Modifier.padding(start = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Box(
-                        modifier = Modifier
-                            .size(1.dp, 30.dp)
-                            .background(color = Color.Gray)
-                            .fillMaxHeight()
-                    )
-                    Spacer(modifier = Modifier.width(15.dp))
-                    IconButton(
-                        onClick = { showDialogState.value = true },
-                        modifier = Modifier
-                    ) {
-                        Icon(
-                            imageVector = Icons.Sharp.Search,
-                            contentDescription = ""
-                        )
-                    }
-                }
+                Icon(imageVector = Icons.Outlined.NoteAlt, contentDescription = "table")
+                Text(
+                    text = stringResource(id = R.string.order_products_header),
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 0.dp)
-                        .shadow(5.dp)
-                        .height(1.dp)
-                        .background(color = Color.Transparent)
+                        .size(1.dp, 30.dp)
+                        .background(color = Color.Gray)
+                        .fillMaxHeight()
                 )
-                if (tableNumber != null) {
-                    SetDataForOrder(
-                        productViewModel,
-                        productCountMap,
-                        onProductCountChanged,
-                        !tableGotAnOrder.value.gotOrder
+                Spacer(modifier = Modifier.width(15.dp))
+                IconButton(
+                    onClick = { showDialogState.value = true }, modifier = Modifier
+                ) {
+                    Icon(
+                        imageVector = Icons.Sharp.Search, contentDescription = ""
                     )
-                }else {
-                    Toast.makeText(context, "An error Ocurred", Toast.LENGTH_LONG).show()
                 }
             }
-        },
-        bottomBar = {
-            Column(
+            Box(
                 modifier = Modifier
-                    .padding(16.dp),
-            ) {
-                BasicLongButton(
-                    buttonText = "Pedir",
-                    onClick = {
-                        val currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-                        val productQuantityMap = productCountMap.mapKeys { (product, _) -> product.productName }
-                        val orderCreated = Order(
-                            orderDateCreated = currentTime,
-                            tableNumber = tableNumber ?: 0,
-                            price = totalPrice.doubleValue,
-                            productQuantityMap = productQuantityMap
-                        )
-                        orderViewModel.addOrder(orderCreated,context)
-                        productViewModel.updateProductQuantities(productCountMap, context)
-                        if (tableNumber != null) {
-                            tableViewModel.updateTableOrderStatus(
-                                tableNumber = tableNumber,
-                                tableManager = tableManager,
-                                context = context,
-                                alreadyGotOrder = true
-                            )
-                        }
-                        navController.navigate(Routes.TableScreen.route)
-                    },
-                    lessRoundedShape = lessRoundedShape,
-                    buttonColors = buttonColors,
-                    enabled = !tableGotAnOrder.value.gotOrder && productCountMap.size > 0
+                    .fillMaxWidth()
+                    .padding(top = 0.dp)
+                    .shadow(5.dp)
+                    .height(1.dp)
+                    .background(color = Color.Transparent)
+            )
+            if (tableNumber != null) {
+                SetDataForOrder(
+                    productViewModel,
+                    productCountMap,
+                    onProductCountChanged,
+                    !tableGotAnOrder.value.gotOrder
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-                BasicLongButtonWithIcon(
-                    buttonText = "${productCountMap.size} items",
-                    secondaryText = String.format("%.2f", totalPrice.doubleValue),
-                    onClick = {
-                        navController.navigate(Routes.OrderSummaryScreen.route)
-                    },
-                    lessRoundedShape = lessRoundedShape,
-                    buttonColors = buttonColors,
-                    enabled = tableGotAnOrder.value.gotOrder
-                )
+            } else {
+                Toast.makeText(context, "An error Ocurred", Toast.LENGTH_LONG).show()
             }
         }
-    )
+    }, bottomBar = {
+        Column(
+            modifier = Modifier.padding(16.dp),
+        ) {
+            BasicLongButton(
+                buttonText = "Pedir",
+                onClick = {
+                    val currentTime =
+                        SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+                    val productQuantityMap =
+                        productCountMap.mapKeys { (product, _) -> product.productName }
+                    val orderCreated = Order(
+                        orderDateCreated = currentTime,
+                        tableNumber = tableNumber ?: 0,
+                        price = totalPrice.doubleValue,
+                        productQuantityMap = productQuantityMap
+                    )
+                    orderViewModel.addOrder(orderCreated, context)
+                    productViewModel.updateProductQuantities(productCountMap, context)
+                    if (tableNumber != null) {
+                        tableViewModel.updateTableOrderStatus(
+                            tableNumber = tableNumber,
+                            tableManager = tableManager,
+                            alreadyGotOrder = true
+                        )
+                    }
+                    navController.navigate(Routes.TableScreen.route)
+                },
+                lessRoundedShape = lessRoundedShape,
+                buttonColors = buttonColors,
+                enabled = !tableGotAnOrder.value.gotOrder && productCountMap.size > 0
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            BasicLongButtonWithIcon(
+                buttonText = "${productCountMap.size} items",
+                secondaryText = String.format("%.2f", totalPrice.doubleValue),
+                onClick = {
+                    navController.navigate(Routes.OrderSummaryScreen.route)
+                },
+                lessRoundedShape = lessRoundedShape,
+                buttonColors = buttonColors,
+                enabled = tableGotAnOrder.value.gotOrder
+            )
+        }
+    })
 }
 
+/**
+ * Composable function that return the result of the list of products
+ *
+ * @param productViewModel
+ * @param selectedProducts
+ * @param onProductCountChanged
+ * @param alreadyGotAnOrder
+ */
 @Composable
 fun SetDataForOrder(
     productViewModel: ProductViewModel,
@@ -239,32 +266,53 @@ fun SetDataForOrder(
     when (val result = productViewModel.response.value) {
         is Result.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                val composition by rememberLottieComposition(
+                    spec = LottieCompositionSpec.Url("https://lottie.host/28d9d00d-fd59-47a3-9274-84ae50025090/NQicxfwezK.json")
+                )
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
             }
         }
+
         is Result.Success -> {
-            ShowLazyListOfProductsForOrder(
-                products = result.data,
-                selectedProducts = selectedProducts,
-                onProductCountChanged = onProductCountChanged,
-                alreadyGotAnOrder = alreadyGotAnOrder
-            )
+            if (result.data.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val composition by rememberLottieComposition(
+                        spec = LottieCompositionSpec.Url("https://lottie.host/4cda72c3-0622-4905-968e-509757c3368b/eqpZmzRMHU.json")
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever
+                    )
+                }
+            } else {
+                ShowLazyListOfProductsForOrder(
+                    products = result.data,
+                    selectedProducts = selectedProducts,
+                    onProductCountChanged = onProductCountChanged,
+                    alreadyGotAnOrder = alreadyGotAnOrder
+                )
+            }
         }
+
         is Result.Failure -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 Text(text = result.message)
             }
         }
+
         is Result.Empty -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 Text(text = "No products found")
             }
@@ -272,7 +320,14 @@ fun SetDataForOrder(
     }
 }
 
-
+/**
+ * Composable function that displays the lazyColumn of the list of products.
+ *
+ * @param products
+ * @param selectedProducts
+ * @param onProductCountChanged
+ * @param alreadyGotAnOrder
+ */
 @Composable
 fun ShowLazyListOfProductsForOrder(
     products: List<Product>,
@@ -283,8 +338,7 @@ fun ShowLazyListOfProductsForOrder(
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         items(products) { product ->
             ProductCardForOrder(
@@ -298,6 +352,15 @@ fun ShowLazyListOfProductsForOrder(
     }
 }
 
+/**
+ * Composable function that displays the information of the product in a card
+ *
+ * @param product
+ * @param selectedProducts
+ * @param productCount
+ * @param onProductCountChanged
+ * @param alreadyGotAnOrder
+ */
 @Composable
 fun ProductCardForOrder(
     product: Product,
@@ -314,8 +377,7 @@ fun ProductCardForOrder(
             defaultElevation = 15.dp
         ),
         border = BorderStroke(
-            0.3.dp,
-            MaterialTheme.colorScheme.primary
+            0.3.dp, MaterialTheme.colorScheme.primary
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onTertiary,
@@ -340,15 +402,12 @@ fun ProductCardForOrder(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                onClick = {},
-                content = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.SpeakerNotes,
-                        contentDescription = ""
-                    )
-                }
-            )
+            IconButton(onClick = {}, content = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.SpeakerNotes,
+                    contentDescription = ""
+                )
+            })
             Button(
                 onClick = {
                     if (selectedCount < product.quantity) {
@@ -395,6 +454,12 @@ fun ProductCardForOrder(
     }
 }
 
+/**
+ * Returns the total price of all selected products.
+ *
+ * @param productCountMap
+ * @return
+ */
 fun calculateTotalPrice(productCountMap: Map<Product, Int>): Double {
     var totalPrice = 0.0
     for ((product, count) in productCountMap) {

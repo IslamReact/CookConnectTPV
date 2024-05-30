@@ -10,12 +10,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 
+/**
+ * Class MainViewModel
+ *
+ */
 class MainViewModel : ViewModel() {
 
-    private val _drawerSelectedIndex = MutableStateFlow<Int>(0)
+    private val _drawerSelectedIndex = MutableStateFlow(0)
     val drawerSelectedIndex: StateFlow<Int> = _drawerSelectedIndex
 
-    // Function to update the selected index
+    /**
+     * Update the selected index of the drawer
+     *
+     * @param index
+     */
     fun updateSelectedIndex(index: Int) {
         _drawerSelectedIndex.value = index
     }

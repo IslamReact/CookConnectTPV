@@ -52,11 +52,17 @@ import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable screen AddProductScreen
+ *
+ * @param navCotroller
+ * @param productViewModel
+ * @param productManager
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddProductScreen(
-    auth: AuthManager,
     navCotroller: NavHostController,
     productViewModel: ProductViewModel,
     productManager: ProductManager

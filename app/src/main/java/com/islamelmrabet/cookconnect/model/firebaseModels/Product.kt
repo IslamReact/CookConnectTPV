@@ -1,10 +1,18 @@
 package com.islamelmrabet.cookconnect.model.firebaseModels
 
-import java.util.UUID
-
+/**
+ * Class: Product
+ *
+ * @property key
+ * @property productUID
+ * @property productName
+ * @property quantity
+ * @property unitPrice
+ * @property category
+ */
 data class Product(
     val key: String? = null,
-    val productUID: String = "" ,
+    val productUID: String = "",
     val productName: String = "",
     val quantity: Int = 0,
     val unitPrice: Double = 0.00,

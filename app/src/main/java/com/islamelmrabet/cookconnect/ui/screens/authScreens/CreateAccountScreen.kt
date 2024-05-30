@@ -56,6 +56,12 @@ import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.AuthRes
 import kotlinx.coroutines.launch
 
+/**
+ * Composable Screen CreateAccountScreen
+ *
+ * @param auth
+ * @param navController
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,6 +231,16 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
     )
 }
 
+/**
+ * Private suspend function that calls the authManager to make the sign up request.
+ *
+ * @param email
+ * @param password
+ * @param worker
+ * @param auth
+ * @param context
+ * @param navigation
+ */
 private suspend fun signUp(
     email: String,
     password: String,
@@ -238,7 +254,6 @@ private suspend fun signUp(
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
             navigation.popBackStack()
         }
-
         is AuthRes.Error -> {
             Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT)
                 .show()

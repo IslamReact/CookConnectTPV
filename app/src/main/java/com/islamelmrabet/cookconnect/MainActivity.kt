@@ -24,7 +24,10 @@ import com.islamelmrabet.cookconnect.viewModel.PreferencesViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 
-
+/**
+ * Class MainActivity
+ *
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +67,9 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (isGranted) {
-
+            Log.d("Permission", "Is Granted")
         } else {
-
+            Log.d("Permission", "Is Not Granted")
         }
     }
 
@@ -80,13 +83,6 @@ class MainActivity : ComponentActivity() {
             Log.d("FCM TOKEN", token.toString())
         })
     }
-
-     fun onBackPressedCallback() {
-        super.onBackPressedDispatcher
-        Toast.makeText(this@MainActivity, "There is no back action", Toast.LENGTH_LONG).show()
-        return
-    }
-
 }
 
 

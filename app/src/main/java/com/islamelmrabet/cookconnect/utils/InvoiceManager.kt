@@ -1,18 +1,23 @@
 package com.islamelmrabet.cookconnect.utils
 
-import android.content.Context
 import android.util.Log
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import java.util.concurrent.CompletableFuture
 
-class InvoiceManager(context: Context) {
+/**
+ * Class InvoiceManager
+ *
+ */
+class InvoiceManager {
     private val collectionReference = FirebaseFirestore.getInstance().collection("invoices")
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("invoices")
 
+    /**
+     * Add invoice to firebase.
+     *
+     * @param invoice
+     * @return CompletableFuture<Boolean>
+     */
     fun addInvoiceManager(invoice: Invoice): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
         collectionReference

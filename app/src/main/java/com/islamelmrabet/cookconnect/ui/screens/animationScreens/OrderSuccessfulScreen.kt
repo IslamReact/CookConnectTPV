@@ -22,6 +22,11 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.navigation.Routes
 import kotlinx.coroutines.delay
 
+/**
+ * Composable screen OrderSuccessfulScreen
+ *
+ * @param navController
+ */
 @Composable
 fun OrderSuccessfulScreen(navController: NavHostController) {
     val composition by rememberLottieComposition(

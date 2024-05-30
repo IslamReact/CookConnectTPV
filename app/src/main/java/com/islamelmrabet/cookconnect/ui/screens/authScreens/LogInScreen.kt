@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
@@ -50,6 +55,14 @@ import com.islamelmrabet.cookconnect.utils.AuthRes
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable screen LogInScreen
+ *
+ * @param auth
+ * @param navController
+ * @param initialEmail
+ * @param authViewModel
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LogInScreen(
@@ -78,7 +91,7 @@ fun LogInScreen(
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
 
     LaunchedEffect(email, password, userRole) {
-        isButtonEnabled = email.isNotBlank() && password.isNotBlank() && userRole.isNotBlank( )
+        isButtonEnabled = email.isNotBlank() && password.isNotBlank() && userRole.isNotBlank()
     }
 
     LaunchedEffect(Unit) {
@@ -131,9 +144,9 @@ fun LogInScreen(
                     onClick = {
                         isLoading = true
                         scope.launch {
-                            if(isANewPassword){
-                                authViewModel.updatePassword(email,auth,context, password)
-                                authViewModel.updateIsANewPassword(email, auth, context, false)
+                            if (isANewPassword) {
+                                authViewModel.updatePassword(email, auth, context, password)
+                                authViewModel.updateIsANewPassword(email, auth, false)
                                 try {
                                     emailPassSignIn(
                                         email,
@@ -146,7 +159,7 @@ fun LogInScreen(
                                 } finally {
                                     isLoading = false
                                 }
-                            }else {
+                            } else {
                                 try {
                                     emailPassSignIn(
                                         email,
@@ -168,8 +181,12 @@ fun LogInScreen(
                     enabled = isButtonEnabled
                 )
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(16.dp)
+                    val composition by rememberLottieComposition(
+                        spec = LottieCompositionSpec.Url("https://lottie.host/28d9d00d-fd59-47a3-9274-84ae50025090/NQicxfwezK.json")
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever
                     )
                 }
                 Spacer(modifier = Modifier.height(50.dp))
@@ -200,6 +217,16 @@ fun LogInScreen(
     )
 }
 
+/**
+ * Private suspend function that calls the authManager to make the sign in request.
+ *
+ * @param email
+ * @param password
+ * @param auth
+ * @param context
+ * @param navigation
+ * @param userRole
+ */
 private suspend fun emailPassSignIn(
     email: String,
     password: String,
@@ -213,7 +240,7 @@ private suspend fun emailPassSignIn(
             Toast.makeText(context, "Inicio de sesion correcto", Toast.LENGTH_SHORT).show()
             when (userRole) {
                 "Cocinero" -> {
-                    navigation.navigate(Routes.OrderCookerScreen.route){
+                    navigation.navigate(Routes.OrderCookerScreen.route) {
                         popUpTo(Routes.LogInScreen.route) { inclusive = true }
                         popUpTo(Routes.WelcomeScreen.route) { inclusive = true }
                     }
@@ -236,10 +263,6 @@ private suspend fun emailPassSignIn(
         is AuthRes.Error -> {
             Toast.makeText(context, "Error SignUp: ${result.errorMessage}", Toast.LENGTH_SHORT)
                 .show()
-        }
-
-        else -> {
-            Toast.makeText(context, "Unknown Error", Toast.LENGTH_SHORT).show()
         }
     }
 }

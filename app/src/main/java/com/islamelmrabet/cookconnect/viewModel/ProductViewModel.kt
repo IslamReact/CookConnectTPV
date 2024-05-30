@@ -9,8 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.tools.Result
@@ -20,10 +18,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
-
+/**
+ * Class ProductViewModel
+ *
+ */
 class ProductViewModel : ViewModel() {
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("products")
 
     private val productManager = ProductManager()
     private val _productList = MutableLiveData<List<Product>>()
@@ -35,14 +34,28 @@ class ProductViewModel : ViewModel() {
         fetchProductData()
     }
 
+    /**
+     * Adds a product
+     *
+     * @param product
+     * @param productManager
+     * @param context
+     */
     fun addProduct(product: Product, productManager: ProductManager, context: Context) {
-        when (val result = productManager.addProduct(product)) {
+        when (productManager.addProduct(product)) {
             else -> {
                 Toast.makeText(context, "Product added successfully", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    /**
+     * Deletes the product
+     *
+     * @param productName
+     * @param productManager
+     * @param context
+     */
     fun deleteProduct(productName: String, productManager: ProductManager, context: Context) {
         viewModelScope.launch {
             val productId = productManager.getProductDocumentIdByName(productName)
@@ -60,6 +73,14 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Update the product
+     *
+     * @param originalProductName
+     * @param product
+     * @param productManager
+     * @param context
+     */
     fun updateProduct(
         originalProductName: String,
         product: Product,
@@ -92,6 +113,10 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Fetches all product data in a live data list.
+     *
+     */
     fun fetchProductData() {
         response.value = Result.Loading
         val productTempList = mutableListOf<Product>()
@@ -115,6 +140,12 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Get product using his name.
+     *
+     * @param productName
+     * @return Product
+     */
     suspend fun getProduct(productName: String): Product? {
         val productsRef = FirebaseFirestore.getInstance().collection("products")
         val querySnapshot = productsRef.whereEqualTo("productName", productName).get().await()
@@ -125,6 +156,12 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Update all products quantity from a list.
+     *
+     * @param productCountMap
+     * @param context
+     */
     fun updateProductQuantities(productCountMap: Map<Product, Int>, context: Context) {
         viewModelScope.launch {
             val db = FirebaseFirestore.getInstance()
@@ -156,13 +193,21 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Cheks if the product already exists
+     *
+     * @param productName
+     * @return Boolean
+     */
     suspend fun productExists(productName: String): Boolean {
         val normalizedProductName = productName.trim().lowercase(Locale.ROOT)
         val productsRef = FirebaseFirestore.getInstance().collection("products")
         val querySnapshot = productsRef.get().await()
         for (document in querySnapshot.documents) {
             val product = document.toObject(Product::class.java)
-            if (product != null && product.productName.trim().lowercase(Locale.ROOT) == normalizedProductName) {
+            if (product != null && product.productName.trim()
+                    .lowercase(Locale.ROOT) == normalizedProductName
+            ) {
                 return true
             }
         }

@@ -16,6 +16,12 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.viewModel.PreferencesViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * Composable function that displays the contents of Splash screen
+ *
+ * @param navController
+ * @param preferencesViewModel
+ */
 @Composable
 fun SplashScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
 
@@ -31,6 +37,10 @@ fun SplashScreen(navController: NavHostController, preferencesViewModel: Prefere
     Splash()
 }
 
+/**
+ * Composable Screen SplashScreen
+ *
+ */
 @Composable
 fun Splash() {
     Column(
@@ -43,11 +53,4 @@ fun Splash() {
             contentDescription = "Logo CookConnect",
         )
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun SplashScreenPreview() {
-    Splash()
 }

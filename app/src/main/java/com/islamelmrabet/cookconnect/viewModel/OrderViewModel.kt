@@ -10,17 +10,32 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.utils.OrderManager
 import kotlinx.coroutines.tasks.await
 
-
+/**
+ * Class OrderViewModel
+ *
+ */
 class OrderViewModel : ViewModel() {
 
     private val orderManager = OrderManager()
 
     private val _orderOrderSummary = MutableLiveData<Order>()
     val orderOrderSummary: LiveData<Order> = _orderOrderSummary
+
+    /**
+     * Set order status
+     *
+     * @param order
+     */
     fun setOrderOrderSummary(order: Order) {
         _orderOrderSummary.value = order
     }
 
+    /**
+     * Adds an order
+     *
+     * @param order
+     * @param context
+     */
     fun addOrder(order: Order, context: Context) {
         orderManager.addOrderManager(order)
             .thenAccept { success ->
@@ -37,6 +52,12 @@ class OrderViewModel : ViewModel() {
             }
     }
 
+    /**
+     * Gets the order using the table number
+     *
+     * @param tableNumber
+     * @return Order
+     */
     suspend fun getOrder(tableNumber: Int): Order? {
         val productsRef = FirebaseFirestore.getInstance().collection("orders")
         val querySnapshot = productsRef.whereEqualTo("tableNumber", tableNumber).get().await()
@@ -47,6 +68,13 @@ class OrderViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Delete the order using the table number
+     *
+     * @param tableNumber
+     * @param context
+     * @param isForDelete
+     */
     fun deleteOrder(tableNumber: Int, context: Context, isForDelete: Boolean) {
         orderManager.deleteOrderManager(tableNumber)
             .thenAccept { success ->
@@ -66,6 +94,10 @@ class OrderViewModel : ViewModel() {
             }
     }
 
+    /**
+     * Clears all the order summary data.
+     *
+     */
     fun clearOrderOrderSummary() {
         _orderOrderSummary.value = Order()
     }

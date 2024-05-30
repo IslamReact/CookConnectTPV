@@ -1,11 +1,17 @@
 package com.islamelmrabet.cookconnect.model.firebaseModels
 
-/*
- * Modelo de Pedido
- *
- * OrderDateCreated y TableNumber son las claves principales
- */
 
+/**
+ * CLASS: Order
+ *
+ * @property key
+ * @property orderDateCreated
+ * @property tableNumber
+ * @property price
+ * @property isReady
+ * @property orderNote
+ * @property productQuantityMap
+ */
 data class Order(
     val key: String? = null,
     // TODO: OrderDateCreated y TableNumber son las claves principales
@@ -15,6 +21,6 @@ data class Order(
     var isReady: Boolean = false,
     val orderNote: String = "",
     val productQuantityMap: Map<String, Int>
-){
-    constructor() : this(null,"",0,0.0,false,"", emptyMap() )
+) {
+    constructor() : this(null, "", 0, 0.0, false, "", emptyMap())
 }

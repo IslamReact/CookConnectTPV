@@ -10,6 +10,11 @@ import com.islamelmrabet.cookconnect.model.localModels.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Class: AppPreferences.
+ *
+ * @property context
+ */
 class AppPreferences(val context: Context) {
     companion object {
         val isFirstTime = booleanPreferencesKey("NAME")
@@ -18,7 +23,7 @@ class AppPreferences(val context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
     /**
-     * TODO
+     * Save user in dataStore
      *
      * @param user
      */
@@ -29,7 +34,7 @@ class AppPreferences(val context: Context) {
     }
 
     /**
-     * TODO
+     * Returns the value of attribute in dataStore
      *
      * @return isFirstTime
      */

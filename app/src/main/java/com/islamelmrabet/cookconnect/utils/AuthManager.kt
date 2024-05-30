@@ -12,19 +12,35 @@ import com.google.firebase.ktx.Firebase
 import com.islamelmrabet.cookconnect.model.firebaseModels.Worker
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Sealed class for the result.
+ *
+ * @param T
+ */
 sealed class AuthRes<out T> {
     data class Success<T>(val data: T) : AuthRes<T>()
     data class Error(val errorMessage: String) : AuthRes<Nothing>()
 }
 
+/**
+ * Class AuthManager.
+ *
+ * Description: This class provides all the methods to signIn, SignUp, and create workers.
+ *
+ * @property context
+ */
 class AuthManager(private val context: Context) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val collectionReference = FirebaseFirestore.getInstance().collection("workers")
 
-
-    private val signInClient = Identity.getSignInClient(context)
-
-
+    /**
+     * Create user
+     *
+     * @param email
+     * @param password
+     * @param worker
+     * @return
+     */
     suspend fun createUserWithEmailAndPassword(
         email: String,
         password: String,
@@ -39,6 +55,13 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * SignIn with FirebaseAuth with email and password.
+     *
+     * @param email
+     * @param password
+     * @return
+     */
     suspend fun signInWithEmailAndPassword(
         email: String,
         password: String
@@ -52,6 +75,13 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * Reset password using the email.
+     *
+     *
+     * @param email
+     * @return
+     */
     suspend fun resetPassword(email: String): AuthRes<Unit> {
         return try {
             auth.sendPasswordResetEmail(email).await()
@@ -61,14 +91,19 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * Sign out from Firebase
+     *
+     */
     fun signOut() {
         auth.signOut()
     }
 
-    fun getCurrentUser(): FirebaseUser? {
-        return auth.currentUser
-    }
-
+    /**
+     * Create a new worker
+     *
+     * @param worker
+     */
     private fun createWorker(worker: Worker) {
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -85,7 +120,11 @@ class AuthManager(private val context: Context) {
         }
     }
 
-
+    /**
+     * Update the last worker login in the app
+     *
+     * @param userId
+     */
     private suspend fun updateLastLoginDate(userId: String?) {
         try {
             userId?.let { uid ->
@@ -103,6 +142,12 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * Get worker document by the email.
+     *
+     * @param workerEmail
+     * @return WorkerDocument
+     */
     suspend fun getWorkerDocumentIdByEmail(workerEmail: String): String? {
         return try {
             val querySnapshot = FirebaseFirestore.getInstance().collection("workers")
@@ -119,6 +164,13 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * Update password of the worker created in Firebase.
+     *
+     * @param workerId
+     * @param password
+     * @return TableRes<Unit>
+     */
     fun updatePassword(workerId: String, password: String): TableRes<Unit> {
         return try {
             collectionReference
@@ -133,6 +185,13 @@ class AuthManager(private val context: Context) {
         }
     }
 
+    /**
+     * Update the field isANewPassword of the worker created in Firebase in case if he is change it
+     *
+     * @param workerId
+     * @param isNewPassword
+     * @return TableRes<Unit>
+     */
     fun updateIsANewPasswordWorker(workerId: String, isNewPassword: Boolean): TableRes<Unit> {
         return try {
             collectionReference
@@ -146,41 +205,4 @@ class AuthManager(private val context: Context) {
             TableRes.Error(e.message ?: "Error updating isANewPassword")
         }
     }
-
-    // TODO: Funciones para la implementacion de la autentificacion de Google
-    /*
-    private val googleSignInClient: GoogleSignInClient by lazy {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        GoogleSignIn.getClient(context, gso)
-    }
-
-    fun handleSignInResult(task: Task<GoogleSignInAccount>): AuthRes<GoogleSignInAccount>? {
-        return try {
-            val account = task.getResult(ApiException::class.java)
-            AuthRes.Success(account)
-        } catch (e: ApiException) {
-            AuthRes.Error(e.message ?: "Google sign-in failed.")
-        }
-    }
-
-    suspend fun signInWithGoogleCredential(credential: AuthCredential): AuthRes<FirebaseUser>? {
-        return try {
-            val firebaseUser = auth.signInWithCredential(credential).await()
-            firebaseUser.user?.let {
-                AuthRes.Success(it)
-            } ?: throw Exception("Sign in with Google failed.")
-        } catch (e: Exception) {
-            AuthRes.Error(e.message ?: "Sign in with Google failed.")
-        }
-    }
-
-    fun signInWithGoogle(googleSignInLauncher: ActivityResultLauncher<Intent>) {
-        val signInIntent = googleSignInClient.signInIntent
-        googleSignInLauncher.launch(signInIntent)
-    }
-    */
-
 }

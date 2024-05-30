@@ -9,6 +9,14 @@ import com.islamelmrabet.cookconnect.model.localModels.UserPreferences
 import com.islamelmrabet.cookconnect.preferences.AppPreferences
 import kotlinx.coroutines.launch
 
+/**
+ * Class PreferencesViewModel
+ *
+ * @constructor
+ * TODO
+ *
+ * @param application
+ */
 class PreferencesViewModel(application: Application) : AndroidViewModel(application) {
     private val preferences = AppPreferences(application.applicationContext)
 

@@ -2,9 +2,15 @@ package com.islamelmrabet.cookconnect.model.localModels
 
 import com.islamelmrabet.cookconnect.navigation.Routes
 
-data class SettingItem (
+/**
+ * Class: SettingItem
+ *
+ * @property title
+ * @property route
+ */
+data class SettingItem(
     val title: String,
-    val route : String,
+    val route: String,
 )
 
 val settingsList = listOf(

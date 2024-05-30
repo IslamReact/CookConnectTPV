@@ -1,5 +1,15 @@
 package com.islamelmrabet.cookconnect.model.firebaseModels
 
+/**
+ * Class: Table
+ *
+ * @property key
+ * @property number
+ * @property gotOrder
+ * @property gotOrderReady
+ * @property capacity
+ * @property isReserved
+ */
 data class Table(
     val key: String? = null,
     val number: Int = 0,

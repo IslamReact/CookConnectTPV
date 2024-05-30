@@ -1,7 +1,6 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +31,6 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,17 +47,21 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.tools.OutlinedBasicButton
-import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
-import kotlinx.coroutines.launch
-import java.util.UUID
 
+/**
+ * Composable screen EditProductScreen
+ *
+ * @param navController
+ * @param productViewModel
+ * @param productManager
+ * @param productNameToEdit
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EditProductScreen(
-    auth: AuthManager,
     navController: NavHostController,
     productViewModel: ProductViewModel,
     productManager: ProductManager,

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
@@ -58,13 +59,21 @@ import com.islamelmrabet.cookconnect.model.localModels.settingsList
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedBasicButton
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable screen AccountSettingsScreen
+ *
+ * @param auth
+ * @param navController
+ * @param authViewModel
+ * @param mainViewModel
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -163,7 +172,7 @@ fun AccountSettingsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(275.dp))
-                HeaderFooter(lastLogInDate)
+                DrawerFooter(lastLogInDate)
             }
         },
     ) {
@@ -231,11 +240,10 @@ fun AccountSettingsScreen(
                         thickness = 1.dp,
                     )
                     LazyColumn {
-                        itemsIndexed(settingsList) { index, item ->
+                        itemsIndexed(settingsList) { _, item ->
                             SettingItemDesign(
                                 title = item.title,
-                                routes = item.route,
-                                onClick = {}
+                                onClick = { navController.navigate(item.route) }
                             )
                         }
                     }
@@ -272,9 +280,14 @@ fun AccountSettingsScreen(
     }
 }
 
-
+/**
+ * Composable function that shows how the setting item will be displayed.
+ *
+ * @param title
+ * @param onClick
+ */
 @Composable
-fun SettingItemDesign(title: String, routes: String, onClick: () -> Unit) {
+fun SettingItemDesign(title: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .padding(16.dp)
@@ -284,7 +297,7 @@ fun SettingItemDesign(title: String, routes: String, onClick: () -> Unit) {
         Text(text = title)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.Default.ArrowForwardIos,
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
             contentDescription = "",
             modifier = Modifier.size(24.dp)
         )

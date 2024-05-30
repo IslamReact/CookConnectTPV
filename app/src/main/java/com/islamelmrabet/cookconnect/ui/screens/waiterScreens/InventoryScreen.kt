@@ -27,7 +27,6 @@ import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -57,13 +56,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
@@ -71,7 +74,15 @@ import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
 
-
+/**
+ * Composable screen InventoryScreen
+ *
+ * @param auth
+ * @param navController
+ * @param authViewModel
+ * @param productViewModel
+ * @param mainViewModel
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InventoryScreen(
@@ -144,7 +155,7 @@ fun InventoryScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(275.dp))
-                HeaderFooter(lastLogInDate)
+                DrawerFooter(lastLogInDate)
             }
         },
     ) {
@@ -223,6 +234,12 @@ fun InventoryScreen(
     }
 }
 
+/**
+ * Composable function that return the result from the list of products.
+ *
+ * @param productViewModel
+ * @param navController
+ */
 @Composable
 fun SetData(productViewModel: ProductViewModel, navController: NavController) {
 
@@ -232,12 +249,33 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                val composition by rememberLottieComposition(
+                    spec = LottieCompositionSpec.Url("https://lottie.host/28d9d00d-fd59-47a3-9274-84ae50025090/NQicxfwezK.json")
+                )
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
             }
         }
 
         is Result.Success -> {
-            ShowLazyListOfProducts(result.data, navController)
+            if (result.data.isEmpty()){
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val composition by rememberLottieComposition(
+                        spec = LottieCompositionSpec.Url("https://lottie.host/4cda72c3-0622-4905-968e-509757c3368b/eqpZmzRMHU.json")
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever
+                    )
+                }
+            }else{
+                ShowLazyListOfProducts(result.data, navController)
+            }
         }
 
         is Result.Failure -> {
@@ -249,26 +287,16 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
             }
         }
 
-        is Result.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "No products found")
-            }
-        }
-
-        else -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Unknown error")
-            }
-        }
+        else -> {}
     }
 }
 
+/**
+ * Composable function that displays the Lazy column of a list of products.
+ *
+ * @param products
+ * @param navController
+ */
 @Composable
 fun ShowLazyListOfProducts(products: List<Product>, navController: NavController) {
     LazyColumn(
@@ -283,6 +311,12 @@ fun ShowLazyListOfProducts(products: List<Product>, navController: NavController
     }
 }
 
+/**
+ * Composable function that displays the product Card.
+ *
+ * @param product
+ * @param navController
+ */
 @Composable
 fun ProductCard(product: Product, navController: NavController) {
 

@@ -8,12 +8,20 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CompletableFuture
 
-class ProductManager() {
+/**
+ * Class ProductManager
+ *
+ */
+class ProductManager {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("products")
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("products")
 
+    /**
+     * Adds a product
+     *
+     * @param product
+     * @return CompletableFuture<Boolean>
+     */
     fun addProduct(product: Product): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
         collectionReference
@@ -29,7 +37,12 @@ class ProductManager() {
         return completableFuture
     }
 
-
+    /**
+     * Delete a product
+     *
+     * @param productId
+     * @return TableRes<Unit>
+     */
     fun deleteProduct(productId: String): TableRes<Unit> {
         return try {
             collectionReference
@@ -44,6 +57,13 @@ class ProductManager() {
         }
     }
 
+    /**
+     * Update a Product
+     *
+     * @param productId
+     * @param product
+     * @return TableRes<Unit>
+     */
     fun updateProduct(productId: String, product: Product): TableRes<Unit> {
         return try {
             collectionReference
@@ -58,6 +78,12 @@ class ProductManager() {
         }
     }
 
+    /**
+     * Get product document id by name
+     *
+     * @param productName
+     * @return String?
+     */
     suspend fun getProductDocumentIdByName(productName: String): String? {
         return try {
             val querySnapshot = FirebaseFirestore.getInstance().collection("products")

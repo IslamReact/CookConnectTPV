@@ -1,35 +1,43 @@
 package com.islamelmrabet.cookconnect.navigation
 
+/**
+ * Class: Routes
+ *
+ * Description: This sealed class provides the routes for the navigation flow.
+ *
+ *
+ * @property route
+ */
 sealed class Routes(val route:String){
-    object SplashScreen : Routes("splash_screen")
+    data object SplashScreen : Routes("splash_screen")
 
     //**********************************************************************************************
     // AUTH SCREEN ROUTES
     //**********************************************************************************************
-    object  WelcomeScreen : Routes("main_screen")
-    object  LogInScreen : Routes("logIn_screen")
-    object  CreateAccountScreen : Routes("create_account_screen")
-    object  ForgotPasswordScreen : Routes("forgot_password_screen")
+    data object  WelcomeScreen : Routes("main_screen")
+    data object  LogInScreen : Routes("logIn_screen")
+    data object  CreateAccountScreen : Routes("create_account_screen")
+    data object  ForgotPasswordScreen : Routes("forgot_password_screen")
 
 
     //**********************************************************************************************
     // APP SCREEN ROUTES
     //**********************************************************************************************
-    object  TableScreen : Routes("table_screen")
-    object  OrderScreen : Routes("order_screen")
-    object  InventoryScreen : Routes("inventory_screen")
-    object  EditProductScreen : Routes("edit_product_screen")
-    object  AddProductScreen : Routes("add_product_screen")
-    object  OrderCookerScreen : Routes("order_cooker_screen")
-    object  InvoiceScreen : Routes("invoice_screen")
-    object  AccountSettingsScreen : Routes("account_settings_screen")
-    object  OrderSummaryScreen : Routes("order_summary_screen")
-    object  OrderSuccessfulScreen : Routes("order_successful_screen")
+    data object  TableScreen : Routes("table_screen")
+    data object  OrderScreen : Routes("order_screen")
+    data object  InventoryScreen : Routes("inventory_screen")
+    data object  EditProductScreen : Routes("edit_product_screen")
+    data object  AddProductScreen : Routes("add_product_screen")
+    data object  OrderCookerScreen : Routes("order_cooker_screen")
+    data object  InvoiceScreen : Routes("invoice_screen")
+    data object  AccountSettingsScreen : Routes("account_settings_screen")
+    data object  OrderSummaryScreen : Routes("order_summary_screen")
+    data object  OrderSuccessfulScreen : Routes("order_successful_screen")
 
 
     //**********************************************************************************************
     // ON BOARDING SCREEN ROUTES
     //**********************************************************************************************
-    object  FisrtOnBoardingScreen : Routes("first_onboarding_screen")
+    data object  FisrtOnBoardingScreen : Routes("first_onboarding_screen")
 
 }

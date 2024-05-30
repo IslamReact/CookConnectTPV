@@ -40,8 +40,19 @@ import com.islamelmrabet.cookconnect.utils.AuthRes
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable screen ForgotPasswordScreen
+ *
+ * @param auth
+ * @param navController
+ * @param authViewModel
+ */
 @Composable
-fun ForgotPasswordScreen(auth: AuthManager, navController: NavController, authViewModel: AuthViewModel) {
+fun ForgotPasswordScreen(
+    auth: AuthManager,
+    navController: NavController,
+    authViewModel: AuthViewModel
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -88,7 +99,11 @@ fun ForgotPasswordScreen(auth: AuthManager, navController: NavController, authVi
                             scope.launch {
                                 when (val res = auth.resetPassword(email)) {
                                     is AuthRes.Success -> {
-                                        authViewModel.updateIsANewPassword(email, auth, context, true)
+                                        authViewModel.updateIsANewPassword(
+                                            email,
+                                            auth,
+                                            true
+                                        )
                                         Toast.makeText(
                                             context,
                                             "Correo enviado",

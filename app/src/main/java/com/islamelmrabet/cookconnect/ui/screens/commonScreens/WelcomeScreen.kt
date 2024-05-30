@@ -4,9 +4,11 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,13 +38,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.BasicButton
 
-
+/**
+ * Composable screen WelcomeScreen
+ *
+ * @param navController
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeScreen(navController: NavController) {
@@ -51,6 +61,9 @@ fun WelcomeScreen(navController: NavController) {
 
     val buttonColors = ButtonDefaults.buttonColors(
         containerColor = primaryColor
+    )
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.Url("https://lottie.host/22030422-d085-49d7-9886-4a48803576e6/HJkT0Z7bVp.json")
     )
 
     var expandedState by remember { mutableStateOf(false) }
@@ -107,7 +120,16 @@ fun WelcomeScreen(navController: NavController) {
                 .fillMaxWidth(),
         ) {
             if (loading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever
+                    )
+                }
             } else {
                 ExposedDropdownMenuBox(
                     expanded = expandedState,

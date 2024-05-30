@@ -69,6 +69,18 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 
 // TODO: ALL TEXT FIELDS OF THE APP
+/**
+ * Edited textField for email and password fields in LogInScreen
+ *
+ * @param labelEmailText
+ * @param labelEmailTextField
+ * @param labelPasswordText
+ * @param labelPasswordTextField
+ * @param onEmailChange
+ * @param onPasswordChange
+ * @param emailValue
+ * @param passwordValue
+ */
 @Composable
 fun TextFieldLogin(
     labelEmailText: String,
@@ -126,6 +138,11 @@ fun TextFieldLogin(
     )
 }
 
+/**
+ *  Card that displays important information in the LogInScreen
+ *
+ * @param content
+ */
 @Composable
 fun ImportantInfoCard(content: @Composable () -> Unit) {
     Card(
@@ -146,6 +163,14 @@ fun ImportantInfoCard(content: @Composable () -> Unit) {
     }
 }
 
+/**
+ * Customized Text Field for table information.
+ * Used in TableScreen
+ *
+ * @param labelTableAttribute
+ * @param tableAttribute
+ * @param onTableAttributeChange
+ */
 @Composable
 fun OutlinedTableTextField(
     labelTableAttribute: String, tableAttribute: Int, onTableAttributeChange: (Int) -> Unit
@@ -173,6 +198,14 @@ fun OutlinedTableTextField(
 
 
 // TODO: ALL BUTTONS OF THE APP
+/**
+ * Basic customized button used in multiple screens
+ *
+ * @param buttonText
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param onClick
+ */
 @Composable
 fun BasicButton(
     buttonText: String,
@@ -203,6 +236,15 @@ fun BasicButton(
     )
 }
 
+/**
+ * Basic customized OutlinedButton used in multiple screens
+ *
+ * @param buttonText
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param border
+ * @param onClick
+ */
 @Composable
 fun OutlinedBasicButton(
     buttonText: String,
@@ -231,6 +273,16 @@ fun OutlinedBasicButton(
     )
 }
 
+/**
+ * Basic customized button with an icon used in multiple screens
+ *
+ * @param buttonText
+ * @param onClick
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param icon
+ * @param enabled
+ */
 @Composable
 fun ButtonWithIcon(
     buttonText: String,
@@ -273,6 +325,15 @@ fun ButtonWithIcon(
     )
 }
 
+/**
+ * Basic customized long button used in multiple screens
+ *
+ * @param buttonText
+ * @param onClick
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param enabled
+ */
 @Composable
 fun BasicLongButton(
     buttonText: String,
@@ -300,6 +361,16 @@ fun BasicLongButton(
     )
 }
 
+/**
+ * Basic customized long button with an icon used in multiple screens
+ *
+ * @param buttonText
+ * @param secondaryText
+ * @param onClick
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param enabled
+ */
 @Composable
 fun BasicLongButtonWithIcon(
     buttonText: String,
@@ -343,6 +414,13 @@ fun BasicLongButtonWithIcon(
 }
 
 // TODO: APP BAR
+/**
+ * Customized app bar used for simple navigation to a specific route.
+ *
+ * @param navController
+ * @param topAppBarText
+ * @param route
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AppBar(navController: NavController, topAppBarText: String, route: String) {
@@ -388,6 +466,12 @@ fun AppBar(navController: NavController, topAppBarText: String, route: String) {
     }
 }
 
+/**
+ * Customized app bar for cooker an waiter used to display the navigation drawer.
+ *
+ * @param topAppBarText
+ * @param onClick
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CookerAndWaiterAppBar(topAppBarText: String, onClick: () -> Unit) {
@@ -426,8 +510,16 @@ fun CookerAndWaiterAppBar(topAppBarText: String, onClick: () -> Unit) {
     }
 }
 
-//TODO: TEXTOS CLICKABLES
+//TODO: CLICKABLE TEXTS
 
+/**
+ * Customized clickable text used in multiple screens.
+ *
+ * @param text
+ * @param onClick
+ * @param modifier
+ * @param textStyle
+ */
 @Composable
 fun ClickableText(
     text: String,
@@ -448,6 +540,10 @@ fun ClickableText(
 }
 
 //TODO: DRAWER COMPONENTS
+/**
+ * Customized drawer header with de app logo with a text.
+ *
+ */
 @Composable
 fun DrawerHeader() {
     Column(
@@ -489,8 +585,13 @@ fun DrawerHeader() {
     }
 }
 
+/**
+ * Customized drawer header with the last login date.
+ *
+ * @param lastLogin
+ */
 @Composable
-fun HeaderFooter(lastLogin: String) {
+fun DrawerFooter(lastLogin: String) {
     Row(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.inversePrimary)
@@ -531,15 +632,4 @@ fun HeaderFooter(lastLogin: String) {
             }
         }
     }
-}
-
-//TODO: ANIMATION COMPONENTS
-@Composable
-fun OrderSuccessful() {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.Url("https://lottie.host/351beb02-ab0c-4715-bee0-bf9498a0a5ae/rsGvAATjm3.json"))
-
-    LottieAnimation(
-        composition = composition,
-        iterations = LottieConstants.IterateForever
-    )
 }

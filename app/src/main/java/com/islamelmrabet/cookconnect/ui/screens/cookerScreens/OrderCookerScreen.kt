@@ -57,15 +57,23 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.model.localModels.cookerNavigationItem
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.OrderCookerManager
 import com.islamelmrabet.cookconnect.utils.TableManager
@@ -76,9 +84,29 @@ import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 
-
+/**
+ * Composable screen OrderCookerScreen
+ *
+ * @param auth
+ * @param navController
+ * @param authViewModel
+ * @param orderCookerViewModel
+ * @param orderCookerManager
+ * @param mainViewModel
+ * @param tableViewModel
+ * @param tableManager
+ */
 @Composable
-fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, productViewModel: ProductViewModel, authViewModel: AuthViewModel, orderCookerViewModel: OrderCookerViewModel, orderCookerManager: OrderCookerManager, mainViewModel: MainViewModel, tableViewModel: TableViewModel, tableManager: TableManager) {
+fun OrderCookerScreen(
+    auth: AuthManager,
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    orderCookerViewModel: OrderCookerViewModel,
+    orderCookerManager: OrderCookerManager,
+    mainViewModel: MainViewModel,
+    tableViewModel: TableViewModel,
+    tableManager: TableManager
+) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -95,25 +123,25 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet (
+            ModalDrawerSheet(
                 drawerContainerColor = MaterialTheme.colorScheme.primary
-            ){
+            ) {
                 DrawerHeader()
                 cookerNavigationItem.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion"){
+                            if (item.title == "Cerrar Sesion") {
                                 auth.signOut()
-                                Log.d("LogOut event","Succesfully logged out")
+                                Log.d("LogOut event", "Succesfully logged out")
                                 navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
-                            }else{
+                            } else {
                                 navController.navigate(item.route)
 
                             }
@@ -124,7 +152,7 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == selectedItemIndex){
+                                imageVector = if (index == selectedItemIndex) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title,
@@ -141,10 +169,10 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                     )
                 }
                 Spacer(modifier = Modifier.height(275.dp))
-                HeaderFooter(lastLogInDate)
+                DrawerFooter(lastLogInDate)
             }
         },
-    ){
+    ) {
         Scaffold(
             topBar = {
                 CookerAndWaiterAppBar(
@@ -201,40 +229,119 @@ fun OrderCookerScreen(auth: AuthManager, navController: NavHostController, produ
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    ShowLazyListOfOrders(allOrders, orderCookerViewModel,context,orderCookerManager, tableViewModel, tableManager)
+                    ShowLazyListOfOrders(
+                        allOrders,
+                        orderCookerViewModel,
+                        context,
+                        orderCookerManager,
+                        tableViewModel,
+                        tableManager
+                    )
                 }
             }
         )
     }
 }
 
+/**
+ * Composable function that displays the lazy Column of Orders.
+ *
+ * @param orders
+ * @param orderCookerViewModel
+ * @param context
+ * @param orderCookerManager
+ * @param tableViewModel
+ * @param tableManager
+ */
 @Composable
-fun ShowLazyListOfOrders(orders: List<Order>, orderCookerViewModel: OrderCookerViewModel, context: Context, orderCookerManager: OrderCookerManager, tableViewModel: TableViewModel, tableManager: TableManager) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        orders.forEachIndexed { _, order ->
-            item {
-                var visible by remember { mutableStateOf(true) }
+fun ShowLazyListOfOrders(
+    orders: List<Order>,
+    orderCookerViewModel: OrderCookerViewModel,
+    context: Context,
+    orderCookerManager: OrderCookerManager,
+    tableViewModel: TableViewModel,
+    tableManager: TableManager
+) {
+    if(orders.isEmpty()){
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.Url("https://lottie.host/b1a6675e-378f-4df7-9ad7-05a74a1676f1/Z0Cdlmwi4Z.json")
+        )
+        Column (
+            modifier = Modifier
+               .fillMaxSize() ,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ){
+            Text(
+                text = "Take a deep breath.",
+                modifier = Modifier
+                   .padding(top = 100.dp),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 30.sp,
+                letterSpacing = 0.5.sp,
+            )
+            Text(text = "There´s no orders.",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 30.sp,
+                letterSpacing = 0.5.sp,
+            )
+            Box(
+                modifier = Modifier
+                   .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
+            }
+        }
+    }else{
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            orders.forEachIndexed { _, order ->
+                item {
+                    var visible by remember { mutableStateOf(true) }
 
-                AnimatedVisibility(
-                    visible = visible,
-                    exit = slideOutVertically()
-                ) {
-                    OrderCard(order, onOrderReadyClick = {
-                        orderCookerViewModel.updateOrderReadyStatus(order.orderDateCreated, orderCookerManager, context)
-                        tableViewModel.updateReadyOrderStatus(order.tableNumber, tableManager, context, true)
-                        visible = false
-                    })
+                    AnimatedVisibility(
+                        visible = visible,
+                        exit = slideOutVertically()
+                    ) {
+                        OrderCard(order, onOrderReadyClick = {
+                            orderCookerViewModel.updateOrderReadyStatus(
+                                order.orderDateCreated,
+                                orderCookerManager,
+                                context
+                            )
+                            tableViewModel.updateReadyOrderStatus(
+                                order.tableNumber,
+                                tableManager,
+                                true
+                            )
+                            visible = false
+                        })
+                    }
                 }
             }
         }
     }
 }
 
+/**
+ * Composable function that displays the order card.
+ *
+ * @param order
+ * @param onOrderReadyClick
+ */
 @Composable
 fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
     Card(
@@ -267,7 +374,8 @@ fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
             ) {
                 Text(
                     text = "Mesa ${order.tableNumber}",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,)
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
                 Text(
                     text = order.orderDateCreated,
                     Modifier.padding(start = 10.dp),
@@ -305,6 +413,12 @@ fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
     }
 }
 
+/**
+ * Composable that displays the information of the order.
+ *
+ * @param product
+ * @param quantity
+ */
 @Composable
 fun ProductRow(product: String, quantity: Int) {
     Row(

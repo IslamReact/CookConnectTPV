@@ -7,13 +7,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import java.util.concurrent.CompletableFuture
 
-class OrderManager() {
+/**
+ * Class OrderManager
+ *
+ */
+class OrderManager {
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("orders")
 
-    // Function to add a new order
+    /**
+     * Adds a new order
+     *
+     * @param order
+     * @return
+     */
     fun addOrderManager(order: Order): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
         collectionReference
@@ -29,6 +36,12 @@ class OrderManager() {
         return completableFuture
     }
 
+    /**
+     * Delete an order
+     *
+     * @param tableThatGotAnOrder
+     * @return
+     */
     fun deleteOrderManager(tableThatGotAnOrder: Int): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
 

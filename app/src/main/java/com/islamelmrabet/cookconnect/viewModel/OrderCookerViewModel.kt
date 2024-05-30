@@ -14,11 +14,16 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
+/**
+ * Class OrderCookerViewModel
+ *
+ */
 class OrderCookerViewModel : ViewModel() {
-    private val firestore = FirebaseFirestore.getInstance()
-
-    val response: MutableState<Result<Order>> = mutableStateOf(Result.Empty)
-
+    /**
+     * Fetches all order data from firestore
+     *
+     * @return Flow<List<Order>>
+     */
     fun fetchOrderDataFlow(): Flow<List<Order>> = callbackFlow {
         val collectionReference = FirebaseFirestore.getInstance().collection("orders")
             .whereEqualTo("ready", false)
@@ -40,13 +45,19 @@ class OrderCookerViewModel : ViewModel() {
         awaitClose { subscription.remove() }
     }
 
+    /**
+     * Update the order data flow
+     *
+     * @param orderDateCreated
+     * @param orderCookerManager
+     * @param context
+     */
     fun updateOrderReadyStatus(
         orderDateCreated: String,
         orderCookerManager: OrderCookerManager,
         context: Context
     ) {
-        val result = orderCookerManager.updateOrderReadyStatus(orderDateCreated)
-        when (result) {
+        when (orderCookerManager.updateOrderReadyStatus(orderDateCreated)) {
             is TableRes.Success -> {
                 Toast.makeText(context, "Order status updated successfully", Toast.LENGTH_SHORT)
                     .show()

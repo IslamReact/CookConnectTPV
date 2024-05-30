@@ -1,6 +1,5 @@
 package com.islamelmrabet.cookconnect.ui.screens.onBoardingScreens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,10 +48,18 @@ import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.viewModel.PreferencesViewModel
 import kotlinx.coroutines.launch
 
-
-@OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
+/**
+ * Composable screen FirstOnBoardingScreen
+ *
+ * @param navController
+ * @param preferencesViewModel
+ */
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun FirstOnBoardingScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
+fun FirstOnBoardingScreen(
+    navController: NavHostController,
+    preferencesViewModel: PreferencesViewModel
+) {
     val lessRoundedShape = RoundedCornerShape(8.dp)
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -99,7 +106,8 @@ fun FirstOnBoardingScreen(navController: NavHostController, preferencesViewModel
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(pagerState.pageCount) { iteration ->
-                val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else Color.LightGray
+                val color =
+                    if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else Color.LightGray
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
@@ -160,10 +168,10 @@ fun FirstOnBoardingScreen(navController: NavHostController, preferencesViewModel
                                 preferencesViewModel.onUserNameChanged(true)
                                 navController.popBackStack()
                                 preferencesViewModel.saveUser(isFirstTime)
-                                navController.navigate(Routes.WelcomeScreen.route){
+                                navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route)
                                 }
-                             },
+                            },
                             lessRoundedShape = lessRoundedShape,
                             buttonColors = buttonColors,
                             enabled = true
@@ -188,6 +196,11 @@ fun FirstOnBoardingScreen(navController: NavHostController, preferencesViewModel
     }
 }
 
+/**
+ * This method defines how the horizontal Pager content will be displayed.
+ *
+ * @param page
+ */
 @Composable
 fun OnBoardingPageScreen(page: PageModel) {
     val composition by rememberLottieComposition(LottieCompositionSpec.Url(page.animationFile))
@@ -199,13 +212,13 @@ fun OnBoardingPageScreen(page: PageModel) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Image(
                 painterResource(id = R.drawable._cropped),
                 contentDescription = "",

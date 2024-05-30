@@ -23,18 +23,25 @@ import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Class TableViewModel
+ *
+ */
 class TableViewModel : ViewModel() {
 
-    private val databaseReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("tables")
     private val firestore = FirebaseFirestore.getInstance()
-
 
     private val _tableNumber = MutableLiveData<Int>()
     val tableNumber: LiveData<Int> = _tableNumber
 
-    val response: MutableState<Result<Table>> = mutableStateOf(Result.Empty)
-
+    /**
+     * Adds a table
+     *
+     * @param table
+     * @param tableManager
+     * @param context
+     * @param onSuccess
+     */
     fun addTable(
         table: Table,
         tableManager: TableManager,
@@ -57,7 +64,11 @@ class TableViewModel : ViewModel() {
         }
     }
 
-
+    /**
+     * Fetches all tables from the database
+     *
+     * @return Flow<List<Table>>
+     */
     fun fetchTableDataFlow(): Flow<List<Table>> = callbackFlow {
         val collectionReference = firestore.collection("tables")
 
@@ -78,10 +89,16 @@ class TableViewModel : ViewModel() {
         awaitClose { subscription.remove() }
     }
 
+    /**
+     * Update the table order status
+     *
+     * @param tableNumber
+     * @param tableManager
+     * @param alreadyGotOrder
+     */
     fun updateTableOrderStatus(
         tableNumber: Int,
         tableManager: TableManager,
-        context: Context,
         alreadyGotOrder: Boolean
     ) {
         val result = tableManager.updateTableOrderStatus(tableNumber, alreadyGotOrder)
@@ -102,14 +119,19 @@ class TableViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Update the order status in case is ready
+     *
+     * @param tableNumber
+     * @param tableManager
+     * @param isReadyOrder
+     */
     fun updateReadyOrderStatus(
         tableNumber: Int,
         tableManager: TableManager,
-        context: Context,
         isReadyOrder: Boolean
     ) {
-        val result = tableManager.updateIsReadyOrderStatus(tableNumber, isReadyOrder)
-        when (result) {
+        when (tableManager.updateIsReadyOrderStatus(tableNumber, isReadyOrder)) {
             is TableRes.Success -> {
                 Log.d(
                     "Estado del pedido de cocina a mesa",
@@ -126,6 +148,12 @@ class TableViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Gets the table object using the table number
+     *
+     * @param tableNumber
+     * @return Table
+     */
     suspend fun getTable(tableNumber: Int): Table? {
         val productsRef = FirebaseFirestore.getInstance().collection("tables")
         val querySnapshot = productsRef.whereEqualTo("number", tableNumber).get().await()
@@ -136,7 +164,7 @@ class TableViewModel : ViewModel() {
         }
     }
 
-    // ----------------------------------------------------------------
+// ----------------------------------------------------------------
 // TODO: THIS FUNCITION MAY BE VALUABLE IN A FUTURE TO UPDATE TABLES
 // ----------------------------------------------------------------
 //    fun updateTable(originalProductName : String, product: Product, productManager: ProductManager, context: Context) {

@@ -78,7 +78,7 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.BasicButton
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
-import com.islamelmrabet.cookconnect.tools.HeaderFooter
+import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
 import com.islamelmrabet.cookconnect.utils.AuthManager
 import com.islamelmrabet.cookconnect.utils.TableManager
@@ -87,7 +87,16 @@ import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 
-
+/**
+ * Composable screen TableScreen
+ *
+ * @param auth
+ * @param navController
+ * @param tableManager
+ * @param authViewModel
+ * @param tableViewModel
+ * @param mainViewModel
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TableScreen(
@@ -175,7 +184,7 @@ fun TableScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(275.dp))
-                HeaderFooter(lastLogInDate)
+                DrawerFooter(lastLogInDate)
             }
         },
     ) {
@@ -257,6 +266,21 @@ fun TableScreen(
     }
 }
 
+/**
+ * Composable function that displays the information and fields to add a table
+ *
+ * @param showDialogState
+ * @param sheetState
+ * @param number
+ * @param onNumberChange
+ * @param capacity
+ * @param onCapacityChange
+ * @param lessRoundedShape
+ * @param buttonColors
+ * @param manager
+ * @param context
+ * @param tableViewModel
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ModalBottomSheetAddTable(
@@ -331,6 +355,12 @@ private fun ModalBottomSheetAddTable(
     }
 }
 
+/**
+ * Composable function that shows the lazy column of tables.
+ *
+ * @param tables
+ * @param navController
+ */
 @Composable
 fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
     LazyVerticalGrid(
@@ -345,6 +375,12 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
     }
 }
 
+/**
+ * Composable function that displays the table information.
+ *
+ * @param table
+ * @param navController
+ */
 @Composable
 fun TableIcon(table: Table, navController: NavController) {
     Card(
