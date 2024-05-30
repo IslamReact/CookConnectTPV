@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.sharp.Search
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,6 +53,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -250,6 +254,16 @@ fun InvoiceScreen(
 
                     ShowLazyListOfInvoices(allInvoices)
                 }
+            },
+            bottomBar = {
+                BottomAppBar(
+                    modifier = Modifier
+                        .height(50.dp)
+                        .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ) {
+                    ShowTotalPrice(allInvoices)
+                }
             }
         )
     }
@@ -264,7 +278,7 @@ fun InvoiceScreen(
 fun ShowLazyListOfInvoices(
     invoices: List<Invoice>,
 ) {
-    if(invoices.isEmpty()){
+    if (invoices.isEmpty()) {
         val composition by rememberLottieComposition(
             spec = LottieCompositionSpec.Url("https://lottie.host/3e5d3a68-0a7d-4e34-bc01-47e4233b5a2f/L0fjp8aoNm.json")
         )
@@ -278,8 +292,7 @@ fun ShowLazyListOfInvoices(
                 iterations = LottieConstants.IterateForever
             )
         }
-    }
-    else{
+    } else {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -401,6 +414,45 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ShowTotalPrice(invoices: List<Invoice>) {
+    val totalPriceInCash = invoices.filter { it.isPayedByCash }.sumOf { it.price }
+    val totalPrice = invoices.filter { !it.isPayedByCash }.sumOf { it.price }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row {
+            Text(
+                text = "Total en efectvo: ",
+                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+            Text(
+                text = String.format("$%.2f", totalPriceInCash),
+                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+        Row {
+            Text(
+                text = "Total en tarjeta: ",
+                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+            Text(
+                text = String.format("$%.2f", totalPrice),
+                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
         }
     }
 }

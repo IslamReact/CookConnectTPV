@@ -1,6 +1,7 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.content.Context
+import android.provider.CalendarContract.Colors
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -439,6 +440,8 @@ fun TableIcon(table: Table, navController: NavController) {
                         .background(
                             color = if (table.gotOrderReady) {
                                 MaterialTheme.colorScheme.secondary
+                            } else if (table.gotOrder && !table.gotOrderReady) {
+                                MaterialTheme.colorScheme.surfaceBright
                             } else {
                                 MaterialTheme.colorScheme.outline
                             }

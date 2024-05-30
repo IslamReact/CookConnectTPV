@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.ui.theme
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -43,7 +44,8 @@ private val LightColors = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
-    surfaceDim = md_theme_light_lightError
+    surfaceDim = md_theme_light_lightError,
+    surfaceBright = md_theme_light_waiting
 )
 
 
@@ -88,7 +90,7 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun CookConnectTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (!useDarkTheme) {
         LightColors
@@ -96,9 +98,19 @@ fun CookConnectTheme(
         DarkColors
     }
 
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colors.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = useDarkTheme
+        }
+    }
+
     MaterialTheme(
         colorScheme = colors,
         content = content
     )
+
 }
 

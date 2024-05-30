@@ -262,19 +262,19 @@ fun ShowLazyListOfOrders(
     tableViewModel: TableViewModel,
     tableManager: TableManager
 ) {
-    if(orders.isEmpty()){
+    if (orders.isEmpty()) {
         val composition by rememberLottieComposition(
             spec = LottieCompositionSpec.Url("https://lottie.host/b1a6675e-378f-4df7-9ad7-05a74a1676f1/Z0Cdlmwi4Z.json")
         )
-        Column (
+        Column(
             modifier = Modifier
-               .fillMaxSize() ,
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-        ){
+        ) {
             Text(
                 text = "Take a deep breath.",
                 modifier = Modifier
-                   .padding(top = 100.dp),
+                    .padding(top = 100.dp),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
@@ -282,7 +282,8 @@ fun ShowLazyListOfOrders(
                 lineHeight = 30.sp,
                 letterSpacing = 0.5.sp,
             )
-            Text(text = "There´s no orders.",
+            Text(
+                text = "There´s no orders.",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -292,7 +293,7 @@ fun ShowLazyListOfOrders(
             )
             Box(
                 modifier = Modifier
-                   .fillMaxSize(),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 LottieAnimation(
@@ -301,7 +302,7 @@ fun ShowLazyListOfOrders(
                 )
             }
         }
-    }else{
+    } else {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
