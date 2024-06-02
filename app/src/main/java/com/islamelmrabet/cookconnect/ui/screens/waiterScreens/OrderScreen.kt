@@ -232,7 +232,7 @@ fun OrderScreen(
             Spacer(modifier = Modifier.height(10.dp))
             BasicLongButtonWithIcon(
                 buttonText = "${productCountMap.size} items",
-                secondaryText = String.format("%.2f", totalPrice.doubleValue),
+                secondaryText = String.format("%.2f $", totalPrice.doubleValue),
                 onClick = {
                     navController.navigate(Routes.OrderSummaryScreen.route)
                 },
@@ -398,12 +398,6 @@ fun ProductCardForOrder(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = {}, content = {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.SpeakerNotes,
-                    contentDescription = ""
-                )
-            })
             Button(
                 onClick = {
                     if (selectedCount < product.quantity) {
