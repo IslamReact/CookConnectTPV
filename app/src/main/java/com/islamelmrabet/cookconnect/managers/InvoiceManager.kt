@@ -1,4 +1,4 @@
-package com.islamelmrabet.cookconnect.utils
+package com.islamelmrabet.cookconnect.managers
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore

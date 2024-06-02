@@ -191,7 +191,7 @@ fun WelcomeScreen(navController: NavController) {
                     navController.navigate(Routes.CreateAccountScreen.route)
                 }
             )
-            Spacer(modifier = Modifier.fillMaxWidth(0.2f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.1f))
             BasicButton(
                 buttonText = stringResource(id = R.string.login),
                 lessRoundedShape = lessRoundedShape,

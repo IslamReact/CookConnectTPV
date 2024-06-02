@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
-import com.islamelmrabet.cookconnect.utils.OrderManager
+import com.islamelmrabet.cookconnect.managers.OrderManager
 import kotlinx.coroutines.tasks.await
 
 /**

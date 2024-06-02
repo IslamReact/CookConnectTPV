@@ -8,8 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.TableRes
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.TableRes
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 

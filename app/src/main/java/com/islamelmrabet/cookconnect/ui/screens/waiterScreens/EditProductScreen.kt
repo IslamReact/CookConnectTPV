@@ -47,7 +47,7 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.tools.OutlinedBasicButton
-import com.islamelmrabet.cookconnect.utils.ProductManager
+import com.islamelmrabet.cookconnect.managers.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 
 /**

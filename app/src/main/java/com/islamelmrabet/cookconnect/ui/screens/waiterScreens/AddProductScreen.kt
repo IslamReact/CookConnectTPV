@@ -47,8 +47,7 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.ProductManager
+import com.islamelmrabet.cookconnect.managers.ProductManager
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
 

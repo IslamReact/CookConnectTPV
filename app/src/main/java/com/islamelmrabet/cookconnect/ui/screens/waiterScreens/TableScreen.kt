@@ -1,7 +1,6 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.content.Context
-import android.provider.CalendarContract.Colors
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,11 +67,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import com.islamelmrabet.cookconnect.model.localModels.navigationItems
@@ -81,8 +87,8 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
@@ -364,13 +370,55 @@ private fun ModalBottomSheetAddTable(
  */
 @Composable
 fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 120.dp),
-        userScrollEnabled = true
-    ) {
-        tables.forEachIndexed { _, table ->
-            item {
-                TableIcon(table, navController)
+    if (tables.isEmpty()) {
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.Url("https://lottie.host/f741b1cc-6935-4d12-8d6a-1be02907e008/7v6a565aGQ.json")
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "There´s no tables",
+                modifier = Modifier
+                    .padding(top = 100.dp),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 30.sp,
+                letterSpacing = 0.5.sp,
+            )
+            Text(
+                text = "Start adding them pressing +",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 30.sp,
+                letterSpacing = 0.5.sp,
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
+            }
+        }
+    }else {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 120.dp),
+            userScrollEnabled = true
+        ) {
+            tables.forEachIndexed { _, table ->
+                item {
+                    TableIcon(table, navController)
+                }
             }
         }
     }

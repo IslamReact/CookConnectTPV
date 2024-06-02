@@ -12,8 +12,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.tools.Result
-import com.islamelmrabet.cookconnect.utils.ProductManager
-import com.islamelmrabet.cookconnect.utils.TableRes
+import com.islamelmrabet.cookconnect.managers.ProductManager
+import com.islamelmrabet.cookconnect.managers.TableRes
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Locale

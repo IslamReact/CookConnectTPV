@@ -57,7 +57,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,13 +73,12 @@ import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.DrawerFooter
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.OrderCookerManager
-import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.OrderCookerManager
+import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
-import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 import kotlinx.coroutines.launch
 

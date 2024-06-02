@@ -2,14 +2,11 @@ package com.islamelmrabet.cookconnect.viewModel
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
-import com.islamelmrabet.cookconnect.tools.Result
-import com.islamelmrabet.cookconnect.utils.OrderCookerManager
-import com.islamelmrabet.cookconnect.utils.TableRes
+import com.islamelmrabet.cookconnect.managers.OrderCookerManager
+import com.islamelmrabet.cookconnect.managers.TableRes
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

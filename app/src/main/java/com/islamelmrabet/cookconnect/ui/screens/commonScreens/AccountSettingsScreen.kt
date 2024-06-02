@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,7 +60,7 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedBasicButton
-import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import kotlinx.coroutines.launch

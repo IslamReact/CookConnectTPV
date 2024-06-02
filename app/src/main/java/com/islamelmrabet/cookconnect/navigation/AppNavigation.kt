@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseUser
 import com.islamelmrabet.cookconnect.ui.screens.animationScreens.OrderSuccessfulScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.CreateAccountScreen
 import com.islamelmrabet.cookconnect.ui.screens.authScreens.ForgotPasswordScreen
@@ -22,12 +21,11 @@ import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.InventoryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.OrderSummaryScreen
 import com.islamelmrabet.cookconnect.ui.screens.waiterScreens.TableScreen
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.InvoiceManager
-import com.islamelmrabet.cookconnect.utils.OrderCookerManager
-import com.islamelmrabet.cookconnect.utils.OrderManager
-import com.islamelmrabet.cookconnect.utils.ProductManager
-import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.InvoiceManager
+import com.islamelmrabet.cookconnect.managers.OrderCookerManager
+import com.islamelmrabet.cookconnect.managers.ProductManager
+import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel

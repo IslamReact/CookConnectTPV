@@ -1,9 +1,6 @@
-package com.islamelmrabet.cookconnect.utils
+package com.islamelmrabet.cookconnect.managers
 
-import android.content.Context
 import android.util.Log
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
 /**

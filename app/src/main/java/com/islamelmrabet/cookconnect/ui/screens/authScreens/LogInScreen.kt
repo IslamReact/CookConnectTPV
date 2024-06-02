@@ -3,7 +3,6 @@ package com.islamelmrabet.cookconnect.ui.screens.authScreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,8 +48,8 @@ import com.islamelmrabet.cookconnect.tools.ButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.ClickableText
 import com.islamelmrabet.cookconnect.tools.ImportantInfoCard
 import com.islamelmrabet.cookconnect.tools.TextFieldLogin
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.AuthRes
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.AuthRes
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 

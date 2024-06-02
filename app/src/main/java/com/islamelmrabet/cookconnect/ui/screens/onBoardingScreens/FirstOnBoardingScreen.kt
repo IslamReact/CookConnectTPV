@@ -234,7 +234,7 @@ fun OnBoardingPageScreen(page: PageModel) {
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier.size(400.dp)
+            modifier = Modifier.size(350.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(

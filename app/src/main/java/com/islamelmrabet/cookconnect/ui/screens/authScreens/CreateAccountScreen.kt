@@ -52,8 +52,8 @@ import com.islamelmrabet.cookconnect.tools.ButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.ClickableText
 import com.islamelmrabet.cookconnect.tools.ImportantInfoCard
 import com.islamelmrabet.cookconnect.tools.TextFieldLogin
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.AuthRes
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.AuthRes
 import kotlinx.coroutines.launch
 
 /**

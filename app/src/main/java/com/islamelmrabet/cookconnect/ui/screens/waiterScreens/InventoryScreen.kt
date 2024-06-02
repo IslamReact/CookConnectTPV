@@ -68,7 +68,7 @@ import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.Result
-import com.islamelmrabet.cookconnect.utils.AuthManager
+import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel

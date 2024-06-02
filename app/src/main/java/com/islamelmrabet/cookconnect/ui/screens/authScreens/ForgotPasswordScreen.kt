@@ -35,8 +35,8 @@ import androidx.navigation.NavController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.AuthRes
+import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.managers.AuthRes
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 

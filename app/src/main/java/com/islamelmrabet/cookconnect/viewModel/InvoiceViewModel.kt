@@ -3,7 +3,7 @@ package com.islamelmrabet.cookconnect.viewModel
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
-import com.islamelmrabet.cookconnect.utils.InvoiceManager
+import com.islamelmrabet.cookconnect.managers.InvoiceManager
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

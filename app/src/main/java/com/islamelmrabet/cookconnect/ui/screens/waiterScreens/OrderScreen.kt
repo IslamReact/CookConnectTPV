@@ -30,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,10 +63,7 @@ import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.tools.BasicLongButtonWithIcon
 import com.islamelmrabet.cookconnect.tools.Result
-import com.islamelmrabet.cookconnect.utils.AuthManager
-import com.islamelmrabet.cookconnect.utils.OrderManager
-import com.islamelmrabet.cookconnect.utils.TableManager
-import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
+import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel

@@ -1,8 +1,7 @@
-package com.islamelmrabet.cookconnect.utils
+package com.islamelmrabet.cookconnect.managers
 
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth

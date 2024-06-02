@@ -52,8 +52,8 @@ import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
-import com.islamelmrabet.cookconnect.utils.InvoiceManager
-import com.islamelmrabet.cookconnect.utils.TableManager
+import com.islamelmrabet.cookconnect.managers.InvoiceManager
+import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
