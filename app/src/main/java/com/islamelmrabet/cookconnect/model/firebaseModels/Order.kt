@@ -19,8 +19,7 @@ data class Order(
     val tableNumber: Int = 0,
     val price: Double = 0.0,
     var isReady: Boolean = false,
-    val orderNote: String = "",
     val productQuantityMap: Map<String, Int>
 ) {
-    constructor() : this(null, "", 0, 0.0, false, "", emptyMap())
+    constructor() : this(null, "", 0, 0.0, false, emptyMap())
 }

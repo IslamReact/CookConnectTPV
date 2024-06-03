@@ -448,7 +448,7 @@ fun ProductCardForOrder(
  * Returns the total price of all selected products.
  *
  * @param productCountMap
- * @return
+ * @return Double
  */
 fun calculateTotalPrice(productCountMap: Map<Product, Int>): Double {
     var totalPrice = 0.0
