@@ -34,9 +34,9 @@
     <string name="invoice_search_header">Invoices</string>
     <string name="order_products_header">Products</string>
     <string name="order_summary_header">Order Summary</string>
-    <string name="lottie_animation_1">https://lottie.host/c094b63e-27bc-40ea-bb8e-fa4fe09070ab/tghNLmO30m.json</string>
-    <string name="lottie_animation_2">https://lottie.host/315b3f27-7686-4343-bc81-ff075c05503d/90q6uEZfPz.json</string>
-    <string name="lottie_animation_3">https://lottie.host/ece0b144-5b62-462a-90ab-c271c9e5291e/QYzVb0RXy5.json</string>
+    <string name="lottie_animation_1" translatable="false">https://lottie.host/c094b63e-27bc-40ea-bb8e-fa4fe09070ab/tghNLmO30m.json</string>
+    <string name="lottie_animation_2" translatable="false">https://lottie.host/315b3f27-7686-4343-bc81-ff075c05503d/90q6uEZfPz.json</string>
+    <string name="lottie_animation_3" translatable="false">https://lottie.host/ece0b144-5b62-462a-90ab-c271c9e5291e/QYzVb0RXy5.json</string>
     <string name="successful_register">Successful Registration</string>
     <string name="admin_role">Administrator</string>
     <string name="cooker_role">Cook</string>
