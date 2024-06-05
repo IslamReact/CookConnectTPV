@@ -1,7 +1,9 @@
 package com.islamelmrabet.cookconnect.ui.screens.commonScreens
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.sharp.Search
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,6 +39,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +56,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,9 +89,9 @@ import kotlinx.coroutines.launch
  * @param navController
  * @param authViewModel
  * @param mainViewModel
- * @param invoiceManager
  * @param invoiceViewModel
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InvoiceScreen(
@@ -108,6 +112,14 @@ fun InvoiceScreen(
     var workerRole by rememberSaveable { mutableStateOf("") }
     var currentWorkerMenu by rememberSaveable { mutableStateOf<List<NavigationItem>>(emptyList()) }
     val allInvoices by invoiceViewModel.fetchInvoiceDataFlow().collectAsState(initial = emptyList())
+    var searchQuery by remember { mutableStateOf("") }
+    var searchIsExpanded by remember { mutableStateOf(false) }
+
+
+    val filteredInvoices = allInvoices.filter { invoice ->
+        val matchesSearchQuery = searchQuery.isEmpty() || invoice.invoiceDateCreated?.contains(searchQuery, ignoreCase = true) == true
+        matchesSearchQuery
+    }
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -227,15 +239,26 @@ fun InvoiceScreen(
                         )
                         Spacer(modifier = Modifier.width(15.dp))
                         IconButton(
-                            onClick = { },
+                            onClick = {
+                                searchIsExpanded = !searchIsExpanded
+                            },
                             modifier = Modifier
                         ) {
                             Icon(
-                                imageVector = Icons.Sharp.Search,
+                                imageVector = Icons.Default.Search,
                                 contentDescription = ""
                             )
                         }
-
+                    }
+                    if (searchIsExpanded) {
+                        TextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text(stringResource(id = R.string.search_by_date_placeHolder)) },
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+                            singleLine = true,
+                        )
                     }
                     Box(
                         modifier = Modifier
@@ -246,7 +269,7 @@ fun InvoiceScreen(
                             .background(color = Color.Transparent)
                     )
 
-                    ShowLazyListOfInvoices(allInvoices)
+                    ShowLazyListOfInvoices(filteredInvoices)
                 }
             },
             bottomBar = {
@@ -370,7 +393,7 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (!invoice.isPayed) "Pagado" else "No pagado",
+                        text = if (!invoice.isPayed) stringResource(id = R.string.payed) else  stringResource(id = R.string.not_payed),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -425,7 +448,7 @@ fun ShowTotalPrice(invoices: List<Invoice>) {
     ) {
         Row {
             Text(
-                text = "Total en efectvo: ",
+                text = stringResource(id = R.string.total_cash),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
@@ -437,7 +460,7 @@ fun ShowTotalPrice(invoices: List<Invoice>) {
         }
         Row {
             Text(
-                text = "Total en tarjeta: ",
+                text = stringResource(id = R.string.total_credit),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )

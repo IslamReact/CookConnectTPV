@@ -7,6 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,12 +19,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.SpeakerNotes
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Search
@@ -30,6 +35,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +49,8 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -81,6 +90,7 @@ import java.util.Locale
  * @param tableViewModel
  * @param tableManager
  */
+@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @Composable
 fun OrderScreen(
@@ -99,10 +109,18 @@ fun OrderScreen(
     )
 
     val productCountMap = remember { mutableStateMapOf<Product, Int>() }
-    val showDialogState = remember { mutableStateOf(false) }
+    var chipsExpanded by remember { mutableStateOf(false) }
+    val categoryOptions = listOf(
+        stringResource(id = R.string.drink),
+        stringResource(id = R.string.sweet),
+        stringResource(id = R.string.salt),
+        stringResource(id = R.string.liquor),
+        stringResource(id = R.string.vegetables)
+    )
     val totalPrice = remember { mutableDoubleStateOf(0.0) }
     val context = LocalContext.current
     val tableGotAnOrder = remember { mutableStateOf(Table()) }
+    var selectedCategory by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         productViewModel.fetchProductData()
@@ -171,11 +189,37 @@ fun OrderScreen(
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 IconButton(
-                    onClick = { showDialogState.value = true }, modifier = Modifier
+                    onClick = {
+                        chipsExpanded = !chipsExpanded
+                    },
+                    modifier = Modifier
                 ) {
                     Icon(
-                        imageVector = Icons.Sharp.Search, contentDescription = ""
+                        imageVector = if (chipsExpanded) Icons.Outlined.KeyboardArrowUp else Icons.Outlined.KeyboardArrowDown,
+                        contentDescription = ""
                     )
+                }
+            }
+            if (chipsExpanded) {
+                FlowRow(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .wrapContentHeight()
+                ) {
+                    categoryOptions.forEach { category ->
+                        FilterChip(
+                            selected = category == selectedCategory,
+                            onClick = {
+                                selectedCategory = if (selectedCategory == category) "" else category
+                            },
+                            label = { Text(text = category) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
                 }
             }
             Box(
@@ -191,10 +235,11 @@ fun OrderScreen(
                     productViewModel,
                     productCountMap,
                     onProductCountChanged,
-                    !tableGotAnOrder.value.gotOrder
+                    !tableGotAnOrder.value.gotOrder,
+                    selectedCategory
                 )
             } else {
-                Toast.makeText(context, "An error Ocurred", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "An error occurred", Toast.LENGTH_LONG).show()
             }
         }
     }, bottomBar = {
@@ -202,7 +247,7 @@ fun OrderScreen(
             modifier = Modifier.padding(16.dp),
         ) {
             BasicLongButton(
-                buttonText = "Pedir",
+                buttonText = stringResource(id = R.string.sent_to_kitchen),
                 onClick = {
                     val currentTime =
                         SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
@@ -244,6 +289,7 @@ fun OrderScreen(
     })
 }
 
+
 /**
  * Composable function that return the result of the list of products
  *
@@ -251,13 +297,15 @@ fun OrderScreen(
  * @param selectedProducts
  * @param onProductCountChanged
  * @param alreadyGotAnOrder
+ * @param selectedCategory
  */
 @Composable
 fun SetDataForOrder(
     productViewModel: ProductViewModel,
     selectedProducts: MutableMap<Product, Int>,
     onProductCountChanged: (Product, Int) -> Unit,
-    alreadyGotAnOrder: Boolean
+    alreadyGotAnOrder: Boolean,
+    selectedCategory: String
 ) {
     when (val result = productViewModel.response.value) {
         is Result.Loading -> {
@@ -275,22 +323,22 @@ fun SetDataForOrder(
         }
 
         is Result.Success -> {
-            if (result.data.isEmpty()) {
+            val filteredProducts = if (selectedCategory.isNotEmpty()) {
+                result.data.filter { it.category == selectedCategory }
+            } else {
+                result.data
+            }
+
+            if (filteredProducts.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    val composition by rememberLottieComposition(
-                        spec = LottieCompositionSpec.Url("https://lottie.host/4cda72c3-0622-4905-968e-509757c3368b/eqpZmzRMHU.json")
-                    )
-                    LottieAnimation(
-                        composition = composition,
-                        iterations = LottieConstants.IterateForever
-                    )
+                    Text(text = stringResource(id = R.string.products_not_found))
                 }
             } else {
                 ShowLazyListOfProductsForOrder(
-                    products = result.data,
+                    products = filteredProducts,
                     selectedProducts = selectedProducts,
                     onProductCountChanged = onProductCountChanged,
                     alreadyGotAnOrder = alreadyGotAnOrder
@@ -310,11 +358,12 @@ fun SetDataForOrder(
             Box(
                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
-                Text(text = "No products found")
+                Text(text = stringResource(id = R.string.products_not_found))
             }
         }
     }
 }
+
 
 /**
  * Composable function that displays the lazyColumn of the list of products.
@@ -393,7 +442,7 @@ fun ProductCardForOrder(
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Text(
-                    text = "Cantidad: $productCount",
+                    text = stringResource(id = R.string.quantity_with_field, productCount),
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }

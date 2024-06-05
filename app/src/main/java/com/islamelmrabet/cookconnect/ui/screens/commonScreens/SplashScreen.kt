@@ -9,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
@@ -30,7 +29,7 @@ fun SplashScreen(navController: NavHostController, preferencesViewModel: Prefere
         navController.popBackStack()
         preferencesViewModel.isDataStored {
             if (it) navController.navigate(Routes.WelcomeScreen.route)
-            else navController.navigate(Routes.FisrtOnBoardingScreen.route)
+            else navController.navigate(Routes.FirstOnBoardingScreen.route)
         }
 
     }

@@ -74,18 +74,16 @@ fun FirstOnBoardingScreen(
         PageModel(
             "ITemPOS.",
             stringResource(id = R.string.lottie_animation_1),
-            "Descubre cómo nuestra aplicación puede facilitar la gestión de tu restaurante. Con nuestra herramienta intuitiva, puedes gestionar mesas, tomar pedidos y supervisar el inventario de manera eficiente. ¡Simplifica tus operaciones diarias y mejora la experiencia de tus clientes!"
+            stringResource(id = R.string.first_explication_text)
         ),
         PageModel(
             "ITemPOS.",
             stringResource(id = R.string.lottie_animation_2),
-            "Asigna mesas y toma pedidos en tiempo real con nuestra interfaz fácil de usar. Los camareros pueden agregar pedidos y los cocineros pueden ver los pedidos directamente desde sus dispositivos. Asegúrate de que todos los pedidos se procesen rápidamente y sin errores."
-        ),
+            stringResource(id = R.string.second_explication_text)        ),
         PageModel(
             "ITemPOS.",
             stringResource(id = R.string.lottie_animation_3),
-            "Genera facturas de manera rápida y lleva un control preciso del inventario. Nuestra aplicación te ayuda a mantener el stock actualizado y te alerta cuando necesites reabastecer. Optimiza tus recursos y maximiza tus ganancias."
-        )
+            stringResource(id = R.string.third_explication_text)        )
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -134,7 +132,7 @@ fun FirstOnBoardingScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     BasicButton(
-                        buttonText = "Back",
+                        buttonText = stringResource(id = R.string.back),
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage - 1)
@@ -144,7 +142,7 @@ fun FirstOnBoardingScreen(
                         buttonColors = buttonColors,
                     )
                     BasicButton(
-                        buttonText = "Next",
+                        buttonText = stringResource(id = R.string.next),
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -163,7 +161,7 @@ fun FirstOnBoardingScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         BasicLongButton(
-                            buttonText = "Get Started",
+                            buttonText = stringResource(id = R.string.get_started),
                             onClick = {
                                 preferencesViewModel.onUserNameChanged(true)
                                 navController.popBackStack()
@@ -180,7 +178,7 @@ fun FirstOnBoardingScreen(
                 }
                 if (pagerState.currentPage != pages.size - 1) {
                     BasicLongButton(
-                        buttonText = "Next",
+                        buttonText = stringResource(id = R.string.next),
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)

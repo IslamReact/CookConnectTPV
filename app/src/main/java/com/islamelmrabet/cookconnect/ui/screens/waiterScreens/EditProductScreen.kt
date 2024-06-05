@@ -79,7 +79,13 @@ fun EditProductScreen(
         contentColor = MaterialTheme.colorScheme.error,
     )
 
-    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
+    val categoryOptions = listOf(
+        stringResource(id = R.string.drink),
+        stringResource(id = R.string.sweet),
+        stringResource(id = R.string.salt),
+        stringResource(id = R.string.liquor),
+        stringResource(id = R.string.vegetables)
+    )
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
     var isButtonEnabled by remember { mutableStateOf(false) }
@@ -128,7 +134,7 @@ fun EditProductScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Nombre del producto *",
+                text = stringResource(id = R.string.product_name),
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -136,7 +142,7 @@ fun EditProductScreen(
                 value = productName,
                 onValueChange = { productName = it },
                 placeholder = {
-                    Text(text = "Azucar Hacendado...")
+                    Text(text = stringResource(id = R.string.product_placeHolder))
                 },
                 leadingIcon = {
                     Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola")
@@ -152,7 +158,7 @@ fun EditProductScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "Cantidad *",
+                text = stringResource(id = R.string.quantity),
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -173,7 +179,7 @@ fun EditProductScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "Precio unitario *",
+                text = stringResource(id = R.string.unit_price),
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -194,7 +200,7 @@ fun EditProductScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "Categoria *",
+                text = stringResource(id = R.string.category),
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -240,7 +246,7 @@ fun EditProductScreen(
                     .padding(bottom = 16.dp),
             ) {
                 OutlinedBasicButton(
-                    buttonText = "Borrar Producto",
+                    buttonText = stringResource(id = R.string.delete_product),
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = outlinedbuttonColors,
                     border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
@@ -253,7 +259,7 @@ fun EditProductScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BasicLongButton(
-                    buttonText = "Modificar Producto",
+                    buttonText = stringResource(id = R.string.modify_product),
                     onClick = {
                         val product = Product(
                             productName = productName,

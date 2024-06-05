@@ -235,7 +235,7 @@ private suspend fun emailPassSignIn(
 ) {
     when (val result = auth.signInWithEmailAndPassword(email, password)) {
         is AuthRes.Success -> {
-            Toast.makeText(context, "Inicio de sesion correcto", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.successful_login, Toast.LENGTH_SHORT).show()
             when (userRole) {
                 "Cocinero" -> {
                     navigation.navigate(Routes.OrderCookerScreen.route) {
@@ -252,7 +252,7 @@ private suspend fun emailPassSignIn(
                 }
 
                 else -> {
-                    Toast.makeText(context, "Rol desconocido: $userRole", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "UknownRole: $userRole", Toast.LENGTH_SHORT).show()
                     navigation.navigate(Routes.WelcomeScreen.route)
                 }
             }

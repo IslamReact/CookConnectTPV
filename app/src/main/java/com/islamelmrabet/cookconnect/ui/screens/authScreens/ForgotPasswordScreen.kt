@@ -86,7 +86,7 @@ fun ForgotPasswordScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 TextField(
-                    label = { Text(text = "Correo electrónico") },
+                    label = { Text(text = stringResource(id = R.string.email)) },
                     value = email,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     onValueChange = { email = it },
@@ -106,7 +106,7 @@ fun ForgotPasswordScreen(
                                         )
                                         Toast.makeText(
                                             context,
-                                            "Correo enviado",
+                                            R.string.email_sent,
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         navController.navigate(Routes.WelcomeScreen.route)
@@ -115,7 +115,7 @@ fun ForgotPasswordScreen(
                                     is AuthRes.Error -> {
                                         Toast.makeText(
                                             context,
-                                            "Error al enviar el correo",
+                                            R.string.email_not_sent,
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }

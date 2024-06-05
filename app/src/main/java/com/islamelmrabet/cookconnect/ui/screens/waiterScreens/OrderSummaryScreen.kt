@@ -162,7 +162,7 @@ fun OrderSummaryScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Subtotal",
+                            text = stringResource(id = R.string.subtotal),
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -172,7 +172,7 @@ fun OrderSummaryScreen(
                         )
                     }
                     BasicLongButton(
-                        buttonText = "Cobrar",
+                        buttonText = stringResource(id = R.string.pay),
                         onClick = {
                             if (orderSummary != null) {
                                 val currentDate = SimpleDateFormat(
@@ -263,7 +263,7 @@ fun OrderListSummary(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Subtotal",
+                        text =  stringResource(id = R.string.subtotal),
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -294,7 +294,7 @@ fun OrderListSummary(
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Delete Order",
+                        text =  stringResource(id = R.string.delete),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error,
                         textDecoration = TextDecoration.Underline
@@ -315,7 +315,7 @@ fun OrderListSummary(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Efectivo",
+                text =  stringResource(id = R.string.in_cash),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
             )

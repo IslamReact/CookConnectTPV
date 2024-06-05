@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -74,7 +75,7 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
     )
 
     var expandedState by remember { mutableStateOf(false) }
-    val options = listOf("Administrador", "Camarero", "Cocinero")
+    val options = listOf(stringResource(id = R.string.admin_role), stringResource(R.string.cooker_role), stringResource(R.string.waiter_role))
     var selectedItem by remember { mutableStateOf(options[0]) }
 
     val (name, setName) = remember { mutableStateOf("") }
@@ -203,7 +204,6 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
                     icon = Icons.Default.Person,
                     enabled = isButtonEnabled
                 )
-                Spacer(modifier = Modifier.height(50.dp))
                 ImportantInfoCard {
                     Row {
                         Icon(
@@ -251,7 +251,7 @@ private suspend fun signUp(
 ) {
     when (val result = auth.createUserWithEmailAndPassword(email, password, worker)) {
         is AuthRes.Success -> {
-            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.successful_register, Toast.LENGTH_SHORT).show()
             navigation.popBackStack()
         }
         is AuthRes.Error -> {

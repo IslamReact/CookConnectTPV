@@ -1,6 +1,5 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -23,9 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Inventory
-import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
@@ -73,6 +70,11 @@ import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 
 /**
  * Composable screen InventoryScreen
@@ -83,7 +85,10 @@ import kotlinx.coroutines.launch
  * @param productViewModel
  * @param mainViewModel
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InventoryScreen(
     auth: AuthManager,
@@ -92,13 +97,13 @@ fun InventoryScreen(
     productViewModel: ProductViewModel,
     mainViewModel: MainViewModel
 ) {
-
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val showDialogState = remember { mutableStateOf(false) }
     val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
+    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
+    var selectedCategory by rememberSaveable { mutableStateOf("") }
+    var chipsExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -129,7 +134,6 @@ fun InventoryScreen(
                                 }
                             } else {
                                 navController.navigate(item.route)
-
                             }
                             mainViewModel.updateSelectedIndex(index)
                             scope.launch {
@@ -162,7 +166,7 @@ fun InventoryScreen(
         Scaffold(
             topBar = {
                 CookerAndWaiterAppBar(
-                    stringResource(id = R.string.inventary_screen_header),
+                    stringResource(id = R.string.inventory_screen_header),
                     onClick = {
                         scope.launch {
                             drawerState.apply {
@@ -210,11 +214,13 @@ fun InventoryScreen(
                         )
                         Spacer(modifier = Modifier.width(15.dp))
                         IconButton(
-                            onClick = { showDialogState.value = true },
+                            onClick = {
+                                chipsExpanded = !chipsExpanded
+                            },
                             modifier = Modifier
                         ) {
                             Icon(
-                                imageVector = Icons.Sharp.Search,
+                                imageVector = if (chipsExpanded) Icons.Outlined.KeyboardArrowUp else Icons.Outlined.KeyboardArrowDown,
                                 contentDescription = ""
                             )
                         }
@@ -227,7 +233,38 @@ fun InventoryScreen(
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    SetData(productViewModel, navController)
+                    if (chipsExpanded) {
+                        FlowRow(
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .wrapContentHeight()
+                        ) {
+                            categoryOptions.forEach { category ->
+                                FilterChip(
+                                    selected = category == selectedCategory,
+                                    onClick = {
+                                        selectedCategory =
+                                            if (selectedCategory == category) "" else category
+                                    },
+                                    label = { Text(text = category) },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                            }
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 0.dp)
+                            .shadow(5.dp)
+                            .height(1.dp)
+                            .background(color = Color.Transparent)
+                    )
+                    SetData(productViewModel, navController, selectedCategory)
                 }
             }
         )
@@ -235,14 +272,18 @@ fun InventoryScreen(
 }
 
 /**
- * Composable function that return the result from the list of products.
+ * Composable function that return the result of the list of products
  *
  * @param productViewModel
  * @param navController
+ * @param selectedCategory
  */
 @Composable
-fun SetData(productViewModel: ProductViewModel, navController: NavController) {
-
+fun SetData(
+    productViewModel: ProductViewModel,
+    navController: NavController,
+    selectedCategory: String
+) {
     when (val result = productViewModel.response.value) {
         is Result.Loading -> {
             Box(
@@ -260,7 +301,13 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
         }
 
         is Result.Success -> {
-            if (result.data.isEmpty()){
+            val filteredProducts = if (selectedCategory.isNotEmpty()) {
+                result.data.filter { it.category == selectedCategory }
+            } else {
+                result.data
+            }
+
+            if (filteredProducts.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -273,8 +320,8 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
                         iterations = LottieConstants.IterateForever
                     )
                 }
-            }else{
-                ShowLazyListOfProducts(result.data, navController)
+            } else {
+                ShowLazyListOfProducts(filteredProducts, navController)
             }
         }
 
@@ -292,7 +339,7 @@ fun SetData(productViewModel: ProductViewModel, navController: NavController) {
 }
 
 /**
- * Composable function that displays the Lazy column of a list of products.
+ * Composable function that displays the lazyColumn of the list of products.
  *
  * @param products
  * @param navController
@@ -302,8 +349,7 @@ fun ShowLazyListOfProducts(products: List<Product>, navController: NavController
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         items(products) { product ->
             ProductCard(product, navController)
@@ -312,14 +358,13 @@ fun ShowLazyListOfProducts(products: List<Product>, navController: NavController
 }
 
 /**
- * Composable function that displays the product Card.
+ * Composable function that displays the information of the product in a card
  *
  * @param product
  * @param navController
  */
 @Composable
 fun ProductCard(product: Product, navController: NavController) {
-
     Card(
         onClick = {
             navController.navigate("${Routes.EditProductScreen.route}/${product.productName}")
@@ -333,7 +378,7 @@ fun ProductCard(product: Product, navController: NavController) {
         border = BorderStroke(
             0.3.dp, MaterialTheme.colorScheme.primary
         ),
-        colors = CardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onTertiary,
             contentColor = MaterialTheme.colorScheme.scrim,
             disabledContainerColor = MaterialTheme.colorScheme.outline,
@@ -371,7 +416,6 @@ fun ProductCard(product: Product, navController: NavController) {
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
-
         }
     }
 }

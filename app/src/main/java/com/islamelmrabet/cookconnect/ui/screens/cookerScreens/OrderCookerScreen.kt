@@ -270,7 +270,7 @@ fun ShowLazyListOfOrders(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Take a deep breath.",
+                text = stringResource(id = R.string.relax_text),
                 modifier = Modifier
                     .padding(top = 100.dp),
                 textAlign = TextAlign.Center,
@@ -281,7 +281,7 @@ fun ShowLazyListOfOrders(
                 letterSpacing = 0.5.sp,
             )
             Text(
-                text = "There´s no orders.",
+                text = stringResource(id = R.string.no_orders_text),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -406,7 +406,7 @@ fun OrderCard(order: Order, onOrderReadyClick: () -> Unit) {
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(text = "Listo")
+                Text(text = stringResource(id = R.string.ready))
             }
         }
     }

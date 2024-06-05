@@ -17,7 +17,7 @@ class OrderManager {
      * Adds a new order
      *
      * @param order
-     * @return
+     * @return CompletableFuture<Boolean>
      */
     fun addOrderManager(order: Order): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
@@ -38,7 +38,7 @@ class OrderManager {
      * Delete an order
      *
      * @param tableThatGotAnOrder
-     * @return
+     * @return CompletableFuture<Boolean>
      */
     fun deleteOrderManager(tableThatGotAnOrder: Int): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()

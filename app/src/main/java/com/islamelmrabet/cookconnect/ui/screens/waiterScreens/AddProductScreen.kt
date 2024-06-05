@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 /**
  * Composable screen AddProductScreen
  *
- * @param navCotroller
+ * @param navController
  * @param productViewModel
  * @param productManager
  */
@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddProductScreen(
-    navCotroller: NavHostController,
+    navController: NavHostController,
     productViewModel: ProductViewModel,
     productManager: ProductManager
 ) {
@@ -73,7 +73,13 @@ fun AddProductScreen(
     val buttonColors = ButtonDefaults.buttonColors(
         containerColor = primaryColor
     )
-    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
+    val categoryOptions = listOf(
+        stringResource(id = R.string.drink),
+        stringResource(id = R.string.sweet),
+        stringResource(id = R.string.salt),
+        stringResource(id = R.string.liquor),
+        stringResource(id = R.string.vegetables)
+    )
     var expandedState by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(categoryOptions[0]) }
     var isButtonEnabled by remember { mutableStateOf(false) }
@@ -99,7 +105,7 @@ fun AddProductScreen(
     Scaffold(
         topBar = {
             AppBar(
-                navCotroller,
+                navController,
                 stringResource(id = R.string.add_product_screen_header),
                 Routes.InventoryScreen.route
             )
@@ -113,7 +119,7 @@ fun AddProductScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Nombre del producto *",
+                    text = stringResource(id = R.string.product_name),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -121,10 +127,10 @@ fun AddProductScreen(
                     value = productName,
                     onValueChange = onProductNameChange,
                     placeholder = {
-                        Text(text = "Azucar Hacendado...")
+                        Text(text = stringResource(id = R.string.product_placeHolder))
                     },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola")
+                        Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "fastFood")
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -137,7 +143,7 @@ fun AddProductScreen(
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Cantidad *",
+                    text = stringResource(id = R.string.product_placeHolder),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -145,7 +151,7 @@ fun AddProductScreen(
                     value = quantity.toString(),
                     onValueChange = { onQuantityChange(it.toIntOrNull() ?: 0) },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola")
+                        Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Numbers")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -158,7 +164,7 @@ fun AddProductScreen(
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Precio unitario *",
+                    text = stringResource(id = R.string.unit_price),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -166,7 +172,7 @@ fun AddProductScreen(
                     value = unitPrice.toString(),
                     onValueChange = { onUnitPriceChange(it.toDoubleOrNull() ?: 0.00) },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola")
+                        Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Money")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -179,7 +185,7 @@ fun AddProductScreen(
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "Categoria *",
+                    text = stringResource(id = R.string.category),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -225,14 +231,14 @@ fun AddProductScreen(
                         .padding(bottom = 16.dp),
                 ) {
                     BasicLongButton(
-                        buttonText = "Añadir Producto",
+                        buttonText = stringResource(id = R.string.add_product),
                         onClick = {
                             scope.launch {
                                 val exists = productViewModel.productExists(productName)
                                 if (exists) {
                                     Toast.makeText(
                                         context,
-                                        "El producto ya existe",
+                                        R.string.product_exists,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {

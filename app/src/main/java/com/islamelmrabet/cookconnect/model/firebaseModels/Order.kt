@@ -9,12 +9,10 @@ package com.islamelmrabet.cookconnect.model.firebaseModels
  * @property tableNumber
  * @property price
  * @property isReady
- * @property orderNote
  * @property productQuantityMap
  */
 data class Order(
     val key: String? = null,
-    // TODO: OrderDateCreated y TableNumber son las claves principales
     val orderDateCreated: String = "",
     val tableNumber: Int = 0,
     val price: Double = 0.0,

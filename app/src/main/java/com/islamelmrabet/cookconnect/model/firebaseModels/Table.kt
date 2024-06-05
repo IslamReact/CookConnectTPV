@@ -15,6 +15,6 @@ data class Table(
     val number: Int = 0,
     val gotOrder: Boolean = false,
     val gotOrderReady: Boolean = false,
-    val capacity: Int = 0, //Not implemented in project
+    val capacity: Int = 0,
     val isReserved: Boolean = false //Not implemented in project
 )

@@ -19,7 +19,7 @@ sealed class TableRes<out T> {
  * Class TableManager
  *
  */
-class TableManager() {
+class TableManager{
     private val databaseReference = FirebaseFirestore.getInstance().collection("tables")
     private val collectionReference = FirebaseFirestore.getInstance().collection("tables")
 

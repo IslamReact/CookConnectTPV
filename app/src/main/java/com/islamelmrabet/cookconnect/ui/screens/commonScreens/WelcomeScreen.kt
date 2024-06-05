@@ -182,7 +182,12 @@ fun WelcomeScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.weight(0.5f))
 
-        Row {
+        Row (
+            modifier = Modifier
+               .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
             BasicButton(
                 buttonText = stringResource(id = R.string.register),
                 lessRoundedShape = lessRoundedShape,
@@ -191,7 +196,7 @@ fun WelcomeScreen(navController: NavController) {
                     navController.navigate(Routes.CreateAccountScreen.route)
                 }
             )
-            Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.2f))
             BasicButton(
                 buttonText = stringResource(id = R.string.login),
                 lessRoundedShape = lessRoundedShape,

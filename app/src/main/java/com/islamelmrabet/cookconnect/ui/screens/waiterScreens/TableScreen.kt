@@ -317,7 +317,7 @@ private fun ModalBottomSheetAddTable(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Añadir Mesas",
+                text = stringResource(id = R.string.add_tables),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.primary,
@@ -333,16 +333,16 @@ private fun ModalBottomSheetAddTable(
                     .padding(bottom = 10.dp)
             )
             Column {
-                OutlinedTableTextField("Numero de la mesa", number, onNumberChange)
+                OutlinedTableTextField(stringResource(id = R.string.table_number), number, onNumberChange)
                 Spacer(modifier = Modifier.height(10.dp))
-                OutlinedTableTextField("Capacidad", capacity, onCapacityChange)
+                OutlinedTableTextField(stringResource(id = R.string.people_capacity), capacity, onCapacityChange)
             }
             Row(
                 modifier = Modifier
                     .padding(top = 30.dp)
             ) {
                 BasicButton(
-                    buttonText = "Añadir mesa",
+                    buttonText = stringResource(id = R.string.add_tables),
                     lessRoundedShape = lessRoundedShape,
                     buttonColors = buttonColors,
                     onClick = {
@@ -380,7 +380,7 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "There´s no tables",
+                text = stringResource(id = R.string.no_tables),
                 modifier = Modifier
                     .padding(top = 100.dp),
                 textAlign = TextAlign.Center,
@@ -391,7 +391,7 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
                 letterSpacing = 0.5.sp,
             )
             Text(
-                text = "Start adding them pressing +",
+                text = stringResource(id = R.string.start_adding_tables),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -478,7 +478,7 @@ fun TableIcon(table: Table, navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Mesa ${table.number} ",
+                    text = stringResource(id = R.string.table, table.number),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Spacer(modifier = Modifier.width(10.dp))

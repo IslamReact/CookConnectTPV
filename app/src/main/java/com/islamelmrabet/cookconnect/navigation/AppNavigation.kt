@@ -38,8 +38,8 @@ import com.islamelmrabet.cookconnect.viewModel.TableViewModel
 /**
  * Class: AppNavigation
  *
- * Description: This calss contanis the navigation flow of the app.
- *              Each composble defines whitch attributes will contain each screen.
+ * Description: This class contains the navigation flow of the app.
+ *              Each composable defines which attributes will contain each screen.
  *
  * @param context
  * @param authViewModel
@@ -72,12 +72,12 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.FisrtOnBoardingScreen.route,
+        startDestination = Routes.FirstOnBoardingScreen.route,
     ) {
         composable(Routes.SplashScreen.route) {
             SplashScreen(navController, preferencesViewModel)
         }
-        composable(Routes.FisrtOnBoardingScreen.route) {
+        composable(Routes.FirstOnBoardingScreen.route) {
             FirstOnBoardingScreen(navController, preferencesViewModel)
         }
         composable(Routes.WelcomeScreen.route) {

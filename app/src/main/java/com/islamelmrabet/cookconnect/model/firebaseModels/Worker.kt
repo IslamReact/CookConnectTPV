@@ -3,11 +3,9 @@ package com.islamelmrabet.cookconnect.model.firebaseModels
 /**
  * Class: Worker
  *
- * @property key
  * @property name
  * @property email
  * @property password
- * @property uid
  * @property userRole
  * @property lastLogin
  * @property isANewPassword

@@ -5,7 +5,6 @@ package com.islamelmrabet.cookconnect.navigation
  *
  * Description: This sealed class provides the routes for the navigation flow.
  *
- *
  * @property route
  */
 sealed class Routes(val route:String){
@@ -38,6 +37,6 @@ sealed class Routes(val route:String){
     //**********************************************************************************************
     // ON BOARDING SCREEN ROUTES
     //**********************************************************************************************
-    data object  FisrtOnBoardingScreen : Routes("first_onboarding_screen")
+    data object  FirstOnBoardingScreen : Routes("first_onboarding_screen")
 
 }

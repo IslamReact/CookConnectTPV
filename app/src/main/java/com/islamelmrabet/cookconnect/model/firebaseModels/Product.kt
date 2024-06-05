@@ -18,6 +18,5 @@ data class Product(
     val unitPrice: Double = 0.00,
     val category: String = ""
 ) {
-    // No-argument constructor for Firebase
     constructor() : this(null, "efjnwefonw", "", 0, 0.00, "")
 }

@@ -7,7 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
  * Class OrderCookerManager
  *
  */
-class OrderCookerManager() {
+class OrderCookerManager{
 
     private val collectionReference = FirebaseFirestore.getInstance().collection("orders")
 
@@ -15,7 +15,7 @@ class OrderCookerManager() {
      * Update order status in case the order is ready.
      *
      * @param orderDateCreated
-     * @return
+     * @return TableRes<Unit>
      */
     fun updateOrderReadyStatus(orderDateCreated: String): TableRes<Unit> {
         return try {
