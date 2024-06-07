@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.managers.TableRes
+import decrypt
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -28,10 +29,12 @@ class AuthViewModel : ViewModel() {
      * @return
      */
     suspend fun getPasswordByEmail(email: String): String? {
+        var decryptedPassword = ""
         val usersRef = FirebaseFirestore.getInstance().collection("workers")
         val querySnapshot = usersRef.whereEqualTo("email", email).get().await()
         if (!querySnapshot.isEmpty) {
-            return querySnapshot.documents.firstOrNull()?.getString("password")
+            decryptedPassword = querySnapshot.documents.firstOrNull()?.getString("password").toString()
+            return decrypt(decryptedPassword)
         }
         return null
     }

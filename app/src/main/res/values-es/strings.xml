@@ -89,6 +89,9 @@
     <string name="profile">Perfil</string>
     <string name="app_made">App hecha por</string>
     <string name="products_added">Producto agregado exitosamente</string>
+    <string name="table_not_found">"Mesa no encontrada "</string>
+    <string name="table_deleted">"Mesa borrada "</string>
+    <string name="table_not_deleted">Error borrando la mesa</string>
     <string name="products_not_updated">Error al actualizar el producto</string>
     <string name="products_not_deleted">Error al eliminar el producto</string>
     <string name="products_deleted">Producto eliminado exitosamente</string>

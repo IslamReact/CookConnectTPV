@@ -85,6 +85,9 @@
     <string name="third_explication_text">Genera fatture rapidamente e mantieni un controllo preciso dell\'inventario. La nostra applicazione ti aiuta a mantenere aggiornato il tuo stock e ti avvisa quando è necessario rifornire. Ottimizza le tue risorse e massimizza i tuoi profitti.</string>
     <string name="app_made">App fatta da</string>
     <string name="products_updated">Prodotto aggiornato con successo</string>
+    <string name="table_not_found">Tavolo non trovato</string>
+    <string name="table_deleted">Tavolo eliminato con successo</string>
+    <string name="table_not_deleted">Impossibile eliminare il tavolo</string>
     <string name="products_not_updated">Errore durante l\'aggiornamento del prodotto</string>
     <string name="products_added">Prodotto aggiunto con successo</string>
     <string name="products_not_deleted">Errore nell\'eliminazione del prodotto</string>

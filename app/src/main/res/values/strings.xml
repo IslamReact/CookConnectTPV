@@ -88,9 +88,9 @@
     <string name="products_not_found">Products not found</string>
     <string name="products_updated">Product updated successfully</string>
     <string name="products_added">Product added successfully</string>
-    <string name="table_not_found" translatable="false">Table not found</string>
-    <string name="table_deleted" translatable="false">Table deleted successfully</string>
-    <string name="table_not_deleted" translatable="false">Failed to delete table</string>
+    <string name="table_not_found">Table not found</string>
+    <string name="table_deleted">Table deleted successfully</string>
+    <string name="table_not_deleted">Failed to delete table</string>
     <string name="products_not_updated">Error updating product</string>
     <string name="products_not_deleted">Error deleting product</string>
     <string name="products_deleted">Product deleted successfully</string>

@@ -101,6 +101,9 @@
     <string name="third_explication_text">Erstellen Sie schnell Rechnungen und behalten Sie die genaue Bestandskontrolle. Unsere Anwendung hilft Ihnen, Ihren Lagerbestand aktuell zu halten und warnt Sie, wenn Sie nachbestellen müssen. Optimieren Sie Ihre Ressourcen und maximieren Sie Ihre Gewinne.</string>
     <string name="app_made">App gemacht von</string>
     <string name="products_updated">Produkt erfolgreich aktualisiert</string>
+    <string name="table_not_found">Tisch nicht gefunden</string>
+    <string name="table_deleted">Tisch erfolgreich gelöscht</string>
+    <string name="table_not_deleted">Tisch konnte nicht gelöscht werden</string>
     <string name="products_not_updated">Fehler beim Aktualisieren des Produkts</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>

@@ -55,6 +55,7 @@ import com.islamelmrabet.cookconnect.tools.ImportantInfoCard
 import com.islamelmrabet.cookconnect.tools.TextFieldLogin
 import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.managers.AuthRes
+import encrypt
 import kotlinx.coroutines.launch
 
 /**
@@ -191,7 +192,7 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
                             name = name,
                             email = email,
                             userRole = selectedItem,
-                            password = password,
+                            password = encrypt(password),
                             isANewPassword = false,
                         )
                         scope.launch {
