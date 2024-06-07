@@ -1,6 +1,8 @@
 package com.islamelmrabet.cookconnect.navigation
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +28,7 @@ import com.islamelmrabet.cookconnect.managers.InvoiceManager
 import com.islamelmrabet.cookconnect.managers.OrderCookerManager
 import com.islamelmrabet.cookconnect.managers.ProductManager
 import com.islamelmrabet.cookconnect.managers.TableManager
+import com.islamelmrabet.cookconnect.ui.screens.settingsScreen.ContactScreen
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
@@ -51,6 +54,7 @@ import com.islamelmrabet.cookconnect.viewModel.TableViewModel
  * @param invoiceViewModel
  * @param preferencesViewModel
  */
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AppNavigation(
     context: Context,
@@ -72,7 +76,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.FirstOnBoardingScreen.route,
+        startDestination = Routes.SplashScreen.route,
     ) {
         composable(Routes.SplashScreen.route) {
             SplashScreen(navController, preferencesViewModel)
@@ -173,6 +177,9 @@ fun AppNavigation(
         }
         composable(Routes.OrderSuccessfulScreen.route) {
             OrderSuccessfulScreen(navController)
+        }
+        composable(Routes.ContactScreen.route) {
+            ContactScreen(navController)
         }
     }
 }

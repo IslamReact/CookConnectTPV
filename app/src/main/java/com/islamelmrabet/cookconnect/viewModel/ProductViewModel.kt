@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
 import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.managers.ProductManager
@@ -44,7 +45,7 @@ class ProductViewModel : ViewModel() {
     fun addProduct(product: Product, productManager: ProductManager, context: Context) {
         when (productManager.addProduct(product)) {
             else -> {
-                Toast.makeText(context, "Product added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.products_added, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -62,13 +63,13 @@ class ProductViewModel : ViewModel() {
             if (productId != null) {
                 val result = productManager.deleteProduct(productId)
                 if (result is TableRes.Success) {
-                    Toast.makeText(context, "Product deleted successfully", Toast.LENGTH_SHORT)
+                    Toast.makeText(context,  R.string.products_deleted, Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    Toast.makeText(context, "Error deleting product", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,  R.string.products_not_deleted, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(context, "Product not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.products_not_found, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -102,13 +103,13 @@ class ProductViewModel : ViewModel() {
                 )
                 val result = productManager.updateProduct(productId, newProduct)
                 if (result is TableRes.Success) {
-                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, R.string.products_updated, Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    Toast.makeText(context, "Error updating product", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.products_not_updated, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(context, "Product not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.products_not_found, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -194,7 +195,44 @@ class ProductViewModel : ViewModel() {
     }
 
     /**
-     * Cheks if the product already exists
+     * Update all products quantity from a list.
+     *
+     * @param productCountMap
+     * @param context
+     */
+    fun updateProductQuantitiesSum(productCountMap: Map<Product, Int>, context: Context) {
+        viewModelScope.launch {
+            val db = FirebaseFirestore.getInstance()
+            productCountMap.forEach { (product, count) ->
+                val newQuantity = product.quantity + count
+                if (newQuantity >= 0) {
+                    val productId = productManager.getProductDocumentIdByName(product.productName)
+                    if (productId != null) {
+                        val productRef = db.collection("products").document(productId)
+                        productRef.update("quantity", newQuantity).addOnSuccessListener {
+                            Log.d("UpdateProduct", "Product quantity updated successfully")
+                        }.addOnFailureListener { e ->
+                            Log.e("UpdateProduct", "Error updating product quantity", e)
+                            Toast.makeText(
+                                context,
+                                "Error updating product quantity",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Not enough quantity for product: ${product.productName}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if the product already exists
      *
      * @param productName
      * @return Boolean

@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.managers.TableRes
 import kotlinx.coroutines.launch
@@ -165,13 +166,13 @@ class AuthViewModel : ViewModel() {
             if (workerId != null) {
                 val result = authManager.updatePassword(workerId, password)
                 if (result is TableRes.Success) {
-                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, R.string.password_updated, Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    Toast.makeText(context, "Error updating product", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.password_not_updated, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(context, "Product not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.password_not_found, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -191,7 +192,7 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             val workerId = authManager.getWorkerDocumentIdByEmail(email)
             if (workerId != null) {
-                val result = authManager.updateIsANewPasswordWorker(workerId, isANewPassword)
+                authManager.updateIsANewPasswordWorker(workerId, isANewPassword)
             }
         }
     }

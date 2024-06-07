@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
 import com.islamelmrabet.cookconnect.managers.TableManager
 import com.islamelmrabet.cookconnect.managers.TableRes
@@ -46,19 +47,42 @@ class TableViewModel : ViewModel() {
         viewModelScope.launch {
             val tableExists = tableManager.tableExists(table.number).await()
             if (tableExists) {
-                Toast.makeText(context, "Table already exists", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.table_exists, Toast.LENGTH_LONG).show()
             } else {
                 val result = tableManager.addTable(table).await()
                 if (result) {
-                    Toast.makeText(context, "Table added successfully", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.table_added_succesfully, Toast.LENGTH_LONG).show()
                     onSuccess()
                 } else {
-                    Toast.makeText(context, "Error adding table", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.error_table, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
+    /**
+     * Deletes the table
+     *
+     * @param tableNumber
+     * @param tableManager
+     * @param context
+     */
+    fun deleteTable(tableNumber: Int, tableManager: TableManager, context: Context) {
+        viewModelScope.launch {
+            val tableId = tableManager.getTableDocumentIdByName(tableNumber)
+            if (tableId != null) {
+                val result = tableManager.deleteTable(tableId)
+                if (result is TableRes.Success) {
+                    Toast.makeText(context,  R.string.table_deleted, Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(context,  R.string.table_not_deleted, Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, R.string.table_not_found, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     /**
      * Fetches all tables from the database
      *
@@ -100,15 +124,15 @@ class TableViewModel : ViewModel() {
         when (result) {
             is TableRes.Success -> {
                 Log.d(
-                    "Estado de la mesa sobre el pedido",
-                    "Correctamente establecido a $alreadyGotOrder"
+                    "Order status",
+                    "Order successfully updated to$alreadyGotOrder"
                 )
             }
 
             is TableRes.Error -> {
                 Log.d(
-                    "Estado de la mesa sobre el pedido",
-                    "No se puedo establecer el estado a $alreadyGotOrder de la mesa $tableNumber"
+                    "Order status",
+                    "Failed to set $alreadyGotOrder status to table $tableNumber"
                 )
             }
         }
@@ -129,15 +153,15 @@ class TableViewModel : ViewModel() {
         when (tableManager.updateIsReadyOrderStatus(tableNumber, isReadyOrder)) {
             is TableRes.Success -> {
                 Log.d(
-                    "Estado del pedido de cocina a mesa",
-                    "Correctamente establecido a $isReadyOrder"
+                    "Order status",
+                    "Successfully set to $isReadyOrder"
                 )
             }
 
             is TableRes.Error -> {
                 Log.d(
-                    "Estado del pedido de cocina a mesa",
-                    "Correctamente establecido a $isReadyOrder"
+                    "Order status",
+                    "Failed to set $isReadyOrder status"
                 )
             }
         }
@@ -158,33 +182,4 @@ class TableViewModel : ViewModel() {
             null
         }
     }
-
-// ----------------------------------------------------------------
-// TODO: THIS FUNCITION MAY BE VALUABLE IN A FUTURE TO UPDATE TABLES
-// ----------------------------------------------------------------
-//    fun updateTable(originalProductName : String, product: Product, productManager: ProductManager, context: Context) {
-//        viewModelScope.launch {
-//            val productId = productManager.getProductDocumentIdByName(originalProductName)
-//            if (productId!= null) {
-//                val productName: String = product.productName
-//                val quantity: Int = product.quantity
-//                val unitPrice = product.unitPrice
-//                val category = product.category
-//                val newProduct = Product(
-//                    productName = productName,
-//                    unitPrice = unitPrice,
-//                    quantity = quantity,
-//                    category = category
-//                )
-//                val result = productManager.updateProduct(productId, newProduct)
-//                if (result is TableRes.Success) {
-//                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(context, "Error updating product", Toast.LENGTH_SHORT).show()
-//                }
-//            } else {
-//                Toast.makeText(context, "Product not found", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
 }

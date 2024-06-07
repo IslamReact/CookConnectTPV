@@ -114,8 +114,6 @@ fun TextFieldLogin(
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(modifier = Modifier.height(50.dp))
-
-    // Password Field
     Text(
         text = labelPasswordText,
         textAlign = TextAlign.Start,
@@ -419,11 +417,10 @@ fun BasicLongButtonWithIcon(
  *
  * @param navController
  * @param topAppBarText
- * @param route
  */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppBar(navController: NavController, topAppBarText: String, route: String) {
+fun AppBar(navController: NavController, topAppBarText: String) {
     Box {
         CenterAlignedTopAppBar(
             title = {
@@ -448,7 +445,7 @@ fun AppBar(navController: NavController, topAppBarText: String, route: String) {
                         .size(30.dp)
                         .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
                 ) {
-                    IconButton(onClick = { navController.navigate(route) }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Default.KeyboardArrowLeft,
                             contentDescription = "Back",

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.managers.OrderManager
 import kotlinx.coroutines.tasks.await
@@ -42,11 +43,11 @@ class OrderViewModel : ViewModel() {
                 if (success) {
                     Toast.makeText(
                         context,
-                        "Order successfully sent to kitchen",
+                        R.string.order_sent_succesfully,
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(context, "Failed to send order to kitchen", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, R.string.order_not_sent, Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -80,16 +81,16 @@ class OrderViewModel : ViewModel() {
             .thenAccept { success ->
                 if (success) {
                     if (isForDelete) {
-                        Toast.makeText(context, "Order successfully deleted", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, R.string.order_deleted, Toast.LENGTH_SHORT)
                             .show()
 
                     } else {
-                        Toast.makeText(context, "Order successfully completed", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, R.string.order_comleted_succesfully, Toast.LENGTH_SHORT)
                             .show()
 
                     }
                 } else {
-                    Toast.makeText(context, "Failed to delete order", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.order_failure, Toast.LENGTH_SHORT).show()
                 }
             }
     }

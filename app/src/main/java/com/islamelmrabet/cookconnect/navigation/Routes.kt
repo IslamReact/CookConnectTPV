@@ -32,6 +32,7 @@ sealed class Routes(val route:String){
     data object  AccountSettingsScreen : Routes("account_settings_screen")
     data object  OrderSummaryScreen : Routes("order_summary_screen")
     data object  OrderSuccessfulScreen : Routes("order_successful_screen")
+    data object  ContactScreen : Routes("contact_screen")
 
 
     //**********************************************************************************************

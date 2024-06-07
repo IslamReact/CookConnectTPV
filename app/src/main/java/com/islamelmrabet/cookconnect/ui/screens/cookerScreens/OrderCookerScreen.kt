@@ -2,8 +2,6 @@ package com.islamelmrabet.cookconnect.ui.screens.cookerScreens
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,19 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Coffee
-import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -33,7 +28,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -68,7 +62,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
-import com.islamelmrabet.cookconnect.model.localModels.cookerNavigationItem
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
@@ -76,6 +69,7 @@ import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.managers.OrderCookerManager
 import com.islamelmrabet.cookconnect.managers.TableManager
+import com.islamelmrabet.cookconnect.model.localModels.getCookerNavigationItems
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderCookerViewModel
@@ -112,6 +106,8 @@ fun OrderCookerScreen(
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val allOrders by orderCookerViewModel.fetchOrderDataFlow().collectAsState(initial = emptyList())
     val context = LocalContext.current
+    val cookerNavigationItem = getCookerNavigationItems()
+    val logOutText = stringResource(id = R.string.logOut)
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -130,9 +126,9 @@ fun OrderCookerScreen(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion") {
+                            if (item.title == logOutText) {
                                 auth.signOut()
-                                Log.d("LogOut event", "Succesfully logged out")
+                                Log.d("LogOut event", "Successfully logged out")
                                 navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
@@ -194,7 +190,7 @@ fun OrderCookerScreen(
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(start = 15.dp, top = 10.dp, end = 15.dp, bottom = 10.dp)
+                            .padding(start = 15.dp, top = 15.dp, end = 15.dp, bottom = 15.dp)
                     ) {
                         Icon(imageVector = Icons.Filled.Coffee, contentDescription = "table")
                         Text(
@@ -202,22 +198,6 @@ fun OrderCookerScreen(
                             modifier = Modifier.padding(start = 10.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        Box(
-                            modifier = Modifier
-                                .size(1.dp, 30.dp)
-                                .background(color = Color.Gray)
-                                .fillMaxHeight()
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
-                        IconButton(
-                            onClick = { },
-                            modifier = Modifier
-                        ) {
-                            Icon(
-                                imageVector = Icons.Sharp.Search,
-                                contentDescription = ""
-                            )
-                        }
                     }
                     Box(
                         modifier = Modifier
@@ -310,25 +290,20 @@ fun ShowLazyListOfOrders(
             orders.forEachIndexed { _, order ->
                 item {
                     var visible by remember { mutableStateOf(true) }
+                    OrderCard(order, onOrderReadyClick = {
+                        orderCookerViewModel.updateOrderReadyStatus(
+                            order.orderDateCreated,
+                            orderCookerManager,
+                            context
+                        )
+                        tableViewModel.updateReadyOrderStatus(
+                            order.tableNumber,
+                            tableManager,
+                            true
+                        )
+                        visible = false
 
-                    AnimatedVisibility(
-                        visible = visible,
-                        exit = slideOutVertically()
-                    ) {
-                        OrderCard(order, onOrderReadyClick = {
-                            orderCookerViewModel.updateOrderReadyStatus(
-                                order.orderDateCreated,
-                                orderCookerManager,
-                                context
-                            )
-                            tableViewModel.updateReadyOrderStatus(
-                                order.tableNumber,
-                                tableManager,
-                                true
-                            )
-                            visible = false
-                        })
-                    }
+                    })
                 }
             }
         }

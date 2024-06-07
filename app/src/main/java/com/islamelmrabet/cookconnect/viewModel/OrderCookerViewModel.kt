@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Order
 import com.islamelmrabet.cookconnect.managers.OrderCookerManager
 import com.islamelmrabet.cookconnect.managers.TableRes
@@ -56,12 +57,12 @@ class OrderCookerViewModel : ViewModel() {
     ) {
         when (orderCookerManager.updateOrderReadyStatus(orderDateCreated)) {
             is TableRes.Success -> {
-                Toast.makeText(context, "Order status updated successfully", Toast.LENGTH_SHORT)
+                Toast.makeText(context, R.string.order_updated, Toast.LENGTH_SHORT)
                     .show()
             }
 
             is TableRes.Error -> {
-                Toast.makeText(context, "Error updating Order", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.order_not_updated, Toast.LENGTH_SHORT).show()
             }
         }
     }

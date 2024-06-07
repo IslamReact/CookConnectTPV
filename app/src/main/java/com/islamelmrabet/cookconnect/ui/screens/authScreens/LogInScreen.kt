@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,6 +85,8 @@ fun LogInScreen(
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
     var isButtonEnabled by remember { mutableStateOf(false) }
+    val cookerRole = stringResource(R.string.cooker_role)
+    val waiterRole = stringResource(R.string.waiter_role)
 
     val onEmailChange: (String) -> Unit = { setEmail(it) }
     val onPasswordChange: (String) -> Unit = { setPassword(it) }
@@ -108,7 +111,6 @@ fun LogInScreen(
             AppBar(
                 navController,
                 stringResource(id = R.string.login),
-                Routes.WelcomeScreen.route
             )
         },
         content = { contentPadding ->
@@ -152,7 +154,9 @@ fun LogInScreen(
                                         auth,
                                         context,
                                         navController,
-                                        userRole
+                                        userRole,
+                                        cookerRole,
+                                        waiterRole
                                     )
                                 } finally {
                                     isLoading = false
@@ -165,7 +169,9 @@ fun LogInScreen(
                                         auth,
                                         context,
                                         navController,
-                                        userRole
+                                        userRole,
+                                        cookerRole,
+                                        waiterRole
                                     )
                                 } finally {
                                     isLoading = false
@@ -231,20 +237,23 @@ private suspend fun emailPassSignIn(
     auth: AuthManager,
     context: Context,
     navigation: NavController,
-    userRole: String
+    userRole: String,
+    cookerRole: String,
+    waiterRole: String
 ) {
+
     when (val result = auth.signInWithEmailAndPassword(email, password)) {
         is AuthRes.Success -> {
             Toast.makeText(context, R.string.successful_login, Toast.LENGTH_SHORT).show()
             when (userRole) {
-                "Cocinero" -> {
+                cookerRole -> {
                     navigation.navigate(Routes.OrderCookerScreen.route) {
                         popUpTo(Routes.LogInScreen.route) { inclusive = true }
                         popUpTo(Routes.WelcomeScreen.route) { inclusive = true }
                     }
                 }
 
-                "Camarero" -> {
+                waiterRole -> {
                     navigation.navigate(Routes.TableScreen.route) {
                         popUpTo(Routes.LogInScreen.route) { inclusive = true }
                         popUpTo(Routes.WelcomeScreen.route) { inclusive = true }

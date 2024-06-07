@@ -75,7 +75,7 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
     )
 
     var expandedState by remember { mutableStateOf(false) }
-    val options = listOf(stringResource(id = R.string.admin_role), stringResource(R.string.cooker_role), stringResource(R.string.waiter_role))
+    val options = listOf(stringResource(R.string.cooker_role), stringResource(R.string.waiter_role))
     var selectedItem by remember { mutableStateOf(options[0]) }
 
     val (name, setName) = remember { mutableStateOf("") }
@@ -99,7 +99,6 @@ fun CreateAccountScreen(auth: AuthManager, navController: NavController) {
             AppBar(
                 navController,
                 stringResource(id = R.string.register),
-                Routes.WelcomeScreen.route
             )
         },
         content = { contentPadding ->

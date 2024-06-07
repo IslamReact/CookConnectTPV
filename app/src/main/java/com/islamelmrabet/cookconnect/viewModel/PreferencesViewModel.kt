@@ -49,7 +49,7 @@ class PreferencesViewModel(application: Application) : AndroidViewModel(applicat
      * @param onCollected
      */
     suspend fun isDataStored(onCollected: (Boolean) -> Unit) {
-        viewModelScope.launch() {
+        viewModelScope.launch{
             preferences.isDataStored().collect {
                 onCollected(it)
             }

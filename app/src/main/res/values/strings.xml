@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CookConnect</string>
+    <string name="app_name" translatable="false">ItemPOS</string>
     <string name="welcome">Welcome to ItemPOS!</string>
     <string name="welcome_text">Select the user you want to use or log in if your user doesn´t appear.</string>
     <string name="users_text">Users</string>
@@ -11,7 +11,7 @@
     <string name="userName">Username</string>
     <string name="userName_example">Jorge Rodriguez Cutillas</string>
     <string name="email_example">example@example.com</string>
-    <string name="password_label">...</string>
+    <string name="password_label">…</string>
     <string name="rol_label">Role</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="default_web_client_id" translatable="false">Default\n</string>
@@ -78,10 +78,39 @@
     <string name="table_number">Table number</string>
     <string name="people_capacity">People capacity</string>
     <string name="no_tables">No tables</string>
-    <string name="sent_to_kitchen">Sent to kitchen</string>
+    <string name="sent_to_kitchen">Send to kitchen</string>
     <string name="start_adding_tables">Start adding them by clicking the top button</string>
     <string name="table">Table: %d</string>
+    <string name="help_user">User Help</string>
+    <string name="contact">Contact</string>
+    <string name="profile">Profile</string>
+    <string name="app_made">App made by</string>
     <string name="products_not_found">Products not found</string>
+    <string name="products_updated">Product updated successfully</string>
+    <string name="products_added">Product added successfully</string>
+    <string name="table_not_found" translatable="false">Table not found</string>
+    <string name="table_deleted" translatable="false">Table deleted successfully</string>
+    <string name="table_not_deleted" translatable="false">Failed to delete table</string>
+    <string name="products_not_updated">Error updating product</string>
+    <string name="products_not_deleted">Error deleting product</string>
+    <string name="products_deleted">Product deleted successfully</string>
+    <string name="password_not_found">Password not found</string>
+    <string name="password_updated">Password updated successfully</string>
+    <string name="password_not_updated">Error updating password</string>
+    <string name="order_failure">Failed to delete or complete order</string>
+    <string name="order_comleted_succesfully">Order successfully completed</string>
+    <string name="order_deleted">Order successfully deleted</string>
+    <string name="order_updated">Order status updated successfully</string>
+    <string name="order_not_updated">Error updating Order</string>
+    <string name="order_sent_succesfully">Order successfully sent to kitchen</string>
+    <string name="order_not_sent">Failed to send order to kitchen</string>
+    <string name="table_exists">Table already exists</string>
+    <string name="table_added_succesfully">Table added successfully</string>
+    <string name="error_table">Error adding table</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_delete">Confirm Delete</string>
+    <string name="confirm_delete_text">Are you shure you want to delete?</string>
     <string name="first_explication_text">Discover how our application can facilitate the management of your restaurant. With our intuitive tool, you can efficiently manage tables, take orders, and supervise inventory. Simplify your daily operations and enhance your customers experience!</string>
     <string name="second_explication_text">Assign tables and take orders in real-time with our easy-to-use interface. Waiters can add orders, and cooks can view orders directly from their devices. Ensure that all orders are processed quickly and accurately.</string>
     <string name="third_explication_text">Generate invoices quickly and maintain precise inventory control. Our application helps you keep your stock updated and alerts you when you need to restock. Optimize your resources and maximize your profits.</string>

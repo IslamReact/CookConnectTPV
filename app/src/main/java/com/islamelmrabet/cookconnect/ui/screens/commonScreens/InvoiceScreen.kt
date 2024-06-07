@@ -70,13 +70,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Invoice
 import com.islamelmrabet.cookconnect.model.localModels.NavigationItem
-import com.islamelmrabet.cookconnect.model.localModels.cookerNavigationItem
-import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
 import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.managers.AuthManager
+import com.islamelmrabet.cookconnect.model.localModels.getCookerNavigationItems
+import com.islamelmrabet.cookconnect.model.localModels.getNavigationItems
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
@@ -91,7 +91,6 @@ import kotlinx.coroutines.launch
  * @param mainViewModel
  * @param invoiceViewModel
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InvoiceScreen(
@@ -114,6 +113,11 @@ fun InvoiceScreen(
     val allInvoices by invoiceViewModel.fetchInvoiceDataFlow().collectAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
     var searchIsExpanded by remember { mutableStateOf(false) }
+    val navigationItems = getNavigationItems()
+    val cookerNavigationItem = getCookerNavigationItems()
+    val totalPriceInCash = allInvoices.filter { it.payedByCash }.sumOf { it.price }
+    val totalPrice = allInvoices.filter { !it.payedByCash && it.payed }.sumOf { it.price }
+    val waiterRole = stringResource(R.string.waiter_role)
 
 
     val filteredInvoices = allInvoices.filter { invoice ->
@@ -137,7 +141,7 @@ fun InvoiceScreen(
         val fetchedRole = authViewModel.getRole()
         fetchedRole?.let {
             workerRole = it
-            currentWorkerMenu = if (workerRole == "Camarero") {
+            currentWorkerMenu = if (workerRole == waiterRole) {
                 navigationItems
             } else {
                 cookerNavigationItem
@@ -279,7 +283,7 @@ fun InvoiceScreen(
                         .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
                     containerColor = MaterialTheme.colorScheme.surface,
                 ) {
-                    ShowTotalPrice(allInvoices)
+                    ShowTotalPrice(totalPriceInCash, totalPrice)
                 }
             }
         )
@@ -383,7 +387,7 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                         .height(30.dp)
                         .width(100.dp)
                         .background(
-                            color = if (!invoice.isPayed) {
+                            color = if (invoice.payed) {
                                 MaterialTheme.colorScheme.secondary
                             } else {
                                 MaterialTheme.colorScheme.error
@@ -393,7 +397,7 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (!invoice.isPayed) stringResource(id = R.string.payed) else  stringResource(id = R.string.not_payed),
+                        text = if (invoice.payed) stringResource(id = R.string.payed) else  stringResource(id = R.string.not_payed),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -434,10 +438,9 @@ fun InvoiceCard(invoice: Invoice, isExpanded: Boolean, onCardClick: () -> Unit) 
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun ShowTotalPrice(invoices: List<Invoice>) {
-    val totalPriceInCash = invoices.filter { it.isPayedByCash }.sumOf { it.price }
-    val totalPrice = invoices.filter { !it.isPayedByCash }.sumOf { it.price }
+fun ShowTotalPrice(totalPriceInCash: Double,totalPrice: Double) {
 
     Row(
         modifier = Modifier
@@ -452,6 +455,7 @@ fun ShowTotalPrice(invoices: List<Invoice>) {
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = String.format("$%.2f", totalPriceInCash),
                 fontSize = 15.sp,
@@ -464,6 +468,7 @@ fun ShowTotalPrice(invoices: List<Invoice>) {
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = String.format("$%.2f", totalPrice),
                 fontSize = 15.sp,

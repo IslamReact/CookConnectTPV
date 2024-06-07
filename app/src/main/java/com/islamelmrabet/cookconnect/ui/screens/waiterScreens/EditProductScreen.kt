@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Fastfood
 import androidx.compose.material.icons.sharp.MonetizationOn
 import androidx.compose.material.icons.sharp.Numbers
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,7 +77,7 @@ fun EditProductScreen(
         containerColor = primaryColor
     )
 
-    val outlinedbuttonColors = ButtonDefaults.outlinedButtonColors(
+    val outlinedButtonColors = ButtonDefaults.outlinedButtonColors(
         contentColor = MaterialTheme.colorScheme.error,
     )
 
@@ -94,7 +96,7 @@ fun EditProductScreen(
     var productName by remember { mutableStateOf(productNameToEdit ?: "") }
     var quantity by remember { mutableIntStateOf(0) }
     var unitPrice by remember { mutableDoubleStateOf(0.00) }
-
+    var showDialog by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(productNameToEdit) {
@@ -122,7 +124,6 @@ fun EditProductScreen(
             AppBar(
                 navController,
                 stringResource(id = R.string.edit_product_screen_header),
-                Routes.InventoryScreen.route
             )
         }
     ) { contentPadding ->
@@ -145,7 +146,7 @@ fun EditProductScreen(
                     Text(text = stringResource(id = R.string.product_placeHolder))
                 },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Hola")
+                    Icon(imageVector = Icons.Sharp.Fastfood, contentDescription = "Fast food")
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -166,7 +167,7 @@ fun EditProductScreen(
                 value = quantity.toString(),
                 onValueChange = { quantity = it.toIntOrNull() ?: 0 },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Hola")
+                    Icon(imageVector = Icons.Sharp.Numbers, contentDescription = "Numbers")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -187,7 +188,7 @@ fun EditProductScreen(
                 value = unitPrice.toString(),
                 onValueChange = { unitPrice = it.toDoubleOrNull() ?: 0.00 },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "Hola")
+                    Icon(imageVector = Icons.Sharp.MonetizationOn, contentDescription = "MonetizationOn")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -248,15 +249,37 @@ fun EditProductScreen(
                 OutlinedBasicButton(
                     buttonText = stringResource(id = R.string.delete_product),
                     lessRoundedShape = lessRoundedShape,
-                    buttonColors = outlinedbuttonColors,
+                    buttonColors = outlinedButtonColors,
                     border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
                     onClick = {
-                        if (productNameToEdit != null) {
-                            productViewModel.deleteProduct(productName, productManager, context)
-                        }
-                        navController.navigate(Routes.InventoryScreen.route)
+                        showDialog = true
                     }
                 )
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text(text = stringResource(id = R.string.confirm_delete)) },
+                        text = { Text(text = stringResource(id = R.string.confirm_delete_text)) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    if (productNameToEdit != null) {
+                                        productViewModel.deleteProduct(productName, productManager, context)
+                                    }
+                                    navController.navigate(Routes.InventoryScreen.route)
+                                    showDialog = false
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.yes))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDialog = false }) {
+                                Text(text = stringResource(id = R.string.no))
+                            }
+                        }
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 BasicLongButton(
                     buttonText = stringResource(id = R.string.modify_product),

@@ -3,6 +3,7 @@ package com.islamelmrabet.cookconnect.managers
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
+import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -20,7 +21,6 @@ sealed class TableRes<out T> {
  *
  */
 class TableManager{
-    private val databaseReference = FirebaseFirestore.getInstance().collection("tables")
     private val collectionReference = FirebaseFirestore.getInstance().collection("tables")
 
     /**
@@ -31,7 +31,7 @@ class TableManager{
      */
     fun addTable(table: Table): CompletableFuture<Boolean> {
         val completableFuture = CompletableFuture<Boolean>()
-        databaseReference
+        collectionReference
             .add(table)
             .addOnSuccessListener {
                 Log.d("Table", "Table created successfully")
@@ -42,6 +42,26 @@ class TableManager{
                 completableFuture.complete(false)
             }
         return completableFuture
+    }
+
+    /**
+     * Delete a table
+     *
+     * @param tableDocument
+     * @return TableRes<Unit>
+     */
+    fun deleteTable(tableDocument: String): TableRes<Unit> {
+        return try {
+            collectionReference
+                .document(tableDocument)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("Table", "Table deleted successfully")
+                }
+            TableRes.Success(Unit)
+        } catch (e: Exception) {
+            TableRes.Error(e.message ?: "Error deleting Table")
+        }
     }
 
     /**
@@ -149,5 +169,27 @@ class TableManager{
                 completableFuture.complete(false)
             }
         return completableFuture
+    }
+
+    /**
+    * Get table document id by table number
+    *
+    * @param tableNumber
+    * @return String?
+    */
+    suspend fun getTableDocumentIdByName(tableNumber: Int): String? {
+        return try {
+            val querySnapshot = collectionReference
+                .whereEqualTo("number", tableNumber)
+                .get().await()
+            if (!querySnapshot.isEmpty) {
+                querySnapshot.documents.firstOrNull()?.id
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("Table Manager", "Error getting table document ID: ${e.message}")
+            null
+        }
     }
 }

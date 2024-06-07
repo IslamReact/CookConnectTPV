@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CookConnect</string>
     <string name="welcome">¡Bienvenido a ItemPOS!</string>
     <string name="welcome_text">Selecciona el usuario que deseas utilizar o inicia sesión si tu usuario no aparece.</string>
     <string name="users_text">Usuarios</string>
@@ -55,9 +54,9 @@
     <string name="liquor">Licor</string>
     <string name="sweet">Dulce</string>
     <string name="salt">Salado</string>
-    <string name="vegetables">Vegetales</string>
+    <string name="vegetables">Verdura</string>
     <string name="product_name">Nombre del producto *</string>
-    <string name="product_placeHolder">Azúcar Hacendado...</string>
+    <string name="product_placeHolder">Azúcar Hacendado…</string>
     <string name="quantity">Cantidad *</string>
     <string name="unit_price">Precio unitario *</string>
     <string name="category">Categoría *</string>
@@ -74,11 +73,37 @@
     <string name="table_number">Número de mesa</string>
     <string name="people_capacity">Capacidad de personas</string>
     <string name="no_tables">No hay mesas</string>
-    <string name="sent_to_kitchen">Enviado a cocina</string>
+    <string name="sent_to_kitchen">Enviar a cocina</string>
     <string name="start_adding_tables">Comienza a agregarlas haciendo clic en el botón superior</string>
     <string name="table">Mesa: %d</string>
+    <string name="help_user">Ayuda de usuario</string>
+    <string name="contact">Contacto</string>
     <string name="products_not_found">Productos no encontrados</string>
+    <string name="order_not_sent">Error al enviar el pedido a la cocina</string>
+    <string name="table_exists">La mesa ya existe</string>
+    <string name="table_added_succesfully">Mesa agregada exitosamente</string>
+    <string name="error_table">Error al agregar la mesa</string>
     <string name="first_explication_text">Descubre cómo nuestra aplicación puede facilitar la gestión de tu restaurante. Con nuestra herramienta intuitiva, puedes gestionar mesas, tomar pedidos y supervisar inventario. ¡Simplifica tus operaciones diarias y mejora la experiencia de tus clientes!</string>
     <string name="second_explication_text">Asigna mesas y toma pedidos en tiempo real con nuestra interfaz fácil de usar. Los camareros pueden agregar pedidos, y los cocineros pueden ver pedidos directamente desde sus dispositivos. Asegúrate de que todos los pedidos se procesen rápidamente y sin errores.</string>
     <string name="third_explication_text">Genera facturas rápidamente y lleva un control preciso del inventario. Nuestra aplicación te ayuda a mantener tu stock actualizado y te alerta cuando necesites reponerlo. Optimiza tus recursos y maximiza tus ganancias.</string>
+    <string name="profile">Perfil</string>
+    <string name="app_made">App hecha por</string>
+    <string name="products_added">Producto agregado exitosamente</string>
+    <string name="products_not_updated">Error al actualizar el producto</string>
+    <string name="products_not_deleted">Error al eliminar el producto</string>
+    <string name="products_deleted">Producto eliminado exitosamente</string>
+    <string name="password_not_found">Contraseña no encontrada</string>
+    <string name="password_updated">Contraseña actualizada exitosamente</string>
+    <string name="password_not_updated">Error al actualizar la contraseña</string>
+    <string name="order_failure">Error al eliminar o completar el pedido</string>
+    <string name="order_comleted_succesfully">Pedido completada exitosamente</string>
+    <string name="order_deleted">Pedido eliminado exitosamente</string>
+    <string name="order_updated">Estado del pedido actualizado exitosamente</string>
+    <string name="order_not_updated">Error al actualizar la pedido</string>
+    <string name="order_sent_succesfully">Pedido enviado a la cocina exitosamente</string>
+    <string name="products_updated">Producto actualizado exitosamente</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="confirm_delete">Confirmar eliminación</string>
+    <string name="confirm_delete_text">¿Estás seguro de que quieres eliminar?</string>
 </resources>

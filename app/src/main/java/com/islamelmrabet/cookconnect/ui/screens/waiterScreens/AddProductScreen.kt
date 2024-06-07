@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
-import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.managers.ProductManager
@@ -86,11 +85,11 @@ fun AddProductScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val (productName, setproductName) = remember { mutableStateOf("") }
+    val (productName, setProductName) = remember { mutableStateOf("") }
     val (quantity, setQuantity) = remember { mutableIntStateOf(0) }
     val (unitPrice, setUnitPrice) = remember { mutableDoubleStateOf(0.00) }
 
-    val onProductNameChange: (String) -> Unit = { setproductName(it) }
+    val onProductNameChange: (String) -> Unit = { setProductName(it) }
     val onQuantityChange: (Int) -> Unit = { setQuantity(it) }
     val onUnitPriceChange: (Double) -> Unit = { setUnitPrice(it) }
 
@@ -106,8 +105,7 @@ fun AddProductScreen(
         topBar = {
             AppBar(
                 navController,
-                stringResource(id = R.string.add_product_screen_header),
-                Routes.InventoryScreen.route
+                stringResource(id = R.string.add_product_screen_header)
             )
         },
         content = { contentPadding ->
@@ -251,7 +249,7 @@ fun AddProductScreen(
                                     productViewModel.addProduct(product, productManager, context)
                                     setQuantity(0)
                                     setUnitPrice(0.00)
-                                    setproductName("")
+                                    setProductName("")
                                 }
                             }
                         },

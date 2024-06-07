@@ -59,7 +59,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Product
-import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
 import com.islamelmrabet.cookconnect.tools.DrawerHeader
@@ -75,6 +74,9 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import com.islamelmrabet.cookconnect.model.localModels.getNavigationItems
 
 /**
  * Composable screen InventoryScreen
@@ -85,9 +87,6 @@ import androidx.compose.material3.FilterChipDefaults
  * @param productViewModel
  * @param mainViewModel
  */
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.icons.outlined.KeyboardArrowUp
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InventoryScreen(
@@ -101,9 +100,17 @@ fun InventoryScreen(
     val scope = rememberCoroutineScope()
     val selectedItemIndex by mainViewModel.drawerSelectedIndex.collectAsState()
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
-    val categoryOptions = listOf("Bebida", "Dulce", "Salado", "Licores", "Verdura")
+    val categoryOptions = listOf(
+        stringResource(id = R.string.drink),
+        stringResource(id = R.string.sweet),
+        stringResource(id = R.string.salt),
+        stringResource(id = R.string.liquor),
+        stringResource(id = R.string.vegetables)
+    )
     var selectedCategory by rememberSaveable { mutableStateOf("") }
     var chipsExpanded by remember { mutableStateOf(false) }
+    val navigationItems = getNavigationItems()
+    val logOutText = stringResource(id = R.string.logOut)
 
     LaunchedEffect(Unit) {
         val fetchedLastLoginDate = authViewModel.getLastLoginDate()
@@ -123,7 +130,7 @@ fun InventoryScreen(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion") {
+                            if (item.title == logOutText) {
                                 auth.signOut()
                                 Log.d("LogOut event", "Succesfully logged out")
                                 navController.popBackStack()
@@ -250,6 +257,7 @@ fun InventoryScreen(
                                     label = { Text(text = category) },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                                     ),
                                     modifier = Modifier.padding(end = 8.dp)
                                 )
@@ -320,6 +328,7 @@ fun SetData(
                         iterations = LottieConstants.IterateForever
                     )
                 }
+                Text(text = stringResource(id = R.string.products_not_found))
             } else {
                 ShowLazyListOfProducts(filteredProducts, navController)
             }

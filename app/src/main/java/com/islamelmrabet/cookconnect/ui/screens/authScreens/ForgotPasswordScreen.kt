@@ -69,7 +69,6 @@ fun ForgotPasswordScreen(
             AppBar(
                 navController,
                 stringResource(id = R.string.forgot_password_label),
-                Routes.WelcomeScreen.route
             )
         },
         content = { contentPadding ->

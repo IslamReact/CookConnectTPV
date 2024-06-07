@@ -23,10 +23,7 @@ class InvoiceViewModel : ViewModel() {
      * @param invoiceManager
      */
     fun addInvoice(invoice: Invoice, invoiceManager: InvoiceManager) {
-        return when (val result = invoiceManager.addInvoiceManager(invoice)) {
-            else -> {
-            }
-        }
+        invoiceManager.addInvoiceManager(invoice)
     }
 
     /**

@@ -24,13 +24,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.SpeakerNotes
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material.icons.sharp.Add
-import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -121,6 +119,7 @@ fun OrderScreen(
     val context = LocalContext.current
     val tableGotAnOrder = remember { mutableStateOf(Table()) }
     var selectedCategory by rememberSaveable { mutableStateOf("") }
+    val totalProductCount = productCountMap.values.sum()
 
     LaunchedEffect(Unit) {
         productViewModel.fetchProductData()
@@ -157,7 +156,6 @@ fun OrderScreen(
         AppBar(
             navController,
             stringResource(id = R.string.order_screen_header),
-            Routes.TableScreen.route
         )
     }, content = { contentPadding ->
         Column(
@@ -216,6 +214,7 @@ fun OrderScreen(
                             label = { Text(text = category) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                             ),
                             modifier = Modifier.padding(end = 8.dp)
                         )
@@ -276,7 +275,7 @@ fun OrderScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
             BasicLongButtonWithIcon(
-                buttonText = "${productCountMap.size} items",
+                buttonText = "$totalProductCount items",
                 secondaryText = String.format("%.2f $", totalPrice.doubleValue),
                 onClick = {
                     navController.navigate(Routes.OrderSummaryScreen.route)
@@ -334,8 +333,15 @@ fun SetDataForOrder(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = stringResource(id = R.string.products_not_found))
+                    val composition by rememberLottieComposition(
+                        spec = LottieCompositionSpec.Url("https://lottie.host/4cda72c3-0622-4905-968e-509757c3368b/eqpZmzRMHU.json")
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever
+                    )
                 }
+                Text(text = stringResource(id = R.string.products_not_found))
             } else {
                 ShowLazyListOfProductsForOrder(
                     products = filteredProducts,
@@ -450,7 +456,9 @@ fun ProductCardForOrder(
             Button(
                 onClick = {
                     if (selectedCount < product.quantity) {
-                        onProductCountChanged(product, selectedCount + 1)
+                        val newCount = selectedCount + 1
+                        selectedProducts[product] = newCount
+                        onProductCountChanged(product, newCount)
                     }
                 },
                 shape = RoundedCornerShape(5.dp),
@@ -471,7 +479,9 @@ fun ProductCardForOrder(
                         val updatedMap = selectedProducts.toMutableMap()
                         updatedMap[product] = selectedCount - 1
                         onProductCountChanged(product, selectedCount - 1)
-                        selectedProducts.remove(product)
+                        if(updatedMap[product] == 0){
+                            selectedProducts.remove(product)
+                        }
                     }
                 },
                 shape = RoundedCornerShape(5.dp),

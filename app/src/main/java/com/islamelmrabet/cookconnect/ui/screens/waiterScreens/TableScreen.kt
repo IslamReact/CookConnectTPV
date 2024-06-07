@@ -1,10 +1,16 @@
 package com.islamelmrabet.cookconnect.ui.screens.waiterScreens
 
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.TableBar
 import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -43,6 +49,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -80,7 +87,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.model.firebaseModels.Table
-import com.islamelmrabet.cookconnect.model.localModels.navigationItems
 import com.islamelmrabet.cookconnect.navigation.Routes
 import com.islamelmrabet.cookconnect.tools.BasicButton
 import com.islamelmrabet.cookconnect.tools.CookerAndWaiterAppBar
@@ -89,6 +95,7 @@ import com.islamelmrabet.cookconnect.tools.DrawerFooter
 import com.islamelmrabet.cookconnect.tools.OutlinedTableTextField
 import com.islamelmrabet.cookconnect.managers.AuthManager
 import com.islamelmrabet.cookconnect.managers.TableManager
+import com.islamelmrabet.cookconnect.model.localModels.getNavigationItems
 import com.islamelmrabet.cookconnect.viewModel.AuthViewModel
 import com.islamelmrabet.cookconnect.viewModel.MainViewModel
 import com.islamelmrabet.cookconnect.viewModel.TableViewModel
@@ -104,6 +111,7 @@ import kotlinx.coroutines.launch
  * @param tableViewModel
  * @param mainViewModel
  */
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TableScreen(
@@ -129,8 +137,10 @@ fun TableScreen(
     var lastLogInDate by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
     val allTables by tableViewModel.fetchTableDataFlow().collectAsState(initial = emptyList())
+    val navigationItems = getNavigationItems()
+    val logOutText = stringResource(id = R.string.logOut)
 
-
+    val vibrator = context.getSystemService(Vibrator::class.java)
     val (number, setNumber) = remember { mutableIntStateOf(0) }
     val (capacity, setCapacity) = remember { mutableIntStateOf(0) }
 
@@ -154,9 +164,9 @@ fun TableScreen(
                         label = { Text(text = item.title) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            if (item.title == "Cerrar Sesion") {
+                            if (item.title == logOutText) {
                                 auth.signOut()
-                                Log.d("LogOut event", "Succesfully logged out")
+                                Log.d("LogOut event", "Successfully logged out")
                                 navController.popBackStack()
                                 navController.navigate(Routes.WelcomeScreen.route) {
                                     popUpTo(Routes.WelcomeScreen.route) {
@@ -251,7 +261,7 @@ fun TableScreen(
                             .height(1.dp)
                             .background(color = Color.Transparent)
                     )
-                    ShowLazyListOfTables(allTables, navController)
+                    ShowLazyListOfTables(allTables, navController, vibrator, tableViewModel, context, tableManager)
                 }
             }
         )
@@ -367,9 +377,13 @@ private fun ModalBottomSheetAddTable(
  *
  * @param tables
  * @param navController
+ * @param tableManager
+ * @param context
+ * @param tableViewModel
  */
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
+fun ShowLazyListOfTables(tables: List<Table>, navController: NavController, vibrator: Vibrator,  tableViewModel: TableViewModel, context: Context, tableManager: TableManager) {
     if (tables.isEmpty()) {
         val composition by rememberLottieComposition(
             spec = LottieCompositionSpec.Url("https://lottie.host/f741b1cc-6935-4d12-8d6a-1be02907e008/7v6a565aGQ.json")
@@ -417,7 +431,7 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
         ) {
             tables.forEachIndexed { _, table ->
                 item {
-                    TableIcon(table, navController)
+                    TableIcon(table, navController, vibrator, showDialog = true, tableViewModel ,context, tableManager)
                 }
             }
         }
@@ -429,9 +443,17 @@ fun ShowLazyListOfTables(tables: List<Table>, navController: NavController) {
  *
  * @param table
  * @param navController
+ * @param tableManager
+ * @param context
+ * @param tableViewModel
+ *
  */
+@OptIn(ExperimentalFoundationApi::class)
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun TableIcon(table: Table, navController: NavController) {
+fun TableIcon(table: Table, navController: NavController, vibrator: Vibrator, showDialog: Boolean, tableViewModel: TableViewModel, context: Context, tableManager: TableManager) {
+    val showAlertDialog = remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -456,22 +478,37 @@ fun TableIcon(table: Table, navController: NavController) {
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(
-                onClick = {
-                    navController.navigate("${Routes.OrderScreen.route}/${table.number}")
+            val onClick: () -> Unit = {
+                navController.navigate("${Routes.OrderScreen.route}/${table.number}")
+            }
+            val onLongClick: () -> Unit = {
+                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                if (showDialog) {
+                    showAlertDialog.value = true
                 }
-            ) {
-                if (table.capacity > 4) {
-                    Image(
-                        painter = painterResource(id = R.drawable.order_large_table),
-                        contentDescription = "table icon",
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.order_table),
-                        contentDescription = "table icon",
-                    )
-                }
+            }
+            if (table.capacity > 4) {
+                Image(
+                    painter = painterResource(id = R.drawable.order_large_table),
+                    contentDescription = "table icon",
+                    modifier = Modifier
+                        .combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick
+                        )
+                        .size(40.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.order_table),
+                    contentDescription = "table icon",
+                    modifier = Modifier
+                        .combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick
+                        )
+                        .size(40.dp)
+                )
             }
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -488,7 +525,7 @@ fun TableIcon(table: Table, navController: NavController) {
                         .background(
                             color = if (table.gotOrderReady) {
                                 MaterialTheme.colorScheme.secondary
-                            } else if (table.gotOrder && !table.gotOrderReady) {
+                            } else if (table.gotOrder) {
                                 MaterialTheme.colorScheme.surfaceBright
                             } else {
                                 MaterialTheme.colorScheme.outline
@@ -505,5 +542,21 @@ fun TableIcon(table: Table, navController: NavController) {
                 }
             }
         }
+        if (showAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showAlertDialog.value = false},
+                title = { Text(text = stringResource(id = R.string.confirm_delete)) },
+                text = { Text(text = stringResource(id = R.string.confirm_delete_text)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        tableViewModel.deleteTable(table.number,tableManager, context)
+                        showAlertDialog.value = false
+                    }) {
+                        Text(text = stringResource(id = R.string.yes))
+                    }
+                }
+            )
+        }
     }
 }
+

@@ -72,18 +72,20 @@ fun FirstOnBoardingScreen(
     val pagerState = rememberPagerState()
     val pages = listOf(
         PageModel(
-            "ITemPOS.",
+            "ITemPOS",
             stringResource(id = R.string.lottie_animation_1),
             stringResource(id = R.string.first_explication_text)
         ),
         PageModel(
-            "ITemPOS.",
+            "ITemPOS",
             stringResource(id = R.string.lottie_animation_2),
-            stringResource(id = R.string.second_explication_text)        ),
+            stringResource(id = R.string.second_explication_text)
+        ),
         PageModel(
-            "ITemPOS.",
+            "ITemPOS",
             stringResource(id = R.string.lottie_animation_3),
-            stringResource(id = R.string.third_explication_text)        )
+            stringResource(id = R.string.third_explication_text)
+        )
     )
 
     Column(modifier = Modifier.fillMaxSize()) {

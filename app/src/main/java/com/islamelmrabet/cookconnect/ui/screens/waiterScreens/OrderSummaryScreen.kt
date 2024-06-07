@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -28,9 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +58,7 @@ import com.islamelmrabet.cookconnect.tools.AppBar
 import com.islamelmrabet.cookconnect.tools.BasicLongButton
 import com.islamelmrabet.cookconnect.managers.InvoiceManager
 import com.islamelmrabet.cookconnect.managers.TableManager
+import com.islamelmrabet.cookconnect.tools.Result
 import com.islamelmrabet.cookconnect.viewModel.InvoiceViewModel
 import com.islamelmrabet.cookconnect.viewModel.OrderViewModel
 import com.islamelmrabet.cookconnect.viewModel.ProductViewModel
@@ -96,6 +101,23 @@ fun OrderSummaryScreen(
     val productList by productViewModel.productList.observeAsState(emptyList())
     val context = LocalContext.current
     var isPayedByCash by remember { mutableStateOf(false) }
+    val productCountMap = remember { mutableStateMapOf<Product, Int>() }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(Unit) {
+        orderSummary?.let { orderData ->
+            val products = productViewModel.response.value
+            if (products is Result.Success) {
+                val productMap = products.data.associateBy { it.productName }
+                orderData.productQuantityMap.forEach { (productName, quantity) ->
+                    productMap[productName]?.let { product ->
+                        productCountMap[product] = quantity
+                    }
+                }
+            }
+        }
+    }
 
 
     Scaffold(
@@ -103,7 +125,6 @@ fun OrderSummaryScreen(
             AppBar(
                 navController,
                 stringResource(id = R.string.order_summary_header),
-                "${Routes.OrderScreen.route}/${orderSummary?.tableNumber}"
             )
         },
         content = { contentPadding ->
@@ -119,19 +140,44 @@ fun OrderSummaryScreen(
                         isPayedByCash = isPayedByCash,
                         onPayedByCashChange = { isPayedByCash = it },
                         onClick = {
-                            tableViewModel.updateTableOrderStatus(
-                                it.tableNumber,
-                                tableManager,
-                                false
-                            )
-                            tableViewModel.updateReadyOrderStatus(
-                                it.tableNumber,
-                                tableManager,
-                                false
-                            )
-                            orderViewModel.deleteOrder(it.tableNumber, context, true)
-                            orderViewModel.clearOrderOrderSummary()
-                            navController.navigate(Routes.TableScreen.route)
+                            showDeleteDialog = true
+                        }
+                    )
+                }
+                if (showDeleteDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteDialog = false },
+                        title = { Text(text = stringResource(id = R.string.confirm_delete)) },
+                        text = { Text(text = stringResource(id = R.string.confirm_delete_text)) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    productViewModel.updateProductQuantitiesSum(productCountMap, context)
+                                    tableViewModel.updateTableOrderStatus(
+                                        orderSummary!!.tableNumber,
+                                        tableManager,
+                                        false
+                                    )
+                                    tableViewModel.updateReadyOrderStatus(
+                                        orderSummary!!.tableNumber,
+                                        tableManager,
+                                        false
+                                    )
+                                    orderViewModel.deleteOrder(orderSummary!!.tableNumber, context, true)
+                                    orderViewModel.clearOrderOrderSummary()
+                                    navController.navigate(Routes.TableScreen.route)
+                                    showDeleteDialog = false
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.yes))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showDeleteDialog = false }
+                            ) {
+                                Text(text = stringResource(id = R.string.no))
+                            }
                         }
                     )
                 }
@@ -182,8 +228,8 @@ fun OrderSummaryScreen(
                                 val invoice =
                                     Invoice(
                                         invoiceDateCreated = currentDate,
-                                        isPayedByCash = isPayedByCash,
-                                        isPayed = true,
+                                        payedByCash = isPayedByCash,
+                                        payed = true,
                                         orderDateCreated = orderSummary!!.orderDateCreated,
                                         tableNumber = orderSummary!!.tableNumber,
                                         price = orderSummary!!.price,

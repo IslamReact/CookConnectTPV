@@ -1,5 +1,8 @@
 package com.islamelmrabet.cookconnect.model.localModels
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.islamelmrabet.cookconnect.R
 import com.islamelmrabet.cookconnect.navigation.Routes
 
 /**
@@ -10,20 +13,26 @@ import com.islamelmrabet.cookconnect.navigation.Routes
  */
 data class SettingItem(
     val title: String,
-    val route: String,
+    val route: String?,
+    val isImplemented: Boolean = true
 )
 
-val settingsList = listOf(
-    SettingItem(
-        title = "Perfil",
-        route = Routes.TableScreen.route,
-    ),
-    SettingItem(
-        title = "Ayuda de Usuario",
-        route = Routes.TableScreen.route,
-    ),
-    SettingItem(
-        title = "Contacto",
-        route = Routes.TableScreen.route,
-    ),
-)
+@Composable
+fun getSettingsList(): List<SettingItem> {
+    return listOf(
+        SettingItem(
+            title = stringResource(id = R.string.profile),
+            route = null,
+            isImplemented = false
+        ),
+        SettingItem(
+            title = stringResource(id = R.string.help_user),
+            route = null,
+            isImplemented = false
+        ),
+        SettingItem(
+            title = stringResource(id = R.string.contact),
+            route = Routes.ContactScreen.route
+        )
+    )
+}
